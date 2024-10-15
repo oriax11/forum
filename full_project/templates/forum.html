@@ -55,59 +55,22 @@
         <form class="post777" action="/" method="post">
           <div class="post">
             <div class="posr-header">
-              <h4>Username3</h4>
-              <h4>15 min ago</h4>
+              {{range .}}
+              <h4> {{.Username}}</h4>
+              <h4>{{.Title}}</h4>
+              <h4>{{.CreatedAt}}</h4>
             </div>
             <p class="categories">#Sport   #Tech</p>
-            <p class="post-paragraph">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard
-              typesetting industry. Lorem Ipsum has been the industry's standard nta zaml wsty lhna hhhhhhh
-              typesetting industry. Lorem Ipsum has been the industry's standard
-              typesetting industry. Lorem Ipsum has been the industry's standard..</p>
+            <p class="post-paragraph">{{.Content}}</p>
             <div class="react-btns-holder">
               <button class="like-btn btn-react"><i class="fa-solid fa-arrow-up"></i> <span>45</span></button>
               <button class="dislike-btn btn-react"><i class="fa-solid fa-arrow-down"></i> <span>0</span></button>
               <button class="comment-btn btn-react"><i class="fa-regular fa-comment"></i> <span>77</span></button>
             </div>
           </div>
+          {{end}}
         </form>
        </div>
-
-       <div class="posts create-post">
-        <form class="post777" action="/" method="post">
-          <div class="post">
-            <div class="posr-header">
-              <h4>Username3</h4>
-              <h4>15 min ago</h4>
-            </div>
-            <p class="categories">#Sport  #Tech</p>
-            <p class="post-paragraph">Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum perspiciatis in quaerat ipsam labore provident doloremque? Porro a odit fuga omnis explicabo commodi et? Sapiente amet accusamus vitae aliquid! Possimus. Lorem ipsum dolor, sit amet consectetur adipisicing elit. Fuga nulla atque nostrum consequuntur. Commodi iusto nemo inventore dolore id! Nulla ipsum laborum eveniet eaque quam quas quibusdam deleniti pariatur doloribus.</p>
-            <div class="react-btns-holder">
-              <button class="like-btn btn-react"><i class="fa-solid fa-arrow-up"></i> <span>45</span></button>
-              <button class="dislike-btn btn-react"><i class="fa-solid fa-arrow-down"></i> <span>0</span></button>
-              <button class="comment-btn btn-react"><i class="fa-regular fa-comment"></i> <span>77</span></button>
-            </div>
-          </div>
-        </form>
-       </div>
-
-       <div class="posts create-post">
-        <form class="post777" action="/" method="post">
-          <div class="post">
-            <div class="posr-header">
-              <h4>Username3</h4>
-              <h4>15 min ago</h4>
-            </div>
-            <p class="categories">#Sport  #Tech</p>
-            <p class="post-paragraph">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Fuga nulla atque nostrum consequuntur. Commodi iusto nemo inventore dolore id! Nulla ipsum laborum eveniet eaque quam quas quibusdam deleniti pariatur doloribus.</p>
-            <div class="react-btns-holder">
-              <button class="like-btn btn-react"><i class="fa-solid fa-arrow-up"></i> <span>45</span></button>
-              <button class="dislike-btn btn-react"><i class="fa-solid fa-arrow-down"></i> <span>0</span></button>
-              <button class="comment-btn btn-react"><i class="fa-regular fa-comment"></i> <span>77</span></button>
-            </div>
-          </div>
-        </form>
-       </div>
-
 
       </div>  
     </section>

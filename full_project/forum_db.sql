@@ -1,11 +1,8 @@
-CREATE DATABASE Forum;
-USE Forum;
-
 CREATE TABLE Users (
     user_id INTEGER PRIMARY KEY, 
     username TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
+    fullname TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -35,6 +32,3 @@ CREATE TABLE Reactions (
     FOREIGN KEY (post_id) REFERENCES Posts(post_id),
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
-
-INSERT INTO posts (title, content, user_id) VALUES ('kaka', 'dada',2 );
-ALTER TABLE Users ADD COLUMN fullname TEXT;
