@@ -20,8 +20,14 @@
         <form class="post-form">
             <textarea class="title" placeholder="title"></textarea>
             <textarea placeholder="What is your question?"></textarea>
-           
-            <button type="submit">Publish</button>
+            <div class="params-container">
+                <div class="checks-container">
+                    <input type="checkbox" id="checkbox1" class="checkbox-text">
+                    <input type="checkbox" id="checkbox2" class="checkbox-text">
+                    <input type="checkbox" id="checkbox3" class="checkbox-text">
+                </div>        
+                <button type="submit">Publish</button>
+            </div>
         </form>
         
         {{range .}}
