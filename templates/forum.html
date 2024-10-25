@@ -23,9 +23,9 @@
             <button type="submit">Publish</button>
         </form>
         
+        {{range .}}
         <div class="post">
             <div class="post-header">
-          {{range .}}
                 <strong>{{.Username}}</strong>
                 
                 <span>{{.CreatedAt}}</span>
