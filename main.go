@@ -118,9 +118,8 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 		_, err := db.Exec("INSERT INTO Users (username, email, fullname) VALUES (?, ?, ?)", username, email, fullname)
 		if err != nil {
 			if strings.Contains(err.Error(), "UNIQUE constraint failed: Users.username") {
-				fmt.Println("tomy")
 				erro := Errors{
-					ErrorType: "some error type",
+					ErrorType: "Username already exists",
 				}
 				tpl.ExecuteTemplate(w, "register.html", erro)
 				return

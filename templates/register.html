@@ -3,212 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-      * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-      }
-      a {
-        text-decoration: none;
-      }
-      body {
-          font-family: "Inter", sans-serif;
-          background-color: #1a1a1a;
-          color: #ffffff;
-      }
-            .navbar {
-        background-color: #2c2c2c;
-        padding: 10px 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 1px 1px rgba(255,255,255,0.1);
-      }
-      .logo{
-        width: 120px;
-      }
-      .nav-buttons {
-        display: flex;
-        gap: 10px;
-      }
-
-      .login , .register{
-        color: #ff4b4b;
-        padding: 8px 16px;
-        border: 1px solid #ff4b4b;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-      .login:hover , .register:hover{
-        color: #1a1a1a;
-        padding: 8px 16px;
-        background-color: #ff4b4b;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-      .btn {
-          background-color: #2c2c2c;
-          color: #ffffff;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          padding: 10px 20px;
-          cursor: pointer;
-          font-size: 16px;
-          font-weight: 700;
-          border-radius: 24px;
-          transition: all 0.4s ease-in-out;
-      }
-      
-      .btn:hover {
-          background-color: #ff4b4b;
-          border: 1px solid #ff4b4b;
-          color: #ffffff;
-      }
-      .container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-top: 200px;
-        width: 100%;
-      }
-      
-      .form {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        max-width: 550px;
-        background-color: #2c2c2c;
-        padding: 20px;
-        border-radius: 20px;
-        position: relative;
-      }
-      
-      .title {
-        font-size: 28px;
-        color: #ff4b4b;
-        font-weight: 600;
-        letter-spacing: -1px;
-        position: relative;
-        display: flex;
-        align-items: center;
-        padding-left: 30px;
-      }
-      
-      .title::before,.title::after {
-        position: absolute;
-        content: "";
-        height: 16px;
-        width: 16px;
-        border-radius: 50%;
-        left: 0px;
-        background-color: #ff4b4b;
-      }
-      
-      .title::before {
-        width: 18px;
-        height: 18px;
-        background-color: #ff4b4b;
-      }
-      
-      .title::after {
-        width: 18px;
-        height: 18px;
-        animation: pulse 1s linear infinite;
-      }
-      
-      .message, .signin {
-        color: rgba(255, 255, 255, 0.7);
-        font-size: 14px;
-      }
-      
-      .signin {
-        text-align: center;
-      }
-      
-      .signin a {
-        color: #ff4b4b;
-      }
-      
-      .signin a:hover {
-        text-decoration: underline #ff4b4b;
-      }
-      
-      .flex {
-        display: flex;
-        width: 100%;
-        gap: 6px;
-      }
-      
-      .form label {
-        position: relative;
-      }
-      
-      .form label .input {
-        width: 100%;
-        padding: 10px 10px 20px 10px;
-        outline: 0;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 10px;
-        background-color: #1a1a1a;
-        color: #ffffff;
-      }
-      
-      .form label .input + span {
-        position: absolute;
-        left: 10px;
-        top: 15px;
-        color: rgba(255, 255, 255, 0.5);
-        font-size: 0.9em;
-        cursor: text;
-        transition: 0.3s ease;
-      }
-      
-      .form label .input:placeholder-shown + span {
-        top: 15px;
-        font-size: 0.9em;
-      }
-      
-      .form label .input:focus + span,
-      .form label .input:valid + span {
-        top: 30px;
-        font-size: 0.7em;
-        font-weight: 600;
-      }
-      
-      .form label .input:valid + span {
-        color: #4CAF50;
-      }
-      
-      .submit {
-        border: none;
-        outline: none;
-        background-color: #ff4b4b;
-        padding: 10px;
-        border-radius: 10px;
-        color: #fff;
-        font-size: 16px;
-        transform: .3s ease;
-        cursor: pointer;
-      }
-      
-      .submit:hover {
-        background-color: #ff3333;
-      }
-      
-      @keyframes pulse {
-        from {
-          transform: scale(0.9);
-          opacity: 1;
-        }
-      
-        to {
-          transform: scale(1.8);
-          opacity: 0;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="static/css/register_sty.css">
+    <title>Register</title>
 </head>
 
 <body>
@@ -225,7 +21,7 @@
           <input type="hidden" name="query" value="reg">
             <p class="title">Register </p>
             <p class="message">Signup now and get full access to our app. </p>
-            {{.ErrorType}}
+            <p class="err">{{.ErrorType}}</p>
             <div class="flex">
                 <label>
                     <input required="" placeholder="" name="username" type="text" class="input">
@@ -244,16 +40,30 @@
             </label> 
                 
             <label>
-                <input required="" placeholder="" type="password" class="input">
+                <input name="password" required="" placeholder="" type="password" class="input">
                 <span>Password</span>
             </label>
             <label>
-                <input required="" placeholder="" type="password" class="input">
+                <input  required="" placeholder="" type="password" class="input">
                 <span>Confirm password</span>
             </label>
-            <button class="submit">Submit</button>
+            <button function="validatePassword()" class="submit">Submit</button>
             <p class="signin">Already have an acount ? <a href="/login">Sign in</a> </p>
         </form>
     </div>
+      <script>
+        let password = document.getElementById("password");
+        let confirmPassword = document.getElementById("confirm-password")
+
+        function validatePassword() {
+          if (password.value != confirmPassword.value) {
+            confirmPassword.setCustomValidity("passwords don't match");
+          } else {
+            confirmPassword.setCustomValidity('');
+          }
+        }
+        password.onchange = validatePassword;
+        confirmPassword.onkeyup = validatePassword; 
+      </script>
 </body>
 </html>
