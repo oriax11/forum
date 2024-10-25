@@ -1,3 +1,7 @@
+a {
+  text-decoration: none;
+}
+
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -20,25 +24,25 @@ body {
   display: flex;
   gap: 10px;
 }
-.nav-buttons button {
+
+.login , .register{
+  color: #ff4b4b;
   padding: 8px 16px;
-  border: none;
-  border-radius: 3px;
+  border: 1px solid #ff4b4b;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.login:hover , .register:hover{
+  color: #1a1a1a;
+  padding: 8px 16px;
+  background-color: #ff4b4b;
+  border-radius: 4px;
   cursor: pointer;
 }
-.login {
-  background-color: #ff4b4b;
-  color: #1a1a1a;
-  width: 70px;
-  height: 40px;
-}
-.register {
-  background-color: #2c2c2c;
-  color: #ff4b4b;
-  border: 1px solid #ff4b4b;
-}
+
 .container {
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 20px auto;
   background-color: #2c2c2c;
   padding: 20px;
@@ -58,6 +62,11 @@ body {
   color: #e0e0e0;
   font-size: 14px;
 
+}
+#user_icon {
+  color: #ff4b4b;
+  font-size: 20px;
+  cursor: pointer;
 }
 .post-form textarea {
   width: 97%;
