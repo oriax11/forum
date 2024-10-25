@@ -222,12 +222,14 @@
 
     <div class="container">
         <form method="POST" action="/register" class="form">
+          <input type="hidden" name="query" value="reg">
             <p class="title">Register </p>
             <p class="message">Signup now and get full access to our app. </p>
+            {{.ErrorType}}
             <div class="flex">
                 <label>
                     <input required="" placeholder="" name="username" type="text" class="input">
-                    <span>Firstname</span>
+                    <span>Username</span>
                 </label>
         
                 <label>

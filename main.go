@@ -2,9 +2,12 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+	"strings"
+
 	// "golang.org/x/crypto/bcrypt"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -16,6 +19,10 @@ var (
 
 func init() {
 	tpl = template.Must(template.ParseGlob("templates/*.html"))
+}
+
+type Errors struct {
+	ErrorType string
 }
 
 type User struct {
@@ -39,7 +46,6 @@ func main() {
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", (http.StripPrefix("/static/", fs)))
 
-	
 	var err error
 	// Open the SQLite database
 	db, err = sql.Open("sqlite3", "./forum.db")
@@ -56,7 +62,6 @@ func main() {
 	log.Println("Server is running on port http://localhost:7080/")
 	log.Fatal(http.ListenAndServe(":7080", nil))
 }
-
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
@@ -101,15 +106,26 @@ func forumHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
-	action := r.FormValue("action")
 
-	if action == "register" {
+	action := r.FormValue("query")
+
+	fmt.Println(action)
+	if action == "reg" {
 		username := r.FormValue("username")
 		email := r.FormValue("email")
 		fullname := r.FormValue("fullname")
 
 		_, err := db.Exec("INSERT INTO Users (username, email, fullname) VALUES (?, ?, ?)", username, email, fullname)
 		if err != nil {
+			if strings.Contains(err.Error(), "UNIQUE constraint failed: Users.username") {
+				fmt.Println("tomy")
+				erro := Errors{
+					ErrorType: "some error type",
+				}
+				tpl.ExecuteTemplate(w, "register.html", erro)
+				return
+
+			}
 			http.Error(w, "User registration failed", http.StatusInternalServerError)
 			return
 		}
