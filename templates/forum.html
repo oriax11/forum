@@ -27,12 +27,13 @@
         {{range .}}
         <div class="post">
             <i id="user_icon" class="fa-solid fa-user"></i>
+            <strong>{{.Username}}</strong>
             <div class="post-header">
-                <strong>{{.Username}}</strong>
+                <h5 class="categories">#Sport #Tech</h5>
                 <span>{{.CreatedAt}}</span>
+                <i function="onclick()" class="fa-solid fa-xmark"></i>
             </div>
             <p class="title">{{.Title}}</p>
-            <h5 class="categories">#Sport #Tech</h5>
             <p>{{.Content}}</p>
             <div class="post-actions">
                 <button class="reactions"><svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 4 3 15h6v5h6v-5h6z" class="icon_svg-stroke icon_svg-fill" stroke-width="1.5" stroke="#e0e0e0" fill="none" stroke-linejoin="round"></path></svg>45</button>
@@ -42,5 +43,15 @@
         </div>
         {{end}}
     </div>
+
+
+    <script>
+        let x = document.getElementsByClassName("fa-xmark");
+        for (let i = 0; i < x.length; i++) {
+            x[i].addEventListener("click", function() {
+                this.parentElement.parentElement.remove();
+            })
+        }
+    </script>
 </body>
 </html>
