@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/css/style.css" />
+    <title>intouch</title>
+</head>
+<body>
+    <nav class="navbar">
+        <img class="logo" src="static/img/logo.svg" alt="logo">
+        <div class="nav-buttons">
+            <a href="login.html" class="login">Login</a>
+            <a href="register.html" class="register">Register</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <form class="post-form">
+            <textarea class="title" placeholder="title"></textarea>
+            <textarea placeholder="What is your question?"></textarea>
+           
+            <button type="submit">Publish</button>
+        </form>
+        
+        <div class="post">
+            <div class="post-header">
+          {{range .}}
+                <strong>{{.Username}}</strong>
+                
+                <span>{{.CreatedAt}}</span>
+            </div>
+            <p class="title">{{.Title}}</p>
+            <p class="categories">#Sport #Tech</p>
+            <p>{{.Content}}</p>
+            <div class="post-actions">
+                <button class="reactions"><svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 4 3 15h6v5h6v-5h6z" class="icon_svg-stroke icon_svg-fill" stroke-width="1.5" stroke="#e0e0e0" fill="none" stroke-linejoin="round"></path></svg>45</button>
+                <button class="reactions"><svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m12 20 9-11h-6V4H9v5H3z" class="icon_svg-stroke icon_svg-fill" stroke="#e0e0e0" fill="none" stroke-width="1.5" stroke-linejoin="round"></path></svg>45</button>
+                <button class="reactions"><svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12.071 18.86c4.103 0 7.429-3.102 7.429-6.93C19.5 8.103 16.174 5 12.071 5s-7.429 3.103-7.429 6.93c0 1.291.379 2.5 1.037 3.534.32.501-1.551 3.058-1.112 3.467.46.429 3.236-1.295 3.803-.99 1.09.585 2.354.92 3.701.92Z" class="icon_svg-stroke icon_svg-fill" stroke="#e0e0e0" stroke-width="1.5" fill="none"></path></svg>45</button>
+            </div>
+        </div>
+        {{end}}
+    </div>
+</body>
+</html>
