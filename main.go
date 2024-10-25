@@ -50,10 +50,23 @@ func main() {
 	// Set up the route to serve the forum page
 	http.HandleFunc("/", forumHandler)
 	http.HandleFunc("/register", registerHandler)
+	http.HandleFunc("/login", loginHandler)
 
 	// Start the server
 	log.Println("Server is running on port http://localhost:7080/")
 	log.Fatal(http.ListenAndServe(":7080", nil))
+}
+
+
+func loginHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		handleFormSubmission(w, r)
+		return
+	}
+	err := tpl.ExecuteTemplate(w, "login.html", nil)
+	if err != nil {
+		http.Error(w, "Error loading the login page", http.StatusInternalServerError)
+	}
 }
 
 func registerHandler(w http.ResponseWriter, r *http.Request) {

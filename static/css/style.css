@@ -66,8 +66,8 @@ body {
 #user_icon {
   color: #ff4b4b;
   font-size: 20px;
-  cursor: pointer;
 }
+
 .post-form textarea {
   width: 97%;
   font-size: 14px;

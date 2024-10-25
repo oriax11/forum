@@ -15,32 +15,44 @@
       }
       body {
           font-family: "Inter", sans-serif;
-          background-color: #ccccccbe;
+          background-color: #1a1a1a;
+          color: #ffffff;
       }
-      .navbar {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 15px;
-          background-color: #cccccca4;
-          border-bottom: 1px solid #00000042;
+            .navbar {
+        background-color: #2c2c2c;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 1px 1px rgba(255,255,255,0.1);
       }
-      
-      .navbar-left .logo {
-          max-width: 100px;
-          height: auto;
-          margin-left: 50px;
+      .logo{
+        width: 120px;
       }
-      
-      .navbar-right {
-          display: flex;
-          margin-right: 50px;
-          gap: 10px;
+      .nav-buttons {
+        display: flex;
+        gap: 10px;
+      }
+
+      .login , .register{
+        color: #ff4b4b;
+        padding: 8px 16px;
+        border: 1px solid #ff4b4b;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .login:hover , .register:hover{
+        color: #1a1a1a;
+        padding: 8px 16px;
+        background-color: #ff4b4b;
+        border-radius: 4px;
+        cursor: pointer;
       }
       .btn {
-          background-color: #f5f5f5;
-          color: #222222CC;
-          border: 1px solid #00000042;
+          background-color: #2c2c2c;
+          color: #ffffff;
+          border: 1px solid rgba(255, 255, 255, 0.1);
           padding: 10px 20px;
           cursor: pointer;
           font-size: 16px;
@@ -50,9 +62,9 @@
       }
       
       .btn:hover {
-          background-color: #e21f43;
-          border: 1px solid #f5f5f5;
-          color: #f5f5f5;
+          background-color: #ff4b4b;
+          border: 1px solid #ff4b4b;
+          color: #ffffff;
       }
       .container {
         display: flex;
@@ -67,7 +79,7 @@
         flex-direction: column;
         gap: 10px;
         max-width: 550px;
-        background-color: #fff;
+        background-color: #2c2c2c;
         padding: 20px;
         border-radius: 20px;
         position: relative;
@@ -75,7 +87,7 @@
       
       .title {
         font-size: 28px;
-        color: #e21f43;
+        color: #ff4b4b;
         font-weight: 600;
         letter-spacing: -1px;
         position: relative;
@@ -91,13 +103,13 @@
         width: 16px;
         border-radius: 50%;
         left: 0px;
-        background-color: #e21f43;
+        background-color: #ff4b4b;
       }
       
       .title::before {
         width: 18px;
         height: 18px;
-        background-color: #e21f43;
+        background-color: #ff4b4b;
       }
       
       .title::after {
@@ -107,7 +119,7 @@
       }
       
       .message, .signin {
-        color: rgba(88, 87, 87, 0.822);
+        color: rgba(255, 255, 255, 0.7);
         font-size: 14px;
       }
       
@@ -116,11 +128,11 @@
       }
       
       .signin a {
-        color: #e21f43;
+        color: #ff4b4b;
       }
       
       .signin a:hover {
-        text-decoration: underline #e21f43;
+        text-decoration: underline #ff4b4b;
       }
       
       .flex {
@@ -137,15 +149,17 @@
         width: 100%;
         padding: 10px 10px 20px 10px;
         outline: 0;
-        border: 1px solid rgba(105, 105, 105, 0.397);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 10px;
+        background-color: #1a1a1a;
+        color: #ffffff;
       }
       
       .form label .input + span {
         position: absolute;
         left: 10px;
         top: 15px;
-        color: grey;
+        color: rgba(255, 255, 255, 0.5);
         font-size: 0.9em;
         cursor: text;
         transition: 0.3s ease;
@@ -156,29 +170,31 @@
         font-size: 0.9em;
       }
       
-      .form label .input:focus + span,.form label .input:valid + span {
+      .form label .input:focus + span,
+      .form label .input:valid + span {
         top: 30px;
         font-size: 0.7em;
         font-weight: 600;
       }
       
       .form label .input:valid + span {
-        color: green;
+        color: #4CAF50;
       }
       
       .submit {
         border: none;
         outline: none;
-        background-color: #e21f43;
+        background-color: #ff4b4b;
         padding: 10px;
         border-radius: 10px;
         color: #fff;
         font-size: 16px;
         transform: .3s ease;
+        cursor: pointer;
       }
       
       .submit:hover {
-        background-color: #c70629;
+        background-color: #ff3333;
       }
       
       @keyframes pulse {
@@ -192,24 +208,23 @@
           opacity: 0;
         }
       }
-          </style>
+    </style>
 </head>
 
 <body>
-      <nav class="navbar">
-        <div class="navbar-left">
-          <img src="/full_project/img/logo.svg" alt="Logo" class="logo" />
-        </div>
-        <div class="navbar-right">
-          <a href="login.html" class="btn">Login</a>
-          <a href="register.html" class="btn">Register</a>
-        </div>
-      </nav>
+  <nav class="navbar">
+    <a href="/"><img class="logo" src="static/img/logo.svg" alt="logo"></a>
+    <div class="nav-buttons">
+        <a href="/login" class="login">Login</a>
+        <a href="/register" class="register">Register</a>
+    </div>
+  </nav>
+
     <div class="container">
-       <form method="POST" action="/register">
+        <form method="POST" action="/register" class="form">
             <p class="title">Register </p>
             <p class="message">Signup now and get full access to our app. </p>
-                <div class="flex">
+            <div class="flex">
                 <label>
                     <input required="" placeholder="" name="username" type="text" class="input">
                     <span>Firstname</span>
@@ -222,22 +237,21 @@
             </div>  
                     
             <label>
-                <input required="" placeholder="" name="email" placeholder="" type="email" class="input">
+                <input required="" placeholder="" name="email" type="email" class="input">
                 <span>Email</span>
             </label> 
                 
             <label>
-                <input required="" placeholder=""  placeholder="" type="password" class="input">
+                <input required="" placeholder="" type="password" class="input">
                 <span>Password</span>
             </label>
             <label>
-                <input  required="" placeholder="" placeholder="" type="password" class="input">
+                <input required="" placeholder="" type="password" class="input">
                 <span>Confirm password</span>
             </label>
             <button class="submit">Submit</button>
-            <p class="signin">Already have an acount ? <a href="login.html">Signin</a> </p>
+            <p class="signin">Already have an acount ? <a href="/login">Signin</a> </p>
         </form>
     </div>
-
 </body>
 </html>
