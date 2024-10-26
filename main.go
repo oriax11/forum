@@ -108,10 +108,6 @@ func forumHandler(w http.ResponseWriter, r *http.Request) {
 func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 
 	action := r.FormValue("query")
-	fmt.Println(action)
-
-
-	fmt.Println(action)
 	if action == "reg" {
 		username := r.FormValue("username")
 		email := r.FormValue("email")
@@ -142,27 +138,38 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}else if action == "login" {
-		fmt.Println("12")
 		email := r.FormValue("email")
-		// password := r.FormValue("password")
+		
+		password := r.FormValue("password")
 	
 		type Cred struct {
 			Password string
 		}
 		var ab Cred
-		err := db.QueryRow("SELECT email, password FROM Users WHERE email = ?", email).Scan(&ab.Password)
+		err :=  db.QueryRow("SELECT password FROM Users WHERE email = ?", email).Scan(&ab.Password)
 		if err == sql.ErrNoRows {
-			http.Error(w, "No user found", http.StatusNotFound)
-			return
-		} else if err != nil {
-			http.Error(w, "Login failed", http.StatusInternalServerError)
+			erro := Errors{
+				ErrorType: "no user with this email!!",
+			}
+			tpl.ExecuteTemplate(w, "login.html", erro)
 			return
 		}
-		fmt.Println(ab.Password)
 
-	}
+		if password != ab.Password {
+			erro := Errors{
+				ErrorType: "password is uncorrect!!",
+			}
+			tpl.ExecuteTemplate(w, "login.html", erro)
+			return
+		} else {	
+			fmt.Println("logged in")
+			fmt.Println(ab.Password)
+		}
+
+
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
 }
 
 func getPosts() ([]Post, error) {

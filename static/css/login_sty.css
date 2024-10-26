@@ -104,7 +104,10 @@ body {
     height: 18px;
     background-color: #ff4b4b;
 }
-
+.err {
+    color: #ff4b4b;
+    font-size: 16px;
+}
 .title::after {
     width: 18px;
     height: 18px;
