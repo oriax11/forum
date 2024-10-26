@@ -16,16 +16,17 @@
       </nav>
 
     <div class="container">
-        <form class="form">
+        <form class="form" method="post">
+            <input type="hidden" name="query" value="login">
             <p class="title">Login </p>
             <p class="message">Login now and get full access to our app. </p>
             <p class="err">{{.ErrorType}}</p>
             <label>
-                <input required="" placeholder="Email" type="email" class="input">
+                <input required="" placeholder="Email" name="email" type="email" class="input">
             </label> 
                 
             <label>
-                <input required="" placeholder="Password" type="password" class="input">
+                <input required="" placeholder="Password" name="password" type="password" class="input">
             </label>
         
             <button class="submit">Submit</button>

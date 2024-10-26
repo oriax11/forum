@@ -108,6 +108,8 @@ func forumHandler(w http.ResponseWriter, r *http.Request) {
 func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 
 	action := r.FormValue("query")
+	fmt.Println(action)
+
 
 	fmt.Println(action)
 	if action == "reg" {
@@ -139,6 +141,25 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Post creation failed", http.StatusInternalServerError)
 			return
 		}
+	}else if action == "login" {
+		fmt.Println("12")
+		email := r.FormValue("email")
+		// password := r.FormValue("password")
+	
+		type Cred struct {
+			Password string
+		}
+		var ab Cred
+		err := db.QueryRow("SELECT email, password FROM Users WHERE email = ?", email).Scan(&ab.Password)
+		if err == sql.ErrNoRows {
+			http.Error(w, "No user found", http.StatusNotFound)
+			return
+		} else if err != nil {
+			http.Error(w, "Login failed", http.StatusInternalServerError)
+			return
+		}
+		fmt.Println(ab.Password)
+
 	}
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
