@@ -19,9 +19,11 @@ CREATE TABLE Posts (
     title TEXT NOT NULL,
     content TEXT NOT NULL,
     category_id INTEGER,
+    category_name TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    FOREIGN KEY (category_id) REFERENCES PostCategories(category_id)
+    FOREIGN KEY (category_id) REFERENCES PostCategories(category_id),
+    FOREIGN KEY (category_name) REFERENCES PostCategories(category_name)
 );
 
 CREATE TABLE Reactions (

@@ -17,22 +17,25 @@
     </nav>
     
     <div class="container">
-        <form class="post-form">
-            <textarea class="title" placeholder="title"></textarea>
-            <textarea placeholder="What is your question?"></textarea>
+
+        {{.Message}}
+        <form class="post-form" method="post">
+            <input type="hidden" name="query" value="newpost">
+            <textarea name="title" class="title" placeholder="title"></textarea>
+            <textarea name="content"  placeholder="What is your question?"></textarea>
             <div class="params-container">
                 <div class="checks-container">
-                    <input type="checkbox" id="General"value="General" class="checkbox-text"><label for="General">General</label>
-                    <input type="checkbox" id="Technology" value="Technology" class="checkbox-text"><label for="Technology">Technology</label>
-                    <input type="checkbox" id="Art" value="Art" class="checkbox-text"><label for="Art">Art</label>
-                    <input type="checkbox" id="Sport"value="Sport" class="checkbox-text"><label for="Sport">Sport</label>
-                    <input type="checkbox" id="News"value="News" class="checkbox-text"><label for="News">News</label>
+                    <input name="category_type" type="checkbox" id="General"value="General" class="checkbox-text"><label for="General">General</label>
+                    <input name="category_type" type="checkbox" id="Technology" value="Technology" class="checkbox-text"><label for="Technology">Technology</label>
+                    <input name="category_type" type="checkbox" id="Art" value="Art" class="checkbox-text"><label for="Art">Art</label>
+                    <input name="category_type" type="checkbox" id="Sport"value="Sport" class="checkbox-text"><label for="Sport">Sport</label>
+                    <input name="category_type" type="checkbox" id="News"value="News" class="checkbox-text"><label for="News">News</label>
                 </div>        
                 <button type="submit">Publish</button>
             </div>
         </form>
         
-        {{range .}}
+        {{range .P}}
         <div class="post">
             <div class="post-header"> 
                 <div>
@@ -42,7 +45,7 @@
             <i function="onclick()" class="fa-solid fa-xmark"></i>
           </div>
             <div class="post-header">
-                <h5 class="categories">#Sport #Tech</h5>
+                <h5 class="categories">{{.Categorie_type}}</h5>
                 <h5>{{.CreatedAt}}</h5>
             </div>
             <p class="post_title">{{.Title}}</p>

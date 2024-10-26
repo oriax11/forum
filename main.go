@@ -1,16 +1,21 @@
 package main
 
 import (
+	"crypto/rand"
 	"database/sql"
+	"encoding/base64"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
-	"golang.org/x/crypto/bcrypt"
 	_ "github.com/mattn/go-sqlite3"
+	"golang.org/x/crypto/bcrypt"
 )
+
+var sessions = make(map[string]string) // session store with sessionID to email mapping
 
 var (
 	db  *sql.DB
@@ -38,6 +43,7 @@ type Post struct {
 	Title     string
 	Content   string
 	Username  string
+	Categorie_type string
 	CreatedAt string
 }
 
@@ -90,6 +96,8 @@ func forumHandler(w http.ResponseWriter, r *http.Request) {
 		handleFormSubmission(w, r)
 		return
 	}
+	cookie, _ := r.Cookie("session_token")
+	email:= sessions[cookie.Value]
 
 	// Retrieve posts to display
 	posts, err := getPosts()
@@ -97,16 +105,25 @@ func forumHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to load posts", http.StatusInternalServerError)
 		return
 	}
+	data := struct {
+		P       []Post
+		Message string
+	}{
+		P:       posts,
+		Message: "hello  " + email,
+	}
 
 	// Render the template with posts
-	err = tpl.ExecuteTemplate(w, "forum.html", posts)
+	err = tpl.ExecuteTemplate(w, "forum.html", data)
 	if err != nil {
+		fmt.Println(err)
 		http.Error(w, "Error rendering the forum page", http.StatusInternalServerError)
 	}
 }
 
 func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 	action := r.FormValue("query")
+
 
 	if action == "reg" {
 		username := r.FormValue("username")
@@ -120,7 +137,7 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		_, err = db.Exec("INSERT INTO Users (username, email, fullname, password) VALUES (?, ?, ?, ?)", 
+		_, err = db.Exec("INSERT INTO Users (username, email, fullname, password) VALUES (?, ?, ?, ?)",
 			username, email, fullname, string(hashedPassword))
 		if err != nil {
 			if strings.Contains(err.Error(), "UNIQUE constraint failed: Users.username") {
@@ -135,12 +152,18 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 		}
 
 	} else if action == "newpost" {
-		userID := 1 
+		userID := 1
 		title := r.FormValue("title")
 		content := r.FormValue("content")
+		category_type := r.FormValue("category_type")
+		cookie, _:= r.Cookie("session_token")
+		email:= sessions[cookie.Value]
+		 db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
 
-		_, err := db.Exec("INSERT INTO Posts (user_id, title, content) VALUES (?, ?, ?)", 
-			userID, title, content)
+		 _, err := db.Exec(
+			"INSERT INTO Posts (user_id, title, content, category_name) VALUES (?, ?, ?, ?)",
+			userID, title, content, category_type,
+		)
 		if err != nil {
 			http.Error(w, "Post creation failed", http.StatusInternalServerError)
 			return
@@ -149,7 +172,7 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 	} else if action == "login" {
 		email := r.FormValue("email")
 		password := r.FormValue("password")
-	
+
 		type Cred struct {
 			HashedPassword string
 		}
@@ -176,7 +199,25 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		sessionID, err := generateSessionID()
+		if err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		// Store session information in memory
+		sessions[sessionID] = email
+
+		// Set session cookie
+		http.SetCookie(w, &http.Cookie{
+			Name:     "session_token",
+			Value:    sessionID,
+			Expires:  time.Now().Add(1 * time.Hour),
+			HttpOnly: true,
+		})
+
 		fmt.Println("Successfully logged in")
+
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
@@ -185,7 +226,7 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 }
 
 func getPosts() ([]Post, error) {
-	rows, err := db.Query(`SELECT p.post_id, p.title, p.content, p.created_at, u.username 
+	rows, err := db.Query(`SELECT p.post_id, p.title, p.content, p.created_at, u.username , p.category_name
                            FROM Posts p 
                            JOIN Users u ON p.user_id = u.user_id 
                            ORDER BY p.created_at DESC`)
@@ -197,10 +238,20 @@ func getPosts() ([]Post, error) {
 	var posts []Post
 	for rows.Next() {
 		var post Post
-		if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.Username); err != nil {
+		if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.Username, &post.Categorie_type); err != nil {
 			return nil, err
-		}
-		posts = append(posts, post)
+			}
+			posts = append(posts, post)
+			}
+			fmt.Println(posts[0].Username)
+			return posts, nil
+}
+
+func generateSessionID() (string, error) {
+	bytes := make([]byte, 32)
+	_, err := rand.Read(bytes)
+	if err != nil {
+		return "", err
 	}
-	return posts, nil
+	return base64.URLEncoding.EncodeToString(bytes), nil
 }
