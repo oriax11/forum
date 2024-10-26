@@ -2,7 +2,8 @@ CREATE TABLE Users (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT, 
     username TEXT UNIQUE NOT NULL,
     email TEXT UNIQUE NOT NULL,
-    fullname TEXT,
+    fullname TEXT NOT NULL,
+    password TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
