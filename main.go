@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	// "golang.org/x/crypto/bcrypt"
+	"golang.org/x/crypto/bcrypt"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -106,15 +106,22 @@ func forumHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
-
 	action := r.FormValue("query")
+
 	if action == "reg" {
 		username := r.FormValue("username")
 		email := r.FormValue("email")
 		fullname := r.FormValue("fullname")
 		password := r.FormValue("password")
 
-		_, err := db.Exec("INSERT INTO Users (username, email, fullname , password) VALUES (?, ?, ?, ?)", username, email, fullname, password)
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+		if err != nil {
+			http.Error(w, "Error processing password", http.StatusInternalServerError)
+			return
+		}
+
+		_, err = db.Exec("INSERT INTO Users (username, email, fullname, password) VALUES (?, ?, ?, ?)", 
+			username, email, fullname, string(hashedPassword))
 		if err != nil {
 			if strings.Contains(err.Error(), "UNIQUE constraint failed: Users.username") {
 				erro := Errors{
@@ -122,54 +129,59 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 				}
 				tpl.ExecuteTemplate(w, "register.html", erro)
 				return
-
 			}
 			http.Error(w, "User registration failed", http.StatusInternalServerError)
 			return
 		}
+
 	} else if action == "newpost" {
-		userID := 1 // Placeholder for logged-in user ID (implement real authentication)
+		userID := 1 
 		title := r.FormValue("title")
 		content := r.FormValue("content")
 
-		_, err := db.Exec("INSERT INTO Posts (user_id, title, content) VALUES (?, ?, ?)", userID, title, content)
+		_, err := db.Exec("INSERT INTO Posts (user_id, title, content) VALUES (?, ?, ?)", 
+			userID, title, content)
 		if err != nil {
 			http.Error(w, "Post creation failed", http.StatusInternalServerError)
 			return
 		}
-	}else if action == "login" {
+
+	} else if action == "login" {
 		email := r.FormValue("email")
-		
 		password := r.FormValue("password")
 	
 		type Cred struct {
-			Password string
+			HashedPassword string
 		}
-		var ab Cred
-		err :=  db.QueryRow("SELECT password FROM Users WHERE email = ?", email).Scan(&ab.Password)
+		var cred Cred
+
+		err := db.QueryRow("SELECT password FROM Users WHERE email = ?", email).Scan(&cred.HashedPassword)
 		if err == sql.ErrNoRows {
 			erro := Errors{
-				ErrorType: "no user with this email!!",
+				ErrorType: "No user with this email!",
 			}
 			tpl.ExecuteTemplate(w, "login.html", erro)
 			return
+		} else if err != nil {
+			http.Error(w, "Database error", http.StatusInternalServerError)
+			return
 		}
 
-		if password != ab.Password {
+		err = bcrypt.CompareHashAndPassword([]byte(cred.HashedPassword), []byte(password))
+		if err != nil {
 			erro := Errors{
-				ErrorType: "password is uncorrect!!",
+				ErrorType: "Incorrect password!",
 			}
 			tpl.ExecuteTemplate(w, "login.html", erro)
 			return
-		} else {	
-			fmt.Println("logged in")
-			fmt.Println(ab.Password)
 		}
 
-
+		fmt.Println("Successfully logged in")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
-}
 }
 
 func getPosts() ([]Post, error) {
