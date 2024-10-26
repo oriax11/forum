@@ -11,14 +11,15 @@
     <nav class="navbar">
         <img class="logo" src="static/img/logo.svg" alt="logo">
         <div class="nav-buttons">
-            <a href="/login" class="login">Login</a>
-            <a href="/register" class="register">Register</a>
+            <p id="Username" class="Username">{{.Message}}</p>
+            <a href="/login" id="login_btn" class="login">Login</a>
+            <a href="/register" id="register_btn" class="register">Register</a>
         </div>
     </nav>
     
     <div class="container">
 
-        {{.Message}}
+        
         <form class="post-form" method="post">
             <input type="hidden" name="query" value="newpost">
             <textarea name="title" class="title" placeholder="title"></textarea>
@@ -66,6 +67,22 @@
                 this.parentElement.parentElement.remove();
             })
         }
+        // const Username = document.getElementById("Username");
+        // const login_btn = document.getElementById("login_btn");
+        // const register_btn = document.getElementById("register_btn");
+        // if (Username != null) {
+        //     login_btn.style.display = "none"
+        //     register_btn.style.display = "none"
+        //     Username.style.display = "block";
+
+        // }else {
+        //     login_btn.style.display = "block"    
+        //     register_btn.style.display = "block"   
+        // }
+
+
+
+
     </script>
 </body>
 </html>

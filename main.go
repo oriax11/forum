@@ -15,9 +15,10 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var sessions = make(map[string]string) // session store with sessionID to email mapping
+
 
 var (
+	sessions = make(map[string]string) // session store with sessionID to email mapping sessions = make(map[string]string) // session store with sessionID to email mapping
 	db  *sql.DB
 	tpl *template.Template
 )
@@ -110,7 +111,7 @@ func forumHandler(w http.ResponseWriter, r *http.Request) {
 		Message string
 	}{
 		P:       posts,
-		Message: "hello  " + email,
+		Message:  email,
 	}
 
 	// Render the template with posts
@@ -216,6 +217,7 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 			HttpOnly: true,
 		})
 
+		// login = true
 		fmt.Println("Successfully logged in")
 
 		http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -228,6 +230,7 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 			Expires:  time.Now().Add(-1 * time.Hour),
 			HttpOnly: true,
 		})
+		// login = false
 		fmt.Println("Successfully logged out")
 	}
 
