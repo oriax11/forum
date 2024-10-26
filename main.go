@@ -114,8 +114,9 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 		username := r.FormValue("username")
 		email := r.FormValue("email")
 		fullname := r.FormValue("fullname")
+		password := r.FormValue("password")
 
-		_, err := db.Exec("INSERT INTO Users (username, email, fullname) VALUES (?, ?, ?)", username, email, fullname)
+		_, err := db.Exec("INSERT INTO Users (username, email, fullname , password) VALUES (?, ?, ?, ?)", username, email, fullname, password)
 		if err != nil {
 			if strings.Contains(err.Error(), "UNIQUE constraint failed: Users.username") {
 				erro := Errors{
