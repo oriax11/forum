@@ -220,6 +220,15 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
+	} else if action == "logout" {
+		// Remove session cookie
+		http.SetCookie(w, &http.Cookie{
+			Name:     "session_token",
+			Value:    "",
+			Expires:  time.Now().Add(-1 * time.Hour),
+			HttpOnly: true,
+		})
+		fmt.Println("Successfully logged out")
 	}
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
