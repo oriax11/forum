@@ -63,6 +63,13 @@ body {
   font-size: 14px;
 
 }
+
+.params-container{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
 #user_icon {
   color: #ff4b4b;
   font-size: 20px;
@@ -71,6 +78,69 @@ body {
   font-size: 16px;
   font-weight: bold;
   margin-top: -10px;
+}
+
+.checks-container {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding: 15px;
+  /* background-color: #1a1a1b; */
+  border-radius: 4px;
+}
+
+.checkbox-text {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkbox-text + label {
+  position: relative;
+  padding-left: 28px;
+  cursor: pointer;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell;
+  color: #d7dadc;
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-text + label:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border: 2px solid #818384;
+  border-radius: 3px;
+  background: #272729;
+  transition: all 0.2s ease;
+}
+
+.checkbox-text:checked + label:before {
+  background: #ff4b4b;
+  border-color: #ff4b4b;
+}
+
+.checkbox-text:checked + label:after {
+  content: '✓';
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: white;
+  font-size: 14px;
+}
+
+.checkbox-text:hover + label:before {
+  border-color: #ff4b4b;
+}
+
+/* Optional: Add hover effect on the text */
+.checkbox-text + label:hover {
+  color: #ff4b4b;
 }
 
 .post-form textarea {
