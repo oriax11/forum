@@ -14,8 +14,12 @@
             <!-- <form action="/search" method="get"><input type="text" name="q" placeholder="Search"></form> -->
             <form action="/profile" method="get">
                 <input type="hidden" name="query" value="profile">
-                <label id="Username" for="Username">{{.Message}}</label>
-                <input type="submit" class="Username" value="5555">
+                <div class="user-info-container">
+                    <label id="Username" for="Username">{{.Message}}</label>
+                    <button type="submit" id="pf_btn"> 
+                         <i id="user_icon" class="fa-solid fa-user"></i>
+                    </button>
+                </div>
             </form>
             <a href="/login" id="login_btn" class="login">Login</a>
             <a href="/register" id="register_btn" class="register">Register</a>
@@ -51,11 +55,11 @@
             <i function="onclick()" class="fa-solid fa-xmark"></i>
           </div>
             <div class="post-header">
-                <h5 class="categories">{{.Categorie_type}}</h5>
+                <h5 class="categories">#{{.Categorie_type}}</h5>
                 <h5>{{.CreatedAt}}</h5>
             </div>
             <p class="post_title">{{.Title}}</p>
-            <p>{{.Content}}</p>
+            <p style="word-wrap: break-word;">{{.Content}}</p>
             <div class="post-actions">
                 <button class="reactions"><svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 4 3 15h6v5h6v-5h6z" class="icon_svg-stroke icon_svg-fill" stroke-width="1.5" stroke="#e0e0e0" fill="none" stroke-linejoin="round"></path></svg>45</button>
                 <button class="reactions"><svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m12 20 9-11h-6V4H9v5H3z" class="icon_svg-stroke icon_svg-fill" stroke="#e0e0e0" fill="none" stroke-width="1.5" stroke-linejoin="round"></path></svg>45</button>
@@ -73,6 +77,7 @@
             })
         }
         const usernameElement = document.getElementById("Username");
+        const pf_btn = document.getElementById("pf_btn");
         usernameElement.style.cursor = "pointer";
         const loginBtn = document.getElementById("login_btn");
         const registerBtn = document.getElementById("register_btn");
@@ -81,10 +86,12 @@
             loginBtn.style.display = "none";
             registerBtn.style.display = "none";
             usernameElement.style.display = "block";
+            pf_btn.style.display = "block";
         } else {
             loginBtn.style.display = "block";    
             registerBtn.style.display = "block";
             if (usernameElement) {
+                pf_btn.style.display = "none";
                 usernameElement.style.display = "none";
             }
         }

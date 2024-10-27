@@ -36,6 +36,7 @@ type User struct {
 	Username string
 	Email    string
 	Fullname string
+	Created_at string
 }
 
 type Post struct {
@@ -72,7 +73,7 @@ func main() {
 }
 
 func Userinfo() ([]User, error) {
-	rows, err := db.Query(`SELECT u.user_id, u.username, u.email, u.fullname 
+	rows, err := db.Query(`SELECT u.user_id, u.username, u.email, u.fullname, u.created_at
                            FROM Users u 
                            ORDER BY u.user_id ASC`)
 	if err != nil {
@@ -83,12 +84,12 @@ func Userinfo() ([]User, error) {
 	var users []User
 	for rows.Next() {
 		var user User
-		if err := rows.Scan(&user.ID, &user.Username, &user.Email, &user.Fullname); err != nil {
+		if err := rows.Scan(&user.ID, &user.Username, &user.Email, &user.Fullname, &user.Created_at); err != nil {
 			return nil, err
 		}
 		users = append(users, user)
 	}
-
+	fmt.Println(users)
 	return users, nil
 }
 

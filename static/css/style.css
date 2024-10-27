@@ -40,6 +40,35 @@ body {
   border-radius: 4px;
   cursor: pointer;
 }
+.user-info-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#pf_btn {
+  background-color: #ff4b4b;
+  border : none;
+  color: #ff4b4b;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  transition: all 0.3s ease;
+}
+
+#pf_btn:hover {
+  background-color: #ff4b4b;
+}
+#pf_btn i {
+  font-size: 22px;
+  color: #2c2c2c;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+}
+
+
 .logout {
   color: #ff4b4b;
   font-size: 24px;
