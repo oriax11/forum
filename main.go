@@ -64,11 +64,80 @@ func main() {
 	http.HandleFunc("/", forumHandler)
 	http.HandleFunc("/register", registerHandler)
 	http.HandleFunc("/login", loginHandler)
+	http.HandleFunc("/profile", Profile)
 
 	// Start the server
 	log.Println("Server is running on port http://localhost:7080/")
 	log.Fatal(http.ListenAndServe(":7080", nil))
 }
+
+func Userinfo() ([]User, error) {
+	rows, err := db.Query(`SELECT u.user_id, u.username, u.email, u.fullname 
+                           FROM Users u 
+                           ORDER BY u.user_id ASC`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []User
+	for rows.Next() {
+		var user User
+		if err := rows.Scan(&user.ID, &user.Username, &user.Email, &user.Fullname); err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+
+	return users, nil
+}
+
+func Profile(w http.ResponseWriter, r *http.Request) {
+	action := r.FormValue("query")
+    if r.Method == http.MethodGet {
+		if action == "profile" {
+			cookie, err := r.Cookie("session_token")
+			if err != nil {
+				http.Redirect(w, r, "/login", http.StatusSeeOther)
+				return
+			}
+		
+			// Get email from session store
+			email, exists := sessions[cookie.Value]
+			if !exists {
+				http.Redirect(w, r, "/login", http.StatusSeeOther)
+				return
+			}
+			// Get user info from database using the email
+			var user User
+			err = db.QueryRow(`
+				SELECT user_id, username, email, fullname 
+				FROM Users 
+				WHERE email = ?`, email).Scan(&user.ID, &user.Username, &user.Email, &user.Fullname)
+			if err != nil {
+				if err == sql.ErrNoRows {
+					http.Error(w, "User not found", http.StatusNotFound)
+					return
+				}
+				http.Error(w, "Database error", http.StatusInternalServerError)
+				return
+			}
+		   
+			// Create data structure to pass to template
+			data := struct {
+				User  User
+			}{
+				User:  user,
+			}
+		
+			err = tpl.ExecuteTemplate(w, "profile.html", data)
+			if err != nil {
+				http.Error(w, "Error loading the profile page", http.StatusInternalServerError)
+			}
+		}
+	}
+}
+
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
@@ -106,12 +175,29 @@ func forumHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to load posts", http.StatusInternalServerError)
 		return
 	}
+	user_info, err := Userinfo()
+	if err != nil {
+		http.Error(w, "Failed to load users info", http.StatusInternalServerError)
+		return
+	}
+	// for (i := 0; i < len(user_info); i++) {
+	// 	if user_info[i].Email == email {
+	// 		user_info = user_info[:i]
+	// 		break
+	// 	}
+	// }
+
+	// if email == user_info
+	// user_name := user_info[0].Username
 	data := struct {
 		P       []Post
 		Message string
+		U []User
+		User_name string
 	}{
 		P:       posts,
 		Message:  email,
+		U: user_info,
 	}
 
 	// Render the template with posts
@@ -252,11 +338,11 @@ func getPosts() ([]Post, error) {
 		var post Post
 		if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.Username, &post.Categorie_type); err != nil {
 			return nil, err
-			}
+		}
 			posts = append(posts, post)
-			}
-			fmt.Println(posts[0].Username)
-			return posts, nil
+	}
+	// fmt.Println(posts[0].Username)
+	return posts, nil
 }
 
 func generateSessionID() (string, error) {

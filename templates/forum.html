@@ -11,7 +11,12 @@
     <nav class="navbar">
         <img class="logo" src="static/img/logo.svg" alt="logo">
         <div class="nav-buttons">
-            <p id="Username" class="Username">{{.Message}}</p>
+            <!-- <form action="/search" method="get"><input type="text" name="q" placeholder="Search"></form> -->
+            <form action="/profile" method="get">
+                <input type="hidden" name="query" value="profile">
+                <label id="Username" for="Username">{{.Message}}</label>
+                <input type="submit" class="Username" value="5555">
+            </form>
             <a href="/login" id="login_btn" class="login">Login</a>
             <a href="/register" id="register_btn" class="register">Register</a>
         </div>
@@ -67,21 +72,27 @@
                 this.parentElement.parentElement.remove();
             })
         }
-        // const Username = document.getElementById("Username");
-        // const login_btn = document.getElementById("login_btn");
-        // const register_btn = document.getElementById("register_btn");
-        // if (Username != null) {
-        //     login_btn.style.display = "none"
-        //     register_btn.style.display = "none"
-        //     Username.style.display = "block";
+        const usernameElement = document.getElementById("Username");
+        usernameElement.style.cursor = "pointer";
+        const loginBtn = document.getElementById("login_btn");
+        const registerBtn = document.getElementById("register_btn");
 
-        // }else {
-        //     login_btn.style.display = "block"    
-        //     register_btn.style.display = "block"   
-        // }
+        if (usernameElement && usernameElement.textContent.trim() !== "") {
+            loginBtn.style.display = "none";
+            registerBtn.style.display = "none";
+            usernameElement.style.display = "block";
+        } else {
+            loginBtn.style.display = "block";    
+            registerBtn.style.display = "block";
+            if (usernameElement) {
+                usernameElement.style.display = "none";
+            }
+        }
 
-
-
+        // usernameElement.addEventListener("click", function() {
+        //     alert("Hello, " + usernameElement.textContent.trim() + "!");
+        // });
+    
 
     </script>
 </body>

@@ -40,6 +40,19 @@ body {
   border-radius: 4px;
   cursor: pointer;
 }
+.logout {
+  color: #ff4b4b;
+  font-size: 24px;
+  cursor: pointer;
+}
+.Username {
+  font-size: 20px;
+  cursor: pointer;
+}
+.Username i {
+  font-size: 24px;
+  color: #ff4b4b;
+}
 
 .container {
   max-width: 1200px;
