@@ -49,6 +49,8 @@ type Post struct {
 	CreatedAt string
 }
 
+
+
 func main() {
 
 	fs := http.FileServer(http.Dir("static"))
@@ -66,11 +68,13 @@ func main() {
 	http.HandleFunc("/register", registerHandler)
 	http.HandleFunc("/login", loginHandler)
 	http.HandleFunc("/profile", Profile)
+	http.HandleFunc("/404", NotFound)
 
 	// Start the server
 	log.Println("Server is running on port http://localhost:7080/")
 	log.Fatal(http.ListenAndServe(":7080", nil))
 }
+
 
 func Userinfo() ([]User, error) {
 	rows, err := db.Query(`SELECT u.user_id, u.username, u.email, u.fullname, u.created_at
@@ -112,9 +116,9 @@ func Profile(w http.ResponseWriter, r *http.Request) {
 			// Get user info from database using the email
 			var user User
 			err = db.QueryRow(`
-				SELECT user_id, username, email, fullname 
+				SELECT user_id, username, email, fullname , created_at
 				FROM Users 
-				WHERE email = ?`, email).Scan(&user.ID, &user.Username, &user.Email, &user.Fullname)
+				WHERE email = ?`, email).Scan(&user.ID, &user.Username, &user.Email, &user.Fullname, &user.Created_at)
 			if err != nil {
 				if err == sql.ErrNoRows {
 					http.Error(w, "User not found", http.StatusNotFound)
@@ -353,4 +357,9 @@ func generateSessionID() (string, error) {
 		return "", err
 	}
 	return base64.URLEncoding.EncodeToString(bytes), nil
+}
+
+func NotFound(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotFound)
+	tpl.ExecuteTemplate(w, "404.html", nil)
 }
