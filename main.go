@@ -36,6 +36,7 @@ type User struct {
 	Username string
 	Email    string
 	Fullname string
+	Created_at string
 }
 
 type Post struct {
@@ -47,6 +48,8 @@ type Post struct {
 	Categorie_type string
 	CreatedAt string
 }
+
+
 
 func main() {
 
@@ -64,11 +67,78 @@ func main() {
 	http.HandleFunc("/", forumHandler)
 	http.HandleFunc("/register", registerHandler)
 	http.HandleFunc("/login", loginHandler)
+	http.HandleFunc("/profile", Profile)
+	http.HandleFunc("/404", NotFound)
 
 	// Start the server
 	log.Println("Server is running on port http://localhost:7080/")
 	log.Fatal(http.ListenAndServe(":7080", nil))
 }
+
+
+func Userinfo(email string) (User, error) {
+	row := db.QueryRow(`SELECT u.user_id, u.username, u.email, u.fullname, u.created_at
+                       FROM Users u 
+                       WHERE u.email = ?`, email)
+
+	var user User
+	if err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Fullname, &user.Created_at); err != nil {
+		if err == sql.ErrNoRows {
+			return User{}, fmt.Errorf("no user found with email: %s", email)
+		}
+		return User{}, err
+	}
+	fmt.Println(user)
+	return user, nil
+}
+
+
+func Profile(w http.ResponseWriter, r *http.Request) {
+	action := r.FormValue("query")
+    if r.Method == http.MethodGet {
+		if action == "profile" {
+			cookie, err := r.Cookie("session_token")
+			if err != nil {
+				http.Redirect(w, r, "/login", http.StatusSeeOther)
+				return
+			}
+		
+			// Get email from session store
+			email, exists := sessions[cookie.Value]
+			if !exists {
+				http.Redirect(w, r, "/login", http.StatusSeeOther)
+				return
+			}
+			// Get user info from database using the email
+			var user User
+			err = db.QueryRow(`
+				SELECT user_id, username, email, fullname , created_at
+				FROM Users 
+				WHERE email = ?`, email).Scan(&user.ID, &user.Username, &user.Email, &user.Fullname, &user.Created_at)
+			if err != nil {
+				if err == sql.ErrNoRows {
+					http.Error(w, "User not found", http.StatusNotFound)
+					return
+				}
+				http.Error(w, "Database error", http.StatusInternalServerError)
+				return
+			}
+		   
+			// Create data structure to pass to template
+			data := struct {
+				User  User
+			}{
+				User:  user,
+			}
+		
+			err = tpl.ExecuteTemplate(w, "profile.html", data)
+			if err != nil {
+				http.Error(w, "Error loading the profile page", http.StatusInternalServerError)
+			}
+		}
+	}
+}
+
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
@@ -97,18 +167,14 @@ func forumHandler(w http.ResponseWriter, r *http.Request) {
 		handleFormSubmission(w, r)
 		return
 	}
-	cookie, ok  := r.Cookie("session_token")
-	if  ok != nil {
+	cookie, err := r.Cookie("session_token")
+	if err != nil {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return 
-	}
-	
-	email, exist := sessions[cookie.Value]
-	if !exist {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return 
-	}
 
+
+	}
+	email:= sessions[cookie.Value]
 
 	// Retrieve posts to display
 	posts, err := getPosts()
@@ -116,12 +182,26 @@ func forumHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to load posts", http.StatusInternalServerError)
 		return
 	}
+	user_info, err := Userinfo(email)
+	if err != nil {
+		http.Error(w, "Failed to load users info", http.StatusInternalServerError)
+		return
+	}
+	// for (i := 0; i < len(user_info); i++) {
+	// 	if user_info[i].Email == email {
+	// 		user_info = user_info[:i]
+	// 		break
+	// 	}
+	// }
+
+	// if email == user_info
+	// user_name := user_info[0].Username
 	data := struct {
 		P       []Post
 		Message string
 	}{
 		P:       posts,
-		Message:  email,
+		Message:  user_info.Username,
 	}
 
 	// Render the template with posts
@@ -166,13 +246,7 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 		title := r.FormValue("title")
 		content := r.FormValue("content")
 		category_type := r.FormValue("category_type")
-		cookie, ok:= r.Cookie("session_token")
-		if ok != nil  {
-
-
-
-		}
-		
+		cookie, _:= r.Cookie("session_token")
 		email:= sessions[cookie.Value]
 		 db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
 
@@ -267,10 +341,11 @@ func getPosts() ([]Post, error) {
 		var post Post
 		if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.Username, &post.Categorie_type); err != nil {
 			return nil, err
-			}
+		}
 			posts = append(posts, post)
-			}
-			return posts, nil
+	}
+	// fmt.Println(posts[0].Username)
+	return posts, nil
 }
 
 func generateSessionID() (string, error) {
@@ -280,4 +355,9 @@ func generateSessionID() (string, error) {
 		return "", err
 	}
 	return base64.URLEncoding.EncodeToString(bytes), nil
+}
+
+func NotFound(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotFound)
+	tpl.ExecuteTemplate(w, "404.html", nil)
 }
