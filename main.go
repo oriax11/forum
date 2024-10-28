@@ -15,12 +15,10 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-
-
 var (
 	sessions = make(map[string]string) // session store with sessionID to email mapping sessions = make(map[string]string) // session store with sessionID to email mapping
-	db  *sql.DB
-	tpl *template.Template
+	db       *sql.DB
+	tpl      *template.Template
 )
 
 func init() {
@@ -32,24 +30,22 @@ type Errors struct {
 }
 
 type User struct {
-	ID       int
-	Username string
-	Email    string
-	Fullname string
+	ID         int
+	Username   string
+	Email      string
+	Fullname   string
 	Created_at string
 }
 
 type Post struct {
-	ID        int
-	UserID    int
-	Title     string
-	Content   string
-	Username  string
+	ID             int
+	UserID         int
+	Title          string
+	Content        string
+	Username       string
 	Categorie_type string
-	CreatedAt string
+	CreatedAt      string
 }
-
-
 
 func main() {
 
@@ -75,7 +71,6 @@ func main() {
 	log.Fatal(http.ListenAndServe(":7080", nil))
 }
 
-
 func Userinfo(email string) (User, error) {
 	row := db.QueryRow(`SELECT u.user_id, u.username, u.email, u.fullname, u.created_at
                        FROM Users u 
@@ -88,21 +83,19 @@ func Userinfo(email string) (User, error) {
 		}
 		return User{}, err
 	}
-	fmt.Println(user)
 	return user, nil
 }
 
-
 func Profile(w http.ResponseWriter, r *http.Request) {
 	action := r.FormValue("query")
-    if r.Method == http.MethodGet {
+	if r.Method == http.MethodGet {
 		if action == "profile" {
 			cookie, err := r.Cookie("session_token")
 			if err != nil {
 				http.Redirect(w, r, "/login", http.StatusSeeOther)
 				return
 			}
-		
+
 			// Get email from session store
 			email, exists := sessions[cookie.Value]
 			if !exists {
@@ -110,27 +103,20 @@ func Profile(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			// Get user info from database using the email
-			var user User
-			err = db.QueryRow(`
-				SELECT user_id, username, email, fullname , created_at
-				FROM Users 
-				WHERE email = ?`, email).Scan(&user.ID, &user.Username, &user.Email, &user.Fullname, &user.Created_at)
+			user, err := Userinfo(email)
 			if err != nil {
-				if err == sql.ErrNoRows {
-					http.Error(w, "User not found", http.StatusNotFound)
-					return
-				}
-				http.Error(w, "Database error", http.StatusInternalServerError)
+				http.Redirect(w, r, "/login", http.StatusSeeOther)
 				return
+
 			}
-		   
+
 			// Create data structure to pass to template
 			data := struct {
-				User  User
+				User User
 			}{
-				User:  user,
+				User: user,
 			}
-		
+
 			err = tpl.ExecuteTemplate(w, "profile.html", data)
 			if err != nil {
 				http.Error(w, "Error loading the profile page", http.StatusInternalServerError)
@@ -138,7 +124,6 @@ func Profile(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
-
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
@@ -170,11 +155,15 @@ func forumHandler(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("session_token")
 	if err != nil {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return 
-
+		return
 
 	}
-	email:= sessions[cookie.Value]
+	email, exists := sessions[cookie.Value]
+	if !exists {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+
+	}
 
 	// Retrieve posts to display
 	posts, err := getPosts()
@@ -201,7 +190,7 @@ func forumHandler(w http.ResponseWriter, r *http.Request) {
 		Message string
 	}{
 		P:       posts,
-		Message:  user_info.Username,
+		Message: user_info.Username,
 	}
 
 	// Render the template with posts
@@ -213,7 +202,6 @@ func forumHandler(w http.ResponseWriter, r *http.Request) {
 
 func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 	action := r.FormValue("query")
-
 
 	if action == "reg" {
 		username := r.FormValue("username")
@@ -246,11 +234,11 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 		title := r.FormValue("title")
 		content := r.FormValue("content")
 		category_type := r.FormValue("category_type")
-		cookie, _:= r.Cookie("session_token")
-		email:= sessions[cookie.Value]
-		 db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
+		cookie, _ := r.Cookie("session_token")
+		email := sessions[cookie.Value]
+		db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
 
-		 _, err := db.Exec(
+		_, err := db.Exec(
 			"INSERT INTO Posts (user_id, title, content, category_name) VALUES (?, ?, ?, ?)",
 			userID, title, content, category_type,
 		)
@@ -342,7 +330,7 @@ func getPosts() ([]Post, error) {
 		if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.Username, &post.Categorie_type); err != nil {
 			return nil, err
 		}
-			posts = append(posts, post)
+		posts = append(posts, post)
 	}
 	// fmt.Println(posts[0].Username)
 	return posts, nil
