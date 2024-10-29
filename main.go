@@ -66,10 +66,22 @@ func main() {
 	http.HandleFunc("/profile", Profile)
 	http.HandleFunc("/404", NotFound)
 	http.HandleFunc("/Guest", GuestHandler)
+	http.HandleFunc("/Logout", Logout)
+
+
 
 	// Start the server
 	log.Println("Server is running on port http://localhost:7080/")
 	log.Fatal(http.ListenAndServe(":7080", nil))
+}
+
+
+func Logout (w http.ResponseWriter, r *http.Request) {
+	deleteAllCookies(w,r)
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
+
+
+
 }
 
 func GuestHandler(w http.ResponseWriter, r *http.Request) {
@@ -373,16 +385,6 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
-	} else if action == "logout" {
-		// Remove session cookie
-		http.SetCookie(w, &http.Cookie{
-			Name:     "session_token",
-			Value:    "",
-			Expires:  time.Now().Add(-1 * time.Hour),
-			HttpOnly: true,
-		})
-		// login = false
-		fmt.Println("Successfully logged out")
 	}
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
