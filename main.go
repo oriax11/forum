@@ -65,10 +65,47 @@ func main() {
 	http.HandleFunc("/login", loginHandler)
 	http.HandleFunc("/profile", Profile)
 	http.HandleFunc("/404", NotFound)
+	http.HandleFunc("/Guest", GuestHandler)
 
 	// Start the server
 	log.Println("Server is running on port http://localhost:7080/")
 	log.Fatal(http.ListenAndServe(":7080", nil))
+}
+
+func GuestHandler(w http.ResponseWriter, r *http.Request) {
+	cookies := r.Cookies()
+	if len(cookies) != 0 {
+		deleteAllCookies(w, r)
+	}
+	sessionID, err := generateSessionID()
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	// Store guest session information in memory
+	sessions[sessionID] = "guest"
+	http.SetCookie(w, &http.Cookie{
+		Name:     "Guest_token",
+		Value:    sessionID,
+		Expires:  time.Now().Add(1 * time.Hour),
+		HttpOnly: true,
+	})
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+
+}
+
+func deleteAllCookies(w http.ResponseWriter, r *http.Request) {
+	for _, cookie := range r.Cookies() {
+		// Set the cookie's MaxAge to -1 and Expires to a past time to delete it
+		http.SetCookie(w, &http.Cookie{
+			Name:     cookie.Name,
+			Value:    "",
+			Expires:  time.Unix(0, 0), // Set to the past
+			MaxAge:   -1,              // MaxAge -1 deletes the cookie
+			HttpOnly: true,
+		})
+	}
 }
 
 func Userinfo(email string) (User, error) {
@@ -121,6 +158,9 @@ func Profile(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				http.Error(w, "Error loading the profile page", http.StatusInternalServerError)
 			}
+		} else {
+			NotFound(w, r)
+
 		}
 	}
 }
@@ -152,51 +192,75 @@ func forumHandler(w http.ResponseWriter, r *http.Request) {
 		handleFormSubmission(w, r)
 		return
 	}
-	cookie, err := r.Cookie("session_token")
-	if err != nil {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
 
-	}
-	email, exists := sessions[cookie.Value]
-	if !exists {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
+	// Check for guest cookie
+	guestCookie, err := r.Cookie("Guest_token")
+	if err != nil && err != http.ErrNoCookie {
+		// Handle error if needed
+		http.Error(w, "Error retrieving cookies", http.StatusInternalServerError)
 		return
-
 	}
 
-	// Retrieve posts to display
+	// Check for session cookie
+	sessionCookie, err := r.Cookie("session_token")
+	if err != nil && err != http.ErrNoCookie {
+		// Handle error if needed
+		http.Error(w, "Error retrieving cookies", http.StatusInternalServerError)
+		return
+	}
+
+	// Load posts regardless of user type
 	posts, err := getPosts()
 	if err != nil {
 		http.Error(w, "Failed to load posts", http.StatusInternalServerError)
 		return
 	}
-	user_info, err := Userinfo(email)
-	if err != nil {
-		http.Error(w, "Failed to load users info", http.StatusInternalServerError)
-		return
-	}
-	// for (i := 0; i < len(user_info); i++) {
-	// 	if user_info[i].Email == email {
-	// 		user_info = user_info[:i]
-	// 		break
-	// 	}
-	// }
 
-	// if email == user_info
-	// user_name := user_info[0].Username
-	data := struct {
-		P       []Post
-		Message string
-	}{
-		P:       posts,
-		Message: user_info.Username,
-	}
+	if guestCookie != nil {
+		// Guest user, render index with posts only
+		data := struct {
+			P       []Post
+			Message string
+		}{
+			P:       posts,
+			Message: "",
+		}
 
-	// Render the template with posts
-	err = tpl.ExecuteTemplate(w, "forum.html", data)
-	if err != nil {
-		http.Error(w, "Error rendering the forum page", http.StatusInternalServerError)
+		err = tpl.ExecuteTemplate(w, "forum.html", data) // Use a different template for guests if needed
+		if err != nil {
+			fmt.Println(err)
+			http.Error(w, "Error rendering the forum page", http.StatusInternalServerError)
+		}
+	} else if sessionCookie != nil {
+		// Logged-in user
+		email, exists := sessions[sessionCookie.Value]
+		if !exists {
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			return
+		}
+
+		userInfo, err := Userinfo(email)
+		if err != nil {
+			http.Error(w, "Failed to load user info", http.StatusInternalServerError)
+			return
+		}
+
+		data := struct {
+			P       []Post
+			Message string
+		}{
+			P:       posts,
+			Message: userInfo.Username,
+		}
+
+		// Render the template with posts and user message
+		err = tpl.ExecuteTemplate(w, "forum.html", data) // Use a different template for users
+		if err != nil {
+			http.Error(w, "Error rendering the forum page", http.StatusInternalServerError)
+		}
+	} else {
+		// No valid cookie, redirect to login
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
 	}
 }
 
@@ -230,6 +294,15 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 		}
 
 	} else if action == "newpost" {
+		_, err := r.Cookie("Guest_token")
+		if err == nil {
+			erro := Errors{
+				ErrorType: "Please Log in to post posts!",
+			}
+			tpl.ExecuteTemplate(w, "login.html", erro)
+			return
+		}
+
 		userID := 1
 		title := r.FormValue("title")
 		content := r.FormValue("content")
@@ -238,7 +311,7 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 		email := sessions[cookie.Value]
 		db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
 
-		_, err := db.Exec(
+		_, err = db.Exec(
 			"INSERT INTO Posts (user_id, title, content, category_name) VALUES (?, ?, ?, ?)",
 			userID, title, content, category_type,
 		)
@@ -276,6 +349,7 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 			tpl.ExecuteTemplate(w, "login.html", erro)
 			return
 		}
+		deleteAllCookies(w, r)
 
 		sessionID, err := generateSessionID()
 		if err != nil {
