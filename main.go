@@ -200,6 +200,10 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func forumHandler(w http.ResponseWriter, r *http.Request) {
+	if(r.URL.Path != "/"){
+        NotFound(w, r)
+        return
+    }
 	if r.Method == http.MethodPost {
 		handleFormSubmission(w, r)
 		return
