@@ -79,9 +79,6 @@ func main() {
 func Logout (w http.ResponseWriter, r *http.Request) {
 	deleteAllCookies(w,r)
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
-
-
-
 }
 
 func GuestHandler(w http.ResponseWriter, r *http.Request) {
