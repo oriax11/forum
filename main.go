@@ -44,7 +44,8 @@ type Post struct {
 	Content        string
 	Username       string
 	Categorie_type string
-	CreatedAt      string
+	CreatedAt      time.Time
+	TimeAgo			string
 }
 
 func main() {
@@ -391,26 +392,69 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-func getPosts() ([]Post, error) {
-	rows, err := db.Query(`SELECT p.post_id, p.title, p.content, p.created_at, u.username , p.category_name
-                           FROM Posts p 
-                           JOIN Users u ON p.user_id = u.user_id 
-                           ORDER BY p.created_at DESC`)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
+// func getPosts() ([]Post, error) {
+// 	rows, err := db.Query(`SELECT p.post_id, p.title, p.content, p.created_at, u.username , p.category_name
+//                            FROM Posts p 
+//                            JOIN Users u ON p.user_id = u.user_id 
+//                            ORDER BY p.created_at DESC`)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	defer rows.Close()
 
-	var posts []Post
-	for rows.Next() {
-		var post Post
-		if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.Username, &post.Categorie_type); err != nil {
-			return nil, err
-		}
-		posts = append(posts, post)
-	}
-	// fmt.Println(posts[0].Username)
-	return posts, nil
+// 	var posts []Post
+// 	for rows.Next() {
+// 		var post Post
+// 		if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.Username, &post.Categorie_type); err != nil {
+// 			return nil, err
+// 		}
+// 		posts = append(posts, post)
+// 	}
+// 	// fmt.Println(posts[0].Username)
+// 	return posts, nil
+// }
+
+func AboutTime(t time.Time) string {
+    duration := time.Since(t)
+
+    switch {
+    case duration < time.Minute:
+        return fmt.Sprintf("%d sec ago", int(duration.Seconds()))
+    case duration < time.Hour:
+        return fmt.Sprintf("%d min ago", int(duration.Minutes()))
+    case duration < 24*time.Hour:
+        return fmt.Sprintf("%d hours ago", int(duration.Hours()))
+    case duration < 30*24*time.Hour:
+        return fmt.Sprintf("%d days ago", int(duration.Hours()/24))
+    case duration < 12*30*24*time.Hour:
+        return fmt.Sprintf("%d months ago", int(duration.Hours()/24/30))
+    default:
+        return fmt.Sprintf("%d years ago", int(duration.Hours()/24/365))
+    }
+}
+
+func getPosts() ([]Post, error) {
+    rows, err := db.Query(`SELECT p.post_id, p.title, p.content, p.created_at, u.username, p.category_name
+                           FROM Posts p
+                           JOIN Users u ON p.user_id = u.user_id
+                           ORDER BY p.created_at DESC`)
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
+
+    var posts []Post
+    for rows.Next() {
+        var post Post
+        if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.Username, &post.Categorie_type); err != nil {
+            return nil, err
+        }
+
+        // fmt.Println(AboutTime(post.CreatedAt)
+        post.TimeAgo = AboutTime(post.CreatedAt)
+        posts = append(posts, post)
+    }
+    return posts, nil
 }
 
 func generateSessionID() (string, error) {
