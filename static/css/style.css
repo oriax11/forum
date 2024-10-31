@@ -67,7 +67,22 @@ body {
   transition: all 0.3s ease;
 
 }
-
+#btn-logout {
+  background-color: #ff4b4b;
+  color: #ff4b4b;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  text-align: center;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+#btn-logout i {
+  margin-top: 30%;
+  color: #272729;
+  font-size: 18px;
+}
 
 .logout {
   color: #ff4b4b;

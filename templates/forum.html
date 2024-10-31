@@ -21,6 +21,7 @@
                     </button>
                 </div>
             </form>
+            <a id="btn-logout" href="/Logout"><i class="fa-solid fa-power-off"></i></a>
             <a href="/login" id="login_btn" class="login">Login</a>
             <a href="/register" id="register_btn" class="register">Register</a>
         </div>
@@ -85,6 +86,7 @@
         const pf_btn = document.getElementById("pf_btn");
         usernameElement.style.cursor = "pointer";
         const loginBtn = document.getElementById("login_btn");
+        const logoutBtn = document.getElementById("btn-logout");
         const registerBtn = document.getElementById("register_btn");
 
         if (usernameElement && usernameElement.textContent.trim() !== "") {
@@ -92,12 +94,14 @@
             registerBtn.style.display = "none";
             usernameElement.style.display = "block";
             pf_btn.style.display = "block";
+            logoutBtn.style.display = "block";
         } else {
             loginBtn.style.display = "block";    
             registerBtn.style.display = "block";
             if (usernameElement) {
                 pf_btn.style.display = "none";
                 usernameElement.style.display = "none";
+                logoutBtn.style.display = "none";
             }
         }
         document.addEventListener("DOMContentLoaded", function() {
@@ -117,27 +121,10 @@
             form.querySelectorAll('input, textarea, button').forEach(element => {
                 element.disabled = true;
                 form.style.opacity = "40%"
-
-                // form.style.background = "rgba(255, 255, 255, 0.3)";
-                // form.style.backdropFilter = "blur(10px)";
             })
         }
     }
-});
-
-        // const post_form = document.querySelector(".post-form") 
-        // if (loginBtn.style.display = "block") {
-        //     post_form.style.display = "none"
-        // }else if (loginBtn.style.display = "none"){
-        //     post_form.style.display = "flex"
-        // }
-
-        // usernameElement.addEventListener("click", function() {
-        //     alert("Hello, " + usernameElement.textContent.trim() + "!");
-        // });
-        
-    
-
+})
     </script>
 </body>
 </html>
