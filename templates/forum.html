@@ -22,6 +22,8 @@
                 </div>
             </form>
             <a id="btn-logout" href="/Logout"><i class="fa-solid fa-power-off"></i></a>
+            <a id="btn-logout" target="_blank" href="https://8fsrcq68bzu.typeform.com/to/smZjpO3E"><i class="fa-solid fa-bug"></i></a>
+           
             <a href="/login" id="login_btn" class="login">Login</a>
             <a href="/register" id="register_btn" class="register">Register</a>
         </div>
@@ -105,12 +107,10 @@
             }
         }
         document.addEventListener("DOMContentLoaded", function() {
-    console.log("hello");
 
     // Function to check if a specific cookie exists
     function cookieExists(name) {
         const cookies = document.cookie.split('; ');
-        console.log(cookies);
         return cookies.some(cookie => cookie.startsWith(name + '='));
     }
 
