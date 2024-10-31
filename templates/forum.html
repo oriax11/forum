@@ -116,7 +116,11 @@
         if (form) { // Check if form exists
             form.querySelectorAll('input, textarea, button').forEach(element => {
                 element.disabled = true;
-            });
+                form.style.opacity = "40%"
+
+                // form.style.background = "rgba(255, 255, 255, 0.3)";
+                // form.style.backdropFilter = "blur(10px)";
+            })
         }
     }
 });
