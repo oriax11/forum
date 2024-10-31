@@ -99,7 +99,7 @@ func GuestHandler(w http.ResponseWriter, r *http.Request) {
 		Name:     "Guest_token",
 		Value:    sessionID,
 		Expires:  time.Now().Add(1 * time.Hour),
-		HttpOnly: true,
+		HttpOnly: false,
 	})
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 
@@ -436,7 +436,6 @@ func getPosts() ([]Post, error) {
             return nil, err
         }
 
-        // fmt.Println(AboutTime(post.CreatedAt)
         post.TimeAgo = AboutTime(post.CreatedAt)
         posts = append(posts, post)
     }

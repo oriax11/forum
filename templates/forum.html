@@ -29,10 +29,10 @@
     <div class="container">
 
         
-        <form class="post-form" method="post">
+        <form  class="post-form" method="post">
             <input type="hidden" name="query" value="newpost">
-            <textarea required class="input-title" name="title"  placeholder="title"></textarea>
-            <textarea required class="input-content" name="content"  placeholder="What is your question?"></textarea>
+            <textarea  required class="input-title" name="title"  placeholder="title"></textarea>
+            <textarea  required class="input-content" name="content"  placeholder="What is your question?"></textarea>
             <div class="params-container">
                 <div class="checks-container">
                     <input name="category_type" type="radio" id="General" value="General" class="checkbox-text">
@@ -46,7 +46,7 @@
                     <input name="category_type" type="radio" id="News" value="News" class="checkbox-text">
                     <label for="News">News</label>
                 </div>                      
-                <button type="submit">Publish</button>
+                <button  type="submit">Publish</button>
             </div>
         </form>
         
@@ -100,10 +100,38 @@
                 usernameElement.style.display = "none";
             }
         }
+        document.addEventListener("DOMContentLoaded", function() {
+    console.log("hello");
+
+    // Function to check if a specific cookie exists
+    function cookieExists(name) {
+        const cookies = document.cookie.split('; ');
+        console.log(cookies);
+        return cookies.some(cookie => cookie.startsWith(name + '='));
+    }
+
+    // Disable the form if the 'Guest_token' cookie exists
+    if (cookieExists('Guest_token')) {
+        const form = document.querySelector('.post-form');
+        if (form) { // Check if form exists
+            form.querySelectorAll('input, textarea, button').forEach(element => {
+                element.disabled = true;
+            });
+        }
+    }
+});
+
+        // const post_form = document.querySelector(".post-form") 
+        // if (loginBtn.style.display = "block") {
+        //     post_form.style.display = "none"
+        // }else if (loginBtn.style.display = "none"){
+        //     post_form.style.display = "flex"
+        // }
 
         // usernameElement.addEventListener("click", function() {
         //     alert("Hello, " + usernameElement.textContent.trim() + "!");
         // });
+        
     
 
     </script>

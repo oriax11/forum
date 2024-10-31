@@ -11,8 +11,8 @@
   <nav class="navbar">
     <a href="/"><img class="logo" src="static/img/logo.svg" alt="logo"></a>
     <div class="nav-buttons">
+      <a href="/Guest" class="login">Join As Guest</a>
         <a href="/login" class="login">Login</a>
-        <a href="/register" class="register">Register</a>
     </div>
   </nav>
 
@@ -54,7 +54,6 @@
       <script>
         let password = document.getElementById("password");
         let confirmPassword = document.getElementById("confirm-password")
-
         function validatePassword() {
           if (password.value != confirmPassword.value) {
             confirmPassword.setCustomValidity("passwords don't match");
@@ -63,7 +62,7 @@
           }
         }
         password.onchange = validatePassword;
-        confirmPassword.onkeyup = validatePassword; 
+        confirmPassword.onkeyup = validatePassword;
       </script>
 </body>
 </html>
