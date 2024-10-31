@@ -72,8 +72,8 @@ func main() {
 
 
 	// Start the server
-	log.Println("Server is running on port http://localhost:7080/")
-	log.Fatal(http.ListenAndServe(":7080", nil))
+	log.Println("Server is running on port http://localhost:9080/")
+	log.Fatal(http.ListenAndServe(":9080", nil))
 }
 
 
@@ -258,7 +258,7 @@ func forumHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Failed to load user info", http.StatusInternalServerError)
 			return
 		}
-
+		
 		data := struct {
 			P       []Post
 			Message string
@@ -266,11 +266,12 @@ func forumHandler(w http.ResponseWriter, r *http.Request) {
 			P:       posts,
 			Message: userInfo.Username,
 		}
-
-		// Render the template with posts and user message
-		err = tpl.ExecuteTemplate(w, "forum.html", data) // Use a different template for users
-		if err != nil {
+		
+		err = tpl.ExecuteTemplate(w, "forum.html", data) 
+		if err != nil {		
+			fmt.Println(err)	
 			http.Error(w, "Error rendering the forum page", http.StatusInternalServerError)
+			return
 		}
 	} else {
 		// No valid cookie, redirect to login
@@ -316,13 +317,19 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 			tpl.ExecuteTemplate(w, "login.html", erro)
 			return
 		}
-
+		
 		userID := 1
 		title := r.FormValue("title")
 		content := r.FormValue("content")
 		category_type := r.FormValue("category_type")
 		cookie, _ := r.Cookie("session_token")
 		email := sessions[cookie.Value]
+
+		if title == "" || content == "" || category_type == "" {
+			http.Error(w, "bad request", http.StatusBadRequest)
+			return
+		}
+		
 		db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
 
 		_, err = db.Exec(
@@ -392,27 +399,6 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-// func getPosts() ([]Post, error) {
-// 	rows, err := db.Query(`SELECT p.post_id, p.title, p.content, p.created_at, u.username , p.category_name
-//                            FROM Posts p 
-//                            JOIN Users u ON p.user_id = u.user_id 
-//                            ORDER BY p.created_at DESC`)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	defer rows.Close()
-
-// 	var posts []Post
-// 	for rows.Next() {
-// 		var post Post
-// 		if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.Username, &post.Categorie_type); err != nil {
-// 			return nil, err
-// 		}
-// 		posts = append(posts, post)
-// 	}
-// 	// fmt.Println(posts[0].Username)
-// 	return posts, nil
-// }
 
 func AboutTime(t time.Time) string {
     duration := time.Since(t)

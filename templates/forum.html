@@ -31,16 +31,21 @@
         
         <form class="post-form" method="post">
             <input type="hidden" name="query" value="newpost">
-            <textarea class="input-title" name="title"  placeholder="title"></textarea>
-            <textarea class="input-content" name="content"  placeholder="What is your question?"></textarea>
+            <textarea required class="input-title" name="title"  placeholder="title"></textarea>
+            <textarea required class="input-content" name="content"  placeholder="What is your question?"></textarea>
             <div class="params-container">
                 <div class="checks-container">
-                    <input name="category_type" type="checkbox" id="General"value="General" class="checkbox-text"><label for="General">General</label>
-                    <input name="category_type" type="checkbox" id="Technology" value="Technology" class="checkbox-text"><label for="Technology">Technology</label>
-                    <input name="category_type" type="checkbox" id="Art" value="Art" class="checkbox-text"><label for="Art">Art</label>
-                    <input name="category_type" type="checkbox" id="Sport"value="Sport" class="checkbox-text"><label for="Sport">Sport</label>
-                    <input name="category_type" type="checkbox" id="News"value="News" class="checkbox-text"><label for="News">News</label>
-                </div>        
+                    <input name="category_type" type="radio" id="General" value="General" class="checkbox-text">
+                    <label for="General">General</label>
+                    <input name="category_type" type="radio" id="Technology" value="Technology" class="checkbox-text">
+                    <label for="Technology">Technology</label>
+                    <input name="category_type" type="radio" id="Art" value="Art" class="checkbox-text">
+                    <label for="Art">Art</label>
+                    <input name="category_type" type="radio" id="Sport" value="Sport" class="checkbox-text">
+                    <label for="Sport">Sport</label>
+                    <input name="category_type" type="radio" id="News" value="News" class="checkbox-text">
+                    <label for="News">News</label>
+                </div>                      
                 <button type="submit">Publish</button>
             </div>
         </form>
