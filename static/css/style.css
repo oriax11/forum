@@ -248,3 +248,108 @@ body {
   fill: none;
   stroke: #e0e0e0;
 }
+
+
+
+
+/* side bar */
+
+.stky-sidebar {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 200px;
+  height: 400px;
+  background-color: transparent;
+  box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  padding-top: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.stky-sidebar ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.stky-sidebar li {
+  margin: 10px 0;
+}
+
+.stky-sidebar a {
+  display: block;
+  padding: 10px 20px;
+  text-decoration: none;
+  color: #ff4b4b;
+  font-size: 16px;
+  border-radius: 5px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.stky-sidebar a:hover {
+  background-color: #444; /* Hover background similar to Quora */
+  color: #ff4b4b;
+}
+
+.stky-sidebar a.active {
+  background-color: #b92b27; /* Quora-like red color for active item */
+  color: #fff;
+}
+
+.stky-sidebar a.active:hover {
+  background-color: #a8221f; /* Darker red on hover when active */
+}
+
+.stky-sidebar li + li {
+  border-top: 1px solid #ddd; /* Separator line between items */
+  margin-top: 10px;
+}
+/* Sidebar responsiveness */
+@media (max-width: 768px) {
+  /* Hide the sidebar on smaller screens */
+  .stky-sidebar {
+      position: relative;
+      width: 100%;
+      height: auto;
+      box-shadow: none;
+  }
+
+  /* Adjust sidebar to appear as a top bar */
+  .stky-sidebar ul {
+      display: flex;
+      justify-content: space-around;
+  }
+
+  .stky-sidebar a {
+      padding: 10px;
+      font-size: 14px;
+  }
+}
+
+/* For very small screens, collapse sidebar items into a dropdown */
+@media (max-width: 576px) {
+  .stky-sidebar {
+      display: none; /* Hide sidebar */
+  }
+
+  .toggle-sidebar {
+      display: block;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1000;
+  }
+
+  .stky-sidebar.active {
+      display: block;
+      position: fixed;
+      top: 60px; /* Adjust according to navbar */
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #f1f1f1;
+      overflow-y: auto;
+  }
+}
+
