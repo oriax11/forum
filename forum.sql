@@ -7,6 +7,7 @@ CREATE TABLE Users (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+
 CREATE TABLE PostCategories (
     category_id INTEGER PRIMARY KEY AUTOINCREMENT, 
     category_name TEXT UNIQUE NOT NULL,
@@ -27,15 +28,13 @@ CREATE TABLE Posts (
 );
 
 CREATE TABLE Reactions (
-    reaction_id INTEGER PRIMARY KEY AUTOINCREMENT, 
+    reaction_id INTEGER PRIMARY KEY AUTOINCREMENT,
     post_id INTEGER,
     user_id INTEGER,
-    reaction_type TEXT NOT NULL,
+    reaction_type TEXT CHECK(reaction_type IN ('LIKE', 'DISLIKE')), /* HNA KHASSNI NZID WN9SS*/
+    is_active BOOLEAN DEFAULT TRUE,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (post_id) REFERENCES Posts(post_id),
-    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    UNIQUE(post_id, user_id)
 );
-
--- DROP TABLE Users;
--- DROP TABLE PostCategories;DROP TABLE Posts;DROP TABLE Reactions;
-
