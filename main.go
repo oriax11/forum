@@ -70,7 +70,6 @@ func main() {
 	http.HandleFunc("/Logout", Logout)
 
 
-
 	// Start the server
 	log.Println("Server is running on port http://localhost:9080/")
 	log.Fatal(http.ListenAndServe(":9080", nil))
@@ -394,6 +393,107 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
+	} else if action == "react" {
+		var userID int
+
+		_, err := r.Cookie("Guest_token")
+		if err == nil {
+			erro := Errors{
+				ErrorType: "Only registred Users can react!",
+			}
+			tpl.ExecuteTemplate(w, "login.html", erro)
+			return
+		}
+
+		cookie, _ := r.Cookie("session_token")
+		email := sessions[cookie.Value]
+
+		db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
+
+		like_btn := r.FormValue("like-btn")
+		dislike_btn := r.FormValue("dislike-btn")
+		post_id := r.FormValue("post_id")
+		var react_holder string
+		var reaction_type string
+		if (len(like_btn) == 0 && len(dislike_btn) > 0){
+			react_holder = dislike_btn
+		}else if (len(like_btn) > 0 && len(dislike_btn) == 0) {
+			react_holder = like_btn
+		}
+
+		db.QueryRow("SELECT reaction_type FROM Reactions WHERE post_id = ? AND user_id = ?", post_id, userID).Scan(&reaction_type)
+
+		// fmt.Println(reaction_type)
+		if len(reaction_type) == 0 {
+			_, err = db.Exec(
+				"INSERT INTO Reactions (post_id ,user_id, reaction_type) VALUES (?, ?, ?)",
+				post_id, userID, react_holder,
+			)
+			if err != nil {
+				fmt.Print(err, "insert")
+				http.Error(w, "Post creation failed", http.StatusInternalServerError)
+				return
+			}
+		}else {
+			if react_holder == reaction_type {
+				_, err = db.Exec(
+					"DELETE FROM Reactions WHERE post_id = ? AND user_id = ?",
+					post_id, userID,
+				)
+				if err != nil {
+					fmt.Print(err, "Delete")
+					http.Error(w, "Post creation failed", http.StatusInternalServerError)
+					return
+				}
+			} else {
+				_, err = db.Exec(
+					"UPDATE Reactions SET reaction_type = ? WHERE post_id = ? AND user_id = ?",
+					react_holder,post_id, userID,
+				)
+				if err != nil {
+					fmt.Print(err, "Update")
+					http.Error(w, "Post creation failed", http.StatusInternalServerError)
+					return
+				}
+			}
+		}
+		// fmt.Println(react_holder , post_id , userID)
+		
+	}else if action == "comment" {
+		var userID int
+		comment_content := r.FormValue("comment-content")
+		post_id := r.FormValue("post_id")
+		_, err := r.Cookie("Guest_token")
+		if err == nil {
+			erro := Errors{
+				ErrorType: "Only registred Users can react!",
+			}
+			tpl.ExecuteTemplate(w, "login.html", erro)
+			return
+		}
+		
+		cookie, _ := r.Cookie("session_token")
+		email := sessions[cookie.Value]
+		
+		db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
+
+
+		if len(comment_content) > 0 {
+			_, err = db.Exec(
+				"INSERT INTO Comment (post_id ,user_id, comment_content) VALUES (?, ?, ?)",
+				post_id, userID, comment_content,
+			)
+			if err != nil {
+				fmt.Print(err, "insert")
+				http.Error(w, "Post creation failed", http.StatusInternalServerError)
+				return
+			}
+		}else {
+			fmt.Print("empty string")
+		}
+
+		// fmt.Println(comment_content, post_id)
+
 	}
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
