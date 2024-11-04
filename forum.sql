@@ -41,9 +41,8 @@ CREATE TABLE Reactions (
 CREATE TABLE Comment (
     comment_id INTEGER PRIMARY KEY AUTOINCREMENT,
     post_id INTEGER,
-    user_id INTEGER,
+    username TEXT,
     comment_content TEXT NOT NULL,
     comment_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (post_id) REFERENCES Posts(post_id),
-    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+    FOREIGN KEY (post_id) REFERENCES Posts(post_id)
 );

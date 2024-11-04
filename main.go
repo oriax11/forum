@@ -464,7 +464,7 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 		// fmt.Println(react_holder , post_id , userID)
 
 	} else if action == "comment" {
-		var userID int
+		var username string
 		comment_content := r.FormValue("comment-content")
 		post_id := r.FormValue("post_id")
 		_, err := r.Cookie("Guest_token")
@@ -479,12 +479,13 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 		cookie, _ := r.Cookie("session_token")
 		email := sessions[cookie.Value]
 
-		db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
+		db.QueryRow("SELECT username FROM Users WHERE email = ?", email).Scan(&username)
+		fmt.Println(username)
 
 		if len(comment_content) > 0 {
 			_, err = db.Exec(
-				"INSERT INTO Comment (post_id ,user_id, comment_content) VALUES (?, ?, ?)",
-				post_id, userID, comment_content,
+				"INSERT INTO Comment (post_id ,username, comment_content) VALUES (?, ?, ?)",
+				post_id, username, comment_content,
 			)
 			if err != nil {
 				fmt.Print(err, "insert")
@@ -537,7 +538,7 @@ func getPosts() ([]Post, error) {
 		if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.Username, &post.Categorie_type); err != nil {
 			return nil, err
 		}
-		commentRows, err := db.Query(`SELECT comment_id, user_id , comment_content, comment_date
+		commentRows, err := db.Query(`SELECT comment_id, username , comment_content, comment_date
 		FROM Comment 
 		WHERE post_id = ? 
 		ORDER BY comment_date ASC`, post.ID)
