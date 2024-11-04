@@ -8,9 +8,10 @@ CREATE TABLE Users (
 );
 
 CREATE TABLE PostCategories (
-    category_id INTEGER PRIMARY KEY AUTOINCREMENT, 
-    category_name TEXT UNIQUE NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    category_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    post_id INTEGER,
+    category_name TEXT  NOT NULL,
+    FOREIGN KEY (post_id) REFERENCES Posts(post_id)
 );
 
 CREATE TABLE Posts (
@@ -18,12 +19,8 @@ CREATE TABLE Posts (
     user_id INTEGER,
     title TEXT NOT NULL,
     content TEXT NOT NULL,
-    category_id INTEGER,
-    category_name TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    FOREIGN KEY (category_id) REFERENCES PostCategories(category_id),
-    FOREIGN KEY (category_name) REFERENCES PostCategories(category_name)
 );
 
 CREATE TABLE Reactions (

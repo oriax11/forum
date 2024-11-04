@@ -322,13 +322,20 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 		}
 
 		userID := 1
+
+		if err := r.ParseForm(); err != nil {
+			http.Error(w, "Failed to parse form", http.StatusBadRequest)
+			return
+		}
+
 		title := r.FormValue("title")
 		content := r.FormValue("content")
-		category_type := r.FormValue("category_type")
+		category_type := r.Form["type"]
+		// fmt.Println(category_type, "hello")
 		cookie, _ := r.Cookie("session_token")
 		email := sessions[cookie.Value]
 
-		if title == "" || content == "" || category_type == "" {
+		if title == "" || content == "" || len(category_type) == 0 {
 			http.Error(w, "bad request", http.StatusBadRequest)
 			return
 		}
@@ -336,9 +343,10 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 		db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
 
 		_, err = db.Exec(
-			"INSERT INTO Posts (user_id, title, content, category_name) VALUES (?, ?, ?, ?)",
-			userID, title, content, category_type,
+			"INSERT INTO Posts (user_id, title, content) VALUES (?, ?, ?)",
+			userID, title, content,
 		)
+
 		if err != nil {
 			http.Error(w, "Post creation failed", http.StatusInternalServerError)
 			return
@@ -427,7 +435,6 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 
 		db.QueryRow("SELECT reaction_type FROM Reactions WHERE post_id = ? AND user_id = ?", post_id, userID).Scan(&reaction_type)
 
-		// fmt.Println(reaction_type)
 		if len(reaction_type) == 0 {
 			_, err = db.Exec(
 				"INSERT INTO Reactions (post_id ,user_id, reaction_type) VALUES (?, ?, ?)",
@@ -495,9 +502,6 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 		} else {
 			fmt.Print("empty string")
 		}
-
-		// fmt.Println(comment_content, post_id)
-
 	}
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -523,7 +527,7 @@ func AboutTime(t time.Time) string {
 }
 
 func getPosts() ([]Post, error) {
-	rows, err := db.Query(`SELECT p.post_id, p.title, p.content, p.created_at, u.username, p.category_name
+	rows, err := db.Query(`SELECT p.post_id, p.title, p.content, p.created_at, u.username
                            FROM Posts p
                            JOIN Users u ON p.user_id = u.user_id
                            ORDER BY p.created_at DESC`)
@@ -535,7 +539,7 @@ func getPosts() ([]Post, error) {
 	var posts []Post
 	for rows.Next() {
 		var post Post
-		if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.Username, &post.Categorie_type); err != nil {
+		if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.Username); err != nil {
 			return nil, err
 		}
 		commentRows, err := db.Query(`SELECT comment_id, username , comment_content, comment_date
