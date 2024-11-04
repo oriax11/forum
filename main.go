@@ -37,6 +37,13 @@ type User struct {
 	Created_at string
 }
 
+type Comment struct {
+	Id       int
+	Content  string
+	Author   string
+	Creation time.Time
+}
+
 type Post struct {
 	ID             int
 	UserID         int
@@ -45,11 +52,11 @@ type Post struct {
 	Username       string
 	Categorie_type string
 	CreatedAt      time.Time
-	TimeAgo			string
+	TimeAgo        string
+	Comments       []Comment
 }
 
 func main() {
-
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", (http.StripPrefix("/static/", fs)))
 
@@ -69,15 +76,13 @@ func main() {
 	http.HandleFunc("/Guest", GuestHandler)
 	http.HandleFunc("/Logout", Logout)
 
-
 	// Start the server
 	log.Println("Server is running on port http://localhost:9080/")
 	log.Fatal(http.ListenAndServe(":9080", nil))
 }
 
-
-func Logout (w http.ResponseWriter, r *http.Request) {
-	deleteAllCookies(w,r)
+func Logout(w http.ResponseWriter, r *http.Request) {
+	deleteAllCookies(w, r)
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
 
@@ -101,7 +106,6 @@ func GuestHandler(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: false,
 	})
 	http.Redirect(w, r, "/", http.StatusSeeOther)
-
 }
 
 func deleteAllCookies(w http.ResponseWriter, r *http.Request) {
@@ -169,7 +173,6 @@ func Profile(w http.ResponseWriter, r *http.Request) {
 			}
 		} else {
 			NotFound(w, r)
-
 		}
 	}
 }
@@ -197,10 +200,10 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func forumHandler(w http.ResponseWriter, r *http.Request) {
-	if(r.URL.Path != "/"){
-        NotFound(w, r)
-        return
-    }
+	if r.URL.Path != "/" {
+		NotFound(w, r)
+		return
+	}
 	if r.Method == http.MethodPost {
 		handleFormSubmission(w, r)
 		return
@@ -225,6 +228,7 @@ func forumHandler(w http.ResponseWriter, r *http.Request) {
 	// Load posts regardless of user type
 	posts, err := getPosts()
 	if err != nil {
+		fmt.Println(err)
 		http.Error(w, "Failed to load posts", http.StatusInternalServerError)
 		return
 	}
@@ -257,7 +261,7 @@ func forumHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Failed to load user info", http.StatusInternalServerError)
 			return
 		}
-		
+
 		data := struct {
 			P       []Post
 			Message string
@@ -265,10 +269,10 @@ func forumHandler(w http.ResponseWriter, r *http.Request) {
 			P:       posts,
 			Message: userInfo.Username,
 		}
-		
-		err = tpl.ExecuteTemplate(w, "forum.html", data) 
-		if err != nil {		
-			fmt.Println(err)	
+
+		err = tpl.ExecuteTemplate(w, "forum.html", data)
+		if err != nil {
+			fmt.Println(err)
 			http.Error(w, "Error rendering the forum page", http.StatusInternalServerError)
 			return
 		}
@@ -316,7 +320,7 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 			tpl.ExecuteTemplate(w, "login.html", erro)
 			return
 		}
-		
+
 		userID := 1
 		title := r.FormValue("title")
 		content := r.FormValue("content")
@@ -328,7 +332,7 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "bad request", http.StatusBadRequest)
 			return
 		}
-		
+
 		db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
 
 		_, err = db.Exec(
@@ -415,9 +419,9 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 		post_id := r.FormValue("post_id")
 		var react_holder string
 		var reaction_type string
-		if (len(like_btn) == 0 && len(dislike_btn) > 0){
+		if len(like_btn) == 0 && len(dislike_btn) > 0 {
 			react_holder = dislike_btn
-		}else if (len(like_btn) > 0 && len(dislike_btn) == 0) {
+		} else if len(like_btn) > 0 && len(dislike_btn) == 0 {
 			react_holder = like_btn
 		}
 
@@ -434,7 +438,7 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "Post creation failed", http.StatusInternalServerError)
 				return
 			}
-		}else {
+		} else {
 			if react_holder == reaction_type {
 				_, err = db.Exec(
 					"DELETE FROM Reactions WHERE post_id = ? AND user_id = ?",
@@ -448,7 +452,7 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 			} else {
 				_, err = db.Exec(
 					"UPDATE Reactions SET reaction_type = ? WHERE post_id = ? AND user_id = ?",
-					react_holder,post_id, userID,
+					react_holder, post_id, userID,
 				)
 				if err != nil {
 					fmt.Print(err, "Update")
@@ -458,8 +462,8 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		// fmt.Println(react_holder , post_id , userID)
-		
-	}else if action == "comment" {
+
+	} else if action == "comment" {
 		var userID int
 		comment_content := r.FormValue("comment-content")
 		post_id := r.FormValue("post_id")
@@ -471,12 +475,11 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 			tpl.ExecuteTemplate(w, "login.html", erro)
 			return
 		}
-		
+
 		cookie, _ := r.Cookie("session_token")
 		email := sessions[cookie.Value]
-		
-		db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
 
+		db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
 
 		if len(comment_content) > 0 {
 			_, err = db.Exec(
@@ -488,7 +491,7 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "Post creation failed", http.StatusInternalServerError)
 				return
 			}
-		}else {
+		} else {
 			fmt.Print("empty string")
 		}
 
@@ -499,47 +502,64 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-
 func AboutTime(t time.Time) string {
-    duration := time.Since(t)
+	duration := time.Since(t)
 
-    switch {
-    case duration < time.Minute:
-        return fmt.Sprintf("%d sec ago", int(duration.Seconds()))
-    case duration < time.Hour:
-        return fmt.Sprintf("%d min ago", int(duration.Minutes()))
-    case duration < 24*time.Hour:
-        return fmt.Sprintf("%d hours ago", int(duration.Hours()))
-    case duration < 30*24*time.Hour:
-        return fmt.Sprintf("%d days ago", int(duration.Hours()/24))
-    case duration < 12*30*24*time.Hour:
-        return fmt.Sprintf("%d months ago", int(duration.Hours()/24/30))
-    default:
-        return fmt.Sprintf("%d years ago", int(duration.Hours()/24/365))
-    }
+	switch {
+	case duration < time.Minute:
+		return fmt.Sprintf("%d sec ago", int(duration.Seconds()))
+	case duration < time.Hour:
+		return fmt.Sprintf("%d min ago", int(duration.Minutes()))
+	case duration < 24*time.Hour:
+		return fmt.Sprintf("%d hours ago", int(duration.Hours()))
+	case duration < 30*24*time.Hour:
+		return fmt.Sprintf("%d days ago", int(duration.Hours()/24))
+	case duration < 12*30*24*time.Hour:
+		return fmt.Sprintf("%d months ago", int(duration.Hours()/24/30))
+	default:
+		return fmt.Sprintf("%d years ago", int(duration.Hours()/24/365))
+	}
 }
 
 func getPosts() ([]Post, error) {
-    rows, err := db.Query(`SELECT p.post_id, p.title, p.content, p.created_at, u.username, p.category_name
+	rows, err := db.Query(`SELECT p.post_id, p.title, p.content, p.created_at, u.username, p.category_name
                            FROM Posts p
                            JOIN Users u ON p.user_id = u.user_id
                            ORDER BY p.created_at DESC`)
-    if err != nil {
-        return nil, err
-    }
-    defer rows.Close()
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
 
-    var posts []Post
-    for rows.Next() {
-        var post Post
-        if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.Username, &post.Categorie_type); err != nil {
-            return nil, err
-        }
+	var posts []Post
+	for rows.Next() {
+		var post Post
+		if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.Username, &post.Categorie_type); err != nil {
+			return nil, err
+		}
+		commentRows, err := db.Query(`SELECT comment_id, user_id , comment_content, comment_date
+		FROM Comment 
+		WHERE post_id = ? 
+		ORDER BY comment_date ASC`, post.ID)
+		if err != nil {
+			return nil, err
+		}
+		defer commentRows.Close()
 
-        post.TimeAgo = AboutTime(post.CreatedAt)
-        posts = append(posts, post)
-    }
-    return posts, nil
+		var comments []Comment
+		for commentRows.Next() {
+			var comment Comment
+			if err := commentRows.Scan(&comment.Id, &comment.Author, &comment.Content, &comment.Creation); err != nil {
+				return nil, err
+			}
+			comments = append(comments, comment)
+		}
+		post.Comments = comments
+
+		post.TimeAgo = AboutTime(post.CreatedAt)
+		posts = append(posts, post)
+	}
+	return posts, nil
 }
 
 func generateSessionID() (string, error) {
