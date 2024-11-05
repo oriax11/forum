@@ -1,3 +1,5 @@
+
+{{ $message := .Message }}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,10 +10,10 @@
     <title>intouch</title>
 </head>
 <body>
+
     <nav class="navbar">
         <img class="logo" src="static/img/logo.svg" alt="logo">
         <div class="nav-buttons">
-            <!-- <form action="/search" method="get"><input type="text" name="q" placeholder="Search"></form> -->
             <form action="/profile" method="get">
                 <input type="hidden" name="query" value="profile">
                 <div class="user-info-container">
@@ -22,100 +24,111 @@
                 </div>
             </form>
             <a id="btn-logout" href="/Logout"><i class="fa-solid fa-power-off"></i></a>
-            <a id="btn-logout" class="bug-tbn" target="_blank" href="https://8fsrcq68bzu.typeform.com/to/smZjpO3E"><i class="fa-solid fa-bug"></i></a>
+            <a id="btn-logout" class="bug-tbn" target="_blank" href="https://8fsrcq68bzu.typeform.com/to/smZjpO3E"><i class="fa-solid fa-bug"></i>
+            </a>
            
             <a href="/login" id="login_btn" class="login">Login</a>
             <a href="/register" id="register_btn" class="register">Register</a>
         </div>
     </nav>
+    
     <div class="stky-sidebar">
         <ul>
             <li><a href="#">categories</a></li>
             <li><a href="#">created posts</a></li>
             <li><a href="#">liked posts</a></li>
             <li><a href="#">more*...</a></li>
-            
-
-
         </ul>
     </div>
+
     <div class="container">
-        <form class="post-form" method="post">
+        <form  class="post-form" method="post">
             <input type="hidden" name="query" value="newpost">
-            <textarea required class="input-title" name="title" placeholder="title"></textarea>
-            <textarea required class="input-content" name="content" placeholder="What is your question?"></textarea>
+            <textarea  required class="input-title" name="title"  placeholder="title"></textarea>
+            <textarea  required class="input-content" name="content"  placeholder="What is your question?"></textarea>
             <div class="params-container">
                 <div class="checks-container">
-                    <input type="checkbox" id="General" name="type" value="General" class="checkbox-text">
+                    <input name="type" type="checkbox" id="General" value="General" class="checkbox-text">
                     <label for="General">General</label>
-                    <input type="checkbox" id="Technology" name="type" value="Technology" class="checkbox-text">
+                    <input name="type" type="checkbox" id="Technology" value="Technology" class="checkbox-text">
                     <label for="Technology">Technology</label>
-                    <input type="checkbox" id="Art" name="type" value="Art" class="checkbox-text">
+                    <input name="type" type="checkbox" id="Art" value="Art" class="checkbox-text">
                     <label for="Art">Art</label>
-                    <input type="checkbox" id="Sport" name="type" value="Sport" class="checkbox-text">
+                    <input name="type" type="checkbox" id="Sport" value="Sport" class="checkbox-text">
                     <label for="Sport">Sport</label>
-                    <input type="checkbox" id="News" name="type" value="News" class="checkbox-text">
+                    <input name="type" type="checkbox" id="News" value="News" class="checkbox-text">
                     <label for="News">News</label>
-                </div>
-                <button type="submit">Publish</button>
+                </div>                                 
+                <button class="publish_btn"  type="submit">Publish</button>
             </div>
         </form>
-        
-        
-        {{range .P}}
-        <div class="post">
+    </div>
+    {{range .P}}
+        <div class="container">
             <div class="post-header"> 
-                <div>
+                <div class="post-header_content">
                     <i id="user_icon" class="fa-solid fa-user"></i>
                     <strong>{{.Username}}</strong>
                 </div>
             <i function="onclick()" class="fa-solid fa-xmark"></i>
           </div>
-            <div class="post-header">
-                <h5 class="categories"></h5>
-                <h5>{{.TimeAgo}}</h5>
-            </div>
-            <p class="post_title">{{.Title}}</p>
-            <p style="word-wrap: break-word;">{{.Content}}</p>
-            <div class="post-actions">
-                <form action="" method="post">
-                    <input type="hidden" name="query" value="react">
-                    <input type="hidden" name="post_id" value="{{.ID}}">  <!-- Add post ID -->
-                    <button name="like-btn" value="LIKE" class="reactions">
-                        <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 4 3 15h6v5h6v-5h6z" class="icon_svg-stroke icon_svg-fill" 
-                                  stroke-width="1.5" stroke="#e0e0e0" fill="none" stroke-linejoin="round"></path>
-                        </svg>
-                        <span class="counter-holder"></span>
-                    </button>
-                
-                    <button name="dislike-btn" value="DISLIKE" class="reactions">
-                        <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="m12 20 9-11h-6V4H9v5H3z" class="icon_svg-stroke icon_svg-fill" 
-                                  stroke="#e0e0e0" fill="none" stroke-width="1.5" stroke-linejoin="round"></path>
-                        </svg>
-                        <span class="counter-holder"></span> 
-                    </button>
-                </form>
-
-                <!-- *** comment form **** -->
-                 <form action="" method="post">
-                    <input type="hidden" name="query" value="comment">
-                    <input type="hidden" name="post_id" value="{{.ID}}">  <!-- Add post ID -->
-                    <input type="text" class="comment-input" name="comment-content">
-                    <button name="comment-btn" class="reactions"><svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12.071 18.86c4.103 0 7.429-3.102 7.429-6.93C19.5 8.103 16.174 5 12.071 5s-7.429 3.103-7.429 6.93c0 1.291.379 2.5 1.037 3.534.32.501-1.551 3.058-1.112 3.467.46.429 3.236-1.295 3.803-.99 1.09.585 2.354.92 3.701.92Z" class="icon_svg-stroke icon_svg-fill" stroke="#e0e0e0" stroke-width="1.5" fill="none"></path></svg>45</button>
-                 </form>
-                 
+            <div class="post">
+               
+                <div class="post-header">
+                    <h5 class="categories">#categories_still_in_process</h5>
+                    <h5>{{.TimeAgo}}</h5>
                 </div>
-                {{range .Comments}}
-                <div>{{.Author}}</div>
-                <div>{{.Creation}}</div>
-                <div>{{.Content}}</div>
-                {{end}}
+                <p class="post_title">{{.Title}}</p>
+                <p style="word-wrap: break-word;">{{.Content}}</p>
+                <div class="post-actions">
+                    <form action="" method="post">
+                        <input type="hidden" name="query" value="react">
+                        <input type="hidden" name="post_id" value="{{.ID}}">
+                        <button name="like-btn" value="LIKE" class="reactions">
+                            <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 4 3 15h6v5h6v-5h6z" class="icon_svg-stroke icon_svg-fill" 
+                                      stroke-width="1.5" stroke="#e0e0e0" fill="none" stroke-linejoin="round"></path>
+                            </svg>
+                            <span class="counter-holder"></span>
+                        </button>
+                    
+                        <button name="dislike-btn" value="DISLIKE" class="reactions">
+                            <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="m12 20 9-11h-6V4H9v5H3z" class="icon_svg-stroke icon_svg-fill" 
+                                      stroke="#e0e0e0" fill="none" stroke-width="1.5" stroke-linejoin="round"></path>
+                            </svg>
+                            <span class="counter-holder"></span> 
+                        </button>
+
+                        <btn id="comment-btn"  class="reactions"><svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12.071 18.86c4.103 0 7.429-3.102 7.429-6.93C19.5 8.103 16.174 5 12.071 5s-7.429 3.103-7.429 6.93c0 1.291.379 2.5 1.037 3.534.32.501-1.551 3.058-1.112 3.467.46.429 3.236-1.295 3.803-.99 1.09.585 2.354.92 3.701.92Z" class="icon_svg-stroke icon_svg-fill" stroke="#e0e0e0" stroke-width="1.5" fill="none"></path></svg>4</btn>
+                    </form>
+                </div>
+                <div id="comment-form">
+                    <form  action="" method="post">
+                        <div class="comment-container">
+                            <input type="hidden" name="query" value="comment">
+                            <input type="hidden" name="post_id" value="{{.ID}}">
+                            <input type="text" name="comment-content" placeholder="comment" class="comment-input">
+                            <button type="submit" class="comment-btn">Comment</button>
+                        </div>
+                        <div class="comment-content">
+                            <div class="post-header">
+                                <div class="flex">
+                                    <i id="user_icon" class="fa-solid fa-user"></i>
+                                    <strong>{{ $message }}</strong>
+                                </div>
+                            </div>   
+                            {{range .Comments}}
+                            <p>{{.Creation}}</p>
+                            <p>{{.Author}}</p>
+                            <p id="thecomment">{{.Content}}</p>
+                            {{end}}
+                        </div>
+                    </form>
+                </div>   
+            </div>
         </div>
         {{end}}
-    </div>
-
     <script>
         let x = document.getElementsByClassName("fa-xmark");
         for (let i = 0; i < x.length; i++) {
@@ -129,7 +142,7 @@
         const loginBtn = document.getElementById("login_btn");
         const logoutBtn = document.getElementById("btn-logout");
         const registerBtn = document.getElementById("register_btn");
-        const bug_tbn = document.querySelector(".bug-tbn") 
+        const bug_tbn = document.querySelector(".bug-tbn")
 
         if (usernameElement && usernameElement.textContent.trim() !== "") {
             loginBtn.style.display = "none";
@@ -145,28 +158,42 @@
                 pf_btn.style.display = "none";
                 usernameElement.style.display = "none";
                 logoutBtn.style.display = "none";
-            bug_tbn.style.display = "none"
+                bug_tbn.style.display = "none";
             }
         }
         document.addEventListener("DOMContentLoaded", function() {
 
-    // Function to check if a specific cookie exists
-    function cookieExists(name) {
-        const cookies = document.cookie.split('; ');
-        return cookies.some(cookie => cookie.startsWith(name + '='));
-    }
-
-    // Disable the form if the 'Guest_token' cookie exists
-    if (cookieExists('Guest_token')) {
-        const form = document.querySelector('.post-form');
-        if (form) { // Check if form exists
-            form.querySelectorAll('input, textarea, button').forEach(element => {
-                element.disabled = true;
-                form.style.opacity = "40%"
-            })
+        function cookieExists(name) {
+            const cookies = document.cookie.split('; ');
+            return cookies.some(cookie => cookie.startsWith(name + '='));
         }
-    }
-})
+
+        if (cookieExists('Guest_token')) {
+            const form = document.querySelector('.post-form');
+            if (form) {
+                form.querySelectorAll('input, textarea, button').forEach(element => {
+                    element.disabled = true;
+                    form.style.opacity = "40%"
+                })
+            }
+        }
+        })
+        const commentBtns = document.querySelectorAll("#comment-btn");
+        const commentForms = document.querySelectorAll("#comment-form");
+
+        commentForms.forEach(form => {
+            form.style.display = "none";
+        });
+
+        commentBtns.forEach((btn, index) => {
+            btn.addEventListener("click", function() {
+                if (commentForms[index].style.display === "none") {
+                    commentForms[index].style.display = "block";
+                } else {
+                    commentForms[index].style.display = "none";
+                }
+            });
+        });
     </script>
 </body>
 </html>

@@ -487,7 +487,6 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 		email := sessions[cookie.Value]
 
 		db.QueryRow("SELECT username FROM Users WHERE email = ?", email).Scan(&username)
-		fmt.Println(username)
 
 		if len(comment_content) > 0 {
 			_, err = db.Exec(
@@ -542,7 +541,7 @@ func getPosts() ([]Post, error) {
 		if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.Username); err != nil {
 			return nil, err
 		}
-		commentRows, err := db.Query(`SELECT comment_id, username , comment_content, comment_date
+		commentRows, err := db.Query(`SELECT comment_id ,username , comment_content, comment_date
 		FROM Comment 
 		WHERE post_id = ? 
 		ORDER BY comment_date ASC`, post.ID)

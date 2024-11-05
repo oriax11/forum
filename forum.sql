@@ -43,3 +43,5 @@ CREATE TABLE Comment (
     comment_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (post_id) REFERENCES Posts(post_id)
 );
+
+

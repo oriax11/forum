@@ -1,3 +1,28 @@
+:root {
+  /* Background Colors */
+  --background-primary: #1a1a1a;
+  --background-secondary: #2c2c2c;
+  --background-input: #1a1a1a;
+  --background-checkbox: #272729;
+
+  /* Text Colors */
+  --text-primary: #e0e0e0;
+  --text-checkbox: #d7dadc;
+  
+  /* Accent Colors */
+  --accent-primary: #ff4b4b;
+  --accent-active: #b92b27;
+  --accent-active-hover: #a8221f;
+  
+  /* Border Colors */
+  --border-color: #444;
+  --border-checkbox: #818384;
+  
+  /* Shadow Colors */
+  --shadow-light: rgba(255, 255, 255, 0.1);
+  --shadow-dark: rgba(0, 0, 0, 0.1);
+}
+
 a {
   text-decoration: none;
 }
@@ -6,40 +31,48 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #1a1a1a;
-  color: #e0e0e0;
+  background-color: var(--background-primary);
+  color: var(--text-primary);
 }
+
 .navbar {
   background-color: #2c2c2c;
   padding: 10px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 1px 1px rgba(255,255,255,0.1);
+  box-shadow: 0 1px 1px rgba(255, 255, 255, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000; /* Ensure it stays above other elements */
 }
-.logo{
+
+
+.logo {
   width: 120px;
 }
+
 .nav-buttons {
   display: flex;
   gap: 10px;
 }
 
-.login , .register{
-  color: #ff4b4b;
+.login, .register{
+  color: var(--accent-primary);
   padding: 8px 16px;
-  border: 1px solid #ff4b4b;
-  border-radius: 4px;
+  border: 1px solid var(--accent-primary);
+  /* border-radius: 4px; */
   cursor: pointer;
   transition: all 0.3s ease;
 }
-.login:hover , .register:hover{
-  color: #1a1a1a;
+
+.login:hover, .register:hover {
+  color: var(--background-primary);
   padding: 8px 16px;
-  background-color: #ff4b4b;
-  border-radius: 4px;
+  background-color: var(--accent-primary);
   cursor: pointer;
 }
+
 .user-info-container {
   display: flex;
   align-items: center;
@@ -47,9 +80,9 @@ body {
 }
 
 #pf_btn {
-  background-color: #ff4b4b;
-  border : none;
-  color: #ff4b4b;
+  background-color: var(--accent-primary);
+  border: none;
+  color: var(--accent-primary);
   cursor: pointer;
   border-radius: 50%;
   width: 40px;
@@ -58,18 +91,19 @@ body {
 }
 
 #pf_btn:hover {
-  background-color: #ff4b4b;
+  background-color: var(--accent-primary);
 }
+
 #pf_btn i {
   font-size: 22px;
-  color: #2c2c2c;
+  color: var(--background-secondary);
   cursor: pointer;
   transition: all 0.3s ease;
-
 }
+
 #btn-logout {
-  background-color: #ff4b4b;
-  color: #ff4b4b;
+  background-color: var(--accent-primary);
+  color: var(--accent-primary);
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -78,45 +112,52 @@ body {
   align-items: center;
   transition: all 0.3s ease;
 }
+
 #btn-logout i {
   margin-top: 30%;
-  color: #272729;
+  color: var(--background-checkbox);
   font-size: 18px;
 }
 
 .logout {
-  color: #ff4b4b;
+  color: var(--accent-primary);
   font-size: 24px;
   cursor: pointer;
 }
+
 .Username {
   font-size: 20px;
   cursor: pointer;
 }
+
 .Username i {
   font-size: 24px;
-  color: #ff4b4b;
+  color: var(--accent-primary);
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1100px;
   margin: 20px auto;
-  background-color: #2c2c2c;
+  background-color: var(--background-secondary);
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(255,255,255,0.1);
+  /* box-shadow: 0 1px 2px var(--shadow-light); */
+  box-shadow: 7px 7px 0px 0px rgba(255,75,75,0.75);
+  -webkit-box-shadow: 7px 7px 0px 0px rgba(255,75,75,0.75);
+  -moz-box-shadow: 7px 7px 0px 0px rgba(255,75,75,0.75);
 }
 
-.params-container{
+.params-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
 }
+
 #user_icon {
-  color: #ff4b4b;
+  color: var(--accent-primary);
   font-size: 20px;
 }
+
 .post_title {
   font-size: 16px;
   font-weight: bold;
@@ -128,7 +169,6 @@ body {
   gap: 20px;
   align-items: center;
   padding: 15px;
-  /* background-color: #1a1a1b; */
   border-radius: 4px;
 }
 
@@ -143,7 +183,7 @@ body {
   padding-left: 28px;
   cursor: pointer;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell;
-  color: #d7dadc;
+  color: var(--text-checkbox);
   display: flex;
   align-items: center;
 }
@@ -156,15 +196,15 @@ body {
   transform: translateY(-50%);
   width: 14px;
   height: 14px;
-  border: 2px solid #818384;
+  border: 2px solid var(--border-checkbox);
   border-radius: 3px;
-  background: #272729;
+  background: var(--background-checkbox);
   transition: all 0.2s ease;
 }
 
 .checkbox-text:checked + label:before {
-  background: #ff4b4b;
-  border-color: #ff4b4b;
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
 }
 
 .checkbox-text:checked + label:after {
@@ -178,12 +218,11 @@ body {
 }
 
 .checkbox-text:hover + label:before {
-  border-color: #ff4b4b;
+  border-color: var(--accent-primary);
 }
 
-/* Optional: Add hover effect on the text */
 .checkbox-text + label:hover {
-  color: #ff4b4b;
+  color: var(--accent-primary);
 }
 
 .input-content {
@@ -192,68 +231,130 @@ body {
   height: 100px;
   margin-bottom: 10px;
   padding: 10px;
-  border: 1px solid #444;
-  border-radius: 8px;
-  background-color: #1a1a1a;
+  border: 1px solid var(--border-color);
+  /* border-radius: 8px; */
+  background-color: var(--background-input);
   resize: none;
-  color: #e0e0e0;
+  color: var(--text-primary);
 }
+
 .input-title {
   width: 97%;
   height: 20px;
   margin-bottom: 10px;
   padding: 10px;
-  border: 1px solid #444;
-  border-radius: 8px;
-  background-color: #1a1a1a;
+  border: 1px solid var(--border-color);
+  /* border-radius: 8px; */
+  background-color: var(--background-input);
   resize: none;
-  color: #e0e0e0;
+  color: var(--text-primary);
   font-size: 14px;
 }
+
 .post-form button {
-  background-color: #ff4b4b;
-  color: #1a1a1a;
-  border: none;
+  color: var(--accent-primary);
+  background-color: transparent;
   padding: 8px 16px;
-  border-radius: 4px;
+  border: 1px solid var(--accent-primary);
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.post-form button:hover {
+  color: var(--background-primary);
+  padding: 8px 16px;
+  background-color: var(--accent-primary);
   cursor: pointer;
 }
+
 .post {
-  border-top: 1px solid #444;
+  border-top: 1px solid var(--border-color);
   padding-top: 20px;
   margin-top: 20px;
 }
 
 .fa-xmark, user_icon {
-  color: #ff4b4b;
+  color: var(--accent-primary);
   font-size: 20px;
 }
+
 .post-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
+
+.post-header_content {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+}
+
 .post-actions {
   display: flex;
   gap: 10px;
   margin-top: 10px;
 }
+
 .post-actions .reactions {
   cursor: pointer;
-  color: #e0e0e0;
+  color: var(--text-primary);
   border: none;
-  color: #ff4b4b;
+  color: var(--accent-primary);
   background-color: transparent;
 }
+
 .post-actions .reactions svg {
   fill: none;
-  stroke: #e0e0e0;
+  stroke: var(--text-primary);
 }
 
+.comment-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+.comment-input {
+  width: 100%;
+  font-size: 16px;
+  height: 20px;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-input);
+  resize: none;
+  color: var(--text-primary);
+}
+.comment-btn {
+  color: var(--accent-primary);
+  background-color: transparent;
+  padding: 8px 16px;
+  border: 1px solid var(--accent-primary);
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+.comment-btn:hover {
+  color: var(--background-primary);
+  padding: 8px 16px;
+  background-color: var(--accent-primary);
+  cursor: pointer;
+}
+.flex {
+  display: flex;
+  gap: 10px;
+}
 
-
-
-/* side bar */
-
+.comment-content {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background-primary);
+  padding: 20px;
+  gap: 10px;
+  margin-top: 10px;
+}
+/* Sidebar styles */
 .stky-sidebar {
   position: fixed;
   top: 60px;
@@ -261,7 +362,7 @@ body {
   width: 200px;
   height: 400px;
   background-color: transparent;
-  box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 1px 0 5px var(--shadow-dark);
   overflow-y: auto;
   padding-top: 20px;
   font-family: Arial, sans-serif;
@@ -281,75 +382,72 @@ body {
   display: block;
   padding: 10px 20px;
   text-decoration: none;
-  color: #ff4b4b;
+  color: var(--accent-primary);
   font-size: 16px;
-  border-radius: 5px;
+  /* border-radius: 5px; */
   transition: background-color 0.2s, color 0.2s;
 }
 
 .stky-sidebar a:hover {
-  background-color: #444; /* Hover background similar to Quora */
-  color: #ff4b4b;
+  background-color: var(--border-color);
+  color: var(--accent-primary);
 }
 
 .stky-sidebar a.active {
-  background-color: #b92b27; /* Quora-like red color for active item */
-  color: #fff;
+  background-color: var(--accent-active);
+  color: white;
 }
 
 .stky-sidebar a.active:hover {
-  background-color: #a8221f; /* Darker red on hover when active */
+  background-color: var(--accent-active-hover);
 }
 
 .stky-sidebar li + li {
-  border-top: 1px solid #ddd; /* Separator line between items */
+  border-top: 1px solid var(--border-color);
   margin-top: 10px;
 }
-/* Sidebar responsiveness */
+
+/* Responsive styles */
 @media (max-width: 768px) {
-  /* Hide the sidebar on smaller screens */
   .stky-sidebar {
-      position: relative;
-      width: 100%;
-      height: auto;
-      box-shadow: none;
+    position: relative;
+    width: 100%;
+    height: auto;
+    box-shadow: none;
   }
 
-  /* Adjust sidebar to appear as a top bar */
   .stky-sidebar ul {
-      display: flex;
-      justify-content: space-around;
+    display: flex;
+    justify-content: space-around;
   }
 
   .stky-sidebar a {
-      padding: 10px;
-      font-size: 14px;
+    padding: 10px;
+    font-size: 14px;
   }
 }
 
-/* For very small screens, collapse sidebar items into a dropdown */
 @media (max-width: 576px) {
   .stky-sidebar {
-      display: none; /* Hide sidebar */
+    display: none;
   }
 
   .toggle-sidebar {
-      display: block;
-      position: fixed;
-      top: 15px;
-      left: 15px;
-      z-index: 1000;
+    display: block;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1000;
   }
 
   .stky-sidebar.active {
-      display: block;
-      position: fixed;
-      top: 60px; /* Adjust according to navbar */
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: #f1f1f1;
-      overflow-y: auto;
+    display: block;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--background-secondary);
+    overflow-y: auto;
   }
 }
-

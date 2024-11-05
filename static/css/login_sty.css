@@ -1,3 +1,29 @@
+:root {
+    /* Background Colors */
+    --background-primary: #1a1a1a;
+    --background-secondary: #2c2c2c;
+    --background-input: #1a1a1a;
+    --background-checkbox: #272729;
+  
+    /* Text Colors */
+    --text-primary: #e0e0e0;
+    --text-checkbox: #d7dadc;
+    
+    /* Accent Colors */
+    --accent-primary: #ff4b4b;
+    --accent-active: #b92b27;
+    --accent-active-hover: #a8221f;
+    
+    /* Border Colors */
+    --border-color: #444;
+    --border-checkbox: #818384;
+    
+    /* Shadow Colors */
+    --shadow-light: rgba(255, 255, 255, 0.1);
+    --shadow-dark: rgba(0, 0, 0, 0.1);
+  }
+  
+
 * {
     margin: 0;
     padding: 0;
@@ -31,7 +57,6 @@ body {
   color: #ff4b4b;
   padding: 8px 16px;
   border: 1px solid #ff4b4b;
-  border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -39,7 +64,6 @@ body {
   color: #1a1a1a;
   padding: 8px 16px;
   background-color: #ff4b4b;
-  border-radius: 4px;
   cursor: pointer;
 }
 .btn {
@@ -50,7 +74,6 @@ body {
     cursor: pointer;
     font-size: 16px;
     font-weight: 700;
-    border-radius: 24px;
     transition: all 0.4s ease-in-out;
 }
 
@@ -64,18 +87,20 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 200px;
+    margin-top: 150px;
     width: 100%;
 }
 .form {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    max-width: 550px;
+    gap: 20px;
+    width: 450px;
     background-color: #2c2c2c;
     padding: 20px;
-    border-radius: 20px;
     position: relative;
+    box-shadow: 7px 7px 0px 0px rgba(255,75,75,0.75);
+    -webkit-box-shadow: 7px 7px 0px 0px rgba(255,75,75,0.75);
+    -moz-box-shadow: 7px 7px 0px 0px rgba(255,75,75,0.75);
 }
 
 .title {
@@ -138,32 +163,43 @@ body {
 .form label .input {
     width: 100%;
     padding: 10px 10px 20px 10px;
+    /* width: 80%; */
+    padding: 14px;
     outline: 0;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
     background-color: #1a1a1a;
     color: #ffffff;
+    box-shadow: 4px 4px 0px 0px rgba(255,75,75,0.75);
+    -webkit-box-shadow: 4px 4px 0px 0px rgba(255,75,75,0.75);
+    -moz-box-shadow: 4px 4px 0px 0px rgba(255,75,75,0.75);
 }
 
 .form label .input::placeholder {
     color: rgba(255, 255, 255, 0.5);
 }
 
-.submit {
-    border: none;
-    outline: none;
-    background-color: #ff4b4b;
-    padding: 10px;
-    border-radius: 10px;
-    width: 100%;
-    color: #fff;
-    font-size: 16px;
-    transform: .3s ease;
-    cursor: pointer;
-}
 
+.submit {
+    color: var(--accent-primary);
+    border: 1px solid var(--accent-primary);
+    background-color: transparent;
+    width: 100%;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 4px 4px 0px 0px rgba(255,75,75,0.75);
+    -webkit-box-shadow: 4px 4px 0px 0px rgba(255,75,75,0.75);
+    -moz-box-shadow: 4px 4px 0px 0px rgba(255,75,75,0.75);
+    transition: all 0.3s ease;
+}
+  
 .submit:hover {
-    background-color: #ff3333;
+    color: var(--background-primary);
+    background-color: var(--accent-primary);
+    cursor: pointer;
+    box-shadow: 4px 4px 0px 0px rgba(151, 34, 34, 0.89);
+    -webkit-box-shadow: 4px 4px 0px 0px rgba(151, 34, 34, 0.89);
+    -moz-box-shadow: 4px 4px 0px 0px rgba(151, 34, 34, 0.89);
 }
 
 @keyframes pulse {
