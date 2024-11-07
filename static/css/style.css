@@ -141,9 +141,10 @@ body {
   background-color: var(--background-secondary);
   padding: 20px;
   /* box-shadow: 0 1px 2px var(--shadow-light); */
-  box-shadow: 7px 7px 0px 0px rgba(255,75,75,0.75);
+  /* box-shadow: 7px 7px 0px 0px rgba(255,75,75,0.75);
   -webkit-box-shadow: 7px 7px 0px 0px rgba(255,75,75,0.75);
-  -moz-box-shadow: 7px 7px 0px 0px rgba(255,75,75,0.75);
+  -moz-box-shadow: 7px 7px 0px 0px rgba(255,75,75,0.75); */
+  border-left: 5px solid var(--accent-primary);
 }
 
 .params-container {
@@ -298,7 +299,7 @@ body {
   margin-top: 10px;
 }
 
-.post-actions .reactions {
+ .reactions {
   cursor: pointer;
   color: var(--text-primary);
   border: none;
@@ -306,11 +307,17 @@ body {
   background-color: transparent;
 }
 
-.post-actions .reactions svg {
+ .reactions svg {
   fill: none;
   stroke: var(--text-primary);
 }
-
+/* .comment_reactions {
+  cursor: pointer;
+  color: var(--text-primary);
+  border: none;
+  color: var(--accent-primary);
+  background-color: transparent;
+} */
 .comment-container {
   display: flex;
   gap: 10px;
