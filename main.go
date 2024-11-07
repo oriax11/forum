@@ -50,7 +50,7 @@ type Post struct {
 	Title          string
 	Content        string
 	Username       string
-	Categorie_type string
+	Categories string
 	CreatedAt      time.Time
 	TimeAgo        string
 	Comments       []Comment
@@ -331,7 +331,13 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 		title := r.FormValue("title")
 		content := r.FormValue("content")
 		category_type := r.Form["type"]
+
+		Allcategories := strings.Join(category_type, " ")
+		// category_content := "#" + strings.Join(category_type, " #")
+		// fmt.Println(category_content)
 		// fmt.Println(category_type, "hello")
+
+		
 		cookie, _ := r.Cookie("session_token")
 		email := sessions[cookie.Value]
 
@@ -343,8 +349,8 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 		db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
 
 		_, err = db.Exec(
-			"INSERT INTO Posts (user_id, title, content) VALUES (?, ?, ?)",
-			userID, title, content,
+			"INSERT INTO Posts (user_id, title, content, categories) VALUES (?, ?, ?, ?)",
+			userID, title, content, Allcategories,
 		)
 
 		if err != nil {
@@ -526,7 +532,7 @@ func AboutTime(t time.Time) string {
 }
 
 func getPosts() ([]Post, error) {
-	rows, err := db.Query(`SELECT p.post_id, p.title, p.content, p.created_at, u.username
+	rows, err := db.Query(`SELECT p.post_id, p.title, p.content, p.categories ,p.created_at, u.username
                            FROM Posts p
                            JOIN Users u ON p.user_id = u.user_id
                            ORDER BY p.created_at DESC`)
@@ -538,7 +544,7 @@ func getPosts() ([]Post, error) {
 	var posts []Post
 	for rows.Next() {
 		var post Post
-		if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.Username); err != nil {
+		if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.Categories, &post.CreatedAt, &post.Username); err != nil {
 			return nil, err
 		}
 		commentRows, err := db.Query(`SELECT comment_id ,username , comment_content, comment_date

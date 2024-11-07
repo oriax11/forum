@@ -7,18 +7,21 @@ CREATE TABLE Users (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE PostCategories (
-    category_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    post_id INTEGER,
-    category_name TEXT  NOT NULL,
-    FOREIGN KEY (post_id) REFERENCES Posts(post_id)
-);
+-- CREATE TABLE PostCategories (
+--     category_id INTEGER PRIMARY KEY AUTOINCREMENT,
+--     post_id INTEGER,
+--     category_name TEXT  NOT NULL,
+--     FOREIGN KEY (post_id) REFERENCES Posts(post_id)
+-- );
+
+
 
 CREATE TABLE Posts (
     post_id INTEGER PRIMARY KEY AUTOINCREMENT, 
     user_id INTEGER,
     title TEXT NOT NULL,
     content TEXT NOT NULL,
+    categories TEXT  NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
 );
