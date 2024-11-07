@@ -539,6 +539,19 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 		} else {
 			fmt.Print("empty string")
 		}
+	}else if action == "Liked" {	
+		rows, _ := db.Query(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at
+		FROM Posts p
+		JOIN Reactions r ON p.user_id = r.user_id
+		WHERE r.reaction_type = 'LIKE'`)
+		defer rows.Close()
+		var posts []Post
+		for rows.Next() {
+			var post Post
+			rows.Scan(&post.ID, &post.Title, &post.Content, &post.Categories, &post.CreatedAt)
+			posts = append(posts, post)
+		}
+		fmt.Println(posts)
 	}
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
