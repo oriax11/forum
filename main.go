@@ -55,6 +55,7 @@ type Post struct {
 	TimeAgo        string
 	Likes		int
 	Dislikes	int
+	Comments_counter int
 	Comments       []Comment
 }
 
@@ -552,8 +553,7 @@ func getPosts() ([]Post, error) {
 		}
 		db.QueryRow("SELECT COUNT(*) FROM Reactions where reaction_type = ? AND post_id = ?","LIKE", post.ID).Scan(&post.Likes)
 		db.QueryRow("SELECT COUNT(*) FROM Reactions where reaction_type = ? AND post_id = ?","DISLIKE", post.ID).Scan(&post.Dislikes)
-
-
+		db.QueryRow("SELECT COUNT(*) FROM Comment WHERE post_id = ?", post.ID).Scan(&post.Comments_counter)
 		commentRows, err := db.Query(`SELECT comment_id ,username , comment_content, comment_date
 		FROM Comment 
 		WHERE post_id = ? 

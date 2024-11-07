@@ -1,4 +1,3 @@
-{{ $message := .Message }}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -99,7 +98,7 @@
                             <span class="counter-holder">{{.Dislikes}}</span> 
                         </button>
 
-                        <btn id="comment-btn"  class="reactions"><svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12.071 18.86c4.103 0 7.429-3.102 7.429-6.93C19.5 8.103 16.174 5 12.071 5s-7.429 3.103-7.429 6.93c0 1.291.379 2.5 1.037 3.534.32.501-1.551 3.058-1.112 3.467.46.429 3.236-1.295 3.803-.99 1.09.585 2.354.92 3.701.92Z" class="icon_svg-stroke icon_svg-fill" stroke="#e0e0e0" stroke-width="1.5" fill="none"></path></svg>4</btn>
+                        <btn id="comment-btn"  class="reactions"><svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12.071 18.86c4.103 0 7.429-3.102 7.429-6.93C19.5 8.103 16.174 5 12.071 5s-7.429 3.103-7.429 6.93c0 1.291.379 2.5 1.037 3.534.32.501-1.551 3.058-1.112 3.467.46.429 3.236-1.295 3.803-.99 1.09.585 2.354.92 3.701.92Z" class="icon_svg-stroke icon_svg-fill" stroke="#e0e0e0" stroke-width="1.5" fill="none"></path></svg>{{.Comments_counter}}</btn>
                     </form>
                 </div>
                 <div id="comment-form">
@@ -110,20 +109,20 @@
                             <input type="text" name="comment-content" placeholder="comment" class="comment-input">
                             <button type="submit" class="comment-btn">Comment</button>
                         </div>
-                        <div class="comment-content">
-                            <div class="post-header">
-                                <div class="flex">
-                                    <i id="user_icon" class="fa-solid fa-user"></i>
-                                    <strong>{{ $message }}</strong>
-                                </div>
-                            </div>   
-                            {{range .Comments}}
-                            <p>{{.Creation}}</p>
-                            <p>{{.Author}}</p>
-                            <p id="thecomment">{{.Content}}</p>
-                            {{end}}
-                        </div>
                     </form>
+                    {{range .Comments}}
+                    <div class="comment-content">
+                        <div class="post-header">
+                            <div class="flex">
+                                <i id="user_icon" class="fa-solid fa-user"></i>
+                                <strong>{{.Author}}</strong>
+                            </div>
+                        </div>   
+                        <p>{{.Creation}}</p>
+                        <p>{{.Author}}</p>
+                        <p id="thecomment">{{.Content}}</p>
+                    </div>
+                    {{end}}
                 </div>   
             </div>
         </div>
