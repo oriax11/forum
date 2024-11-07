@@ -294,6 +294,21 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 		email := r.FormValue("email")
 		fullname := r.FormValue("fullname")
 		password := r.FormValue("password")
+		
+		if len(username) > 20 {
+            erro := Errors{
+                ErrorType: "Username cannot exceed 20 characters.",
+            }
+            tpl.ExecuteTemplate(w, "register.html", erro)
+            return
+        }
+        if len(password) < 8 {
+            erro := Errors{
+                ErrorType: "Password cannot be less than 8 characters.",
+            }
+            tpl.ExecuteTemplate(w, "register.html", erro)
+            return
+        }
 
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 		if err != nil {
@@ -341,14 +356,27 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 		// fmt.Println(category_content)
 		// fmt.Println(category_type, "hello")
 
+		if  len(title) > 150 {
+            http.Error(w, "Post title cannot exceed 150 characters.", http.StatusBadRequest)
+            return
+        }
+        if  len(content) > 3000 {
+            http.Error(w, "Post content cannot exceed 3000 characters.", http.StatusBadRequest)
+            return
+        }
+
 		
 		cookie, _ := r.Cookie("session_token")
 		email := sessions[cookie.Value]
 
-		if title == "" || content == "" || len(category_type) == 0 {
-			http.Error(w, "bad request", http.StatusBadRequest)
-			return
-		}
+		if  len(category_type) == 0 {
+            http.Error(w, "category cannot be emty", http.StatusBadRequest)
+            return
+        }
+        if title == "" || content == "" {
+            http.Error(w, "Title and content cannot be empty", http.StatusBadRequest)
+            return
+        }
 
 		db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
 
