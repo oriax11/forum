@@ -545,20 +545,45 @@ func handleFormSubmission(w http.ResponseWriter, r *http.Request) {
 			fmt.Print("empty string")
 		}
 	}else if action == "Liked" {	
-		rows, _ := db.Query(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at
-		FROM Posts p
-		JOIN Reactions r ON p.user_id = r.user_id
-		WHERE r.reaction_type = 'LIKE'`)
+		rows, _ := db.Query(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
+FROM Posts p
+JOIN Users u ON p.user_id = u.user_id
+JOIN Reactions r ON p.post_id = r.post_id
+WHERE r.reaction_type = 'LIKE'`)
 		defer rows.Close()
 		var posts []Post
 		for rows.Next() {
 			var post Post
-			rows.Scan(&post.ID, &post.Title, &post.Content, &post.Categories, &post.CreatedAt)
-			posts = append(posts, post)
+			rows.Scan(&post.ID, &post.Title, &post.Content, &post.Categories, &post.CreatedAt,post.Username)
+			db.QueryRow("SELECT COUNT(*) FROM Reactions where reaction_type = ? AND post_id = ?","LIKE", post.ID).Scan(&post.Likes)
+		db.QueryRow("SELECT COUNT(*) FROM Reactions where reaction_type = ? AND post_id = ?","DISLIKE", post.ID).Scan(&post.Dislikes)
+		db.QueryRow("SELECT COUNT(*) FROM Comment WHERE post_id = ?", post.ID).Scan(&post.Comments_counter)
+		commentRows, _ := db.Query(`SELECT comment_id ,username , comment_content, comment_date
+		FROM Comment 
+		WHERE post_id = ? 
+		ORDER BY comment_date ASC`, post.ID)
+		var comments []Comment
+		for commentRows.Next() {
+			var comment Comment
+			commentRows.Scan(&comment.Id, &comment.Author, &comment.Content, &comment.Creation)
+			comments = append(comments, comment)
 		}
-		fmt.Println(posts)
+		post.Comments = comments
+
+		post.TimeAgo = AboutTime(post.CreatedAt)
+		posts = append(posts, post)
+	}
+	data := struct {
+		P       []Post
+		Message string
+	}{
+		P:       posts,
+		Message: "",
 	}
 
+	 tpl.ExecuteTemplate(w, "forum.html", data) 
+		return
+	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
