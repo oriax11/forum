@@ -53,6 +53,8 @@ type Post struct {
 	Categories string
 	CreatedAt      time.Time
 	TimeAgo        string
+	Likes		int
+	Dislikes	int
 	Comments       []Comment
 }
 
@@ -548,6 +550,10 @@ func getPosts() ([]Post, error) {
 		if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.Categories, &post.CreatedAt, &post.Username); err != nil {
 			return nil, err
 		}
+		db.QueryRow("SELECT COUNT(*) FROM Reactions where reaction_type = ? AND post_id = ?","LIKE", post.ID).Scan(&post.Likes)
+		db.QueryRow("SELECT COUNT(*) FROM Reactions where reaction_type = ? AND post_id = ?","DISLIKE", post.ID).Scan(&post.Dislikes)
+
+
 		commentRows, err := db.Query(`SELECT comment_id ,username , comment_content, comment_date
 		FROM Comment 
 		WHERE post_id = ? 
