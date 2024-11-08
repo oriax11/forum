@@ -1,60 +1,15 @@
 package forum_full
 
 import (
-	"database/sql"
 	"fmt"
 	"net/http"
 	"strings"
-	"time"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 func HandleFormSubmission(w http.ResponseWriter, r *http.Request) {
 	action := r.FormValue("query")
 
-	if action == "reg" {
-		username := r.FormValue("username")
-		email := r.FormValue("email")
-		fullname := r.FormValue("fullname")
-		password := r.FormValue("password")
-
-		if len(username) > 20 {
-			erro := Errors{
-				ErrorType: "Username cannot exceed 20 characters.",
-			}
-			tpl.ExecuteTemplate(w, "register.html", erro)
-			return
-		}
-		if len(password) < 8 {
-			erro := Errors{
-				ErrorType: "Password cannot be less than 8 characters.",
-			}
-			tpl.ExecuteTemplate(w, "register.html", erro)
-			return
-		}
-
-		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-		if err != nil {
-			http.Error(w, "Error processing password", http.StatusInternalServerError)
-			return
-		}
-
-		_, err = db.Exec("INSERT INTO Users (username, email, fullname, password) VALUES (?, ?, ?, ?)",
-			username, email, fullname, string(hashedPassword))
-		if err != nil {
-			if strings.Contains(err.Error(), "UNIQUE constraint failed: Users.username") {
-				erro := Errors{
-					ErrorType: "Username already exists",
-				}
-				tpl.ExecuteTemplate(w, "register.html", erro)
-				return
-			}
-			http.Error(w, "User registration failed", http.StatusInternalServerError)
-			return
-		}
-
-	} else if action == "newpost" {
+	if action == "newpost" {
 		_, err := r.Cookie("Guest_token")
 		if err == nil {
 			erro := Errors{
@@ -112,59 +67,6 @@ func HandleFormSubmission(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-	} else if action == "login" {
-		email := r.FormValue("email")
-		password := r.FormValue("password")
-
-		type Cred struct {
-			HashedPassword string
-		}
-		var cred Cred
-
-		err := db.QueryRow("SELECT password FROM Users WHERE email = ?", email).Scan(&cred.HashedPassword)
-		if err == sql.ErrNoRows {
-			erro := Errors{
-				ErrorType: "No user with this email!",
-			}
-			tpl.ExecuteTemplate(w, "login.html", erro)
-			return
-		} else if err != nil {
-			http.Error(w, "Database error", http.StatusInternalServerError)
-			return
-		}
-
-		err = bcrypt.CompareHashAndPassword([]byte(cred.HashedPassword), []byte(password))
-		if err != nil {
-			erro := Errors{
-				ErrorType: "Incorrect password!",
-			}
-			tpl.ExecuteTemplate(w, "login.html", erro)
-			return
-		}
-		deleteAllCookies(w, r)
-
-		sessionID, err := generateSessionID()
-		if err != nil {
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			return
-		}
-
-		// Store session information in memory
-		sessions[sessionID] = email
-
-		// Set session cookie
-		http.SetCookie(w, &http.Cookie{
-			Name:     "session_token",
-			Value:    sessionID,
-			Expires:  time.Now().Add(1 * time.Hour),
-			HttpOnly: true,
-		})
-
-		// login = true
-		fmt.Println("Successfully logged in")
-
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
 	} else if action == "react" {
 		var userID int
 
