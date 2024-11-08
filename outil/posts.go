@@ -1,6 +1,5 @@
 package forum_full
 
-
 func getPosts() ([]Post, error) {
 	rows, err := db.Query(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
 						   FROM Posts p
@@ -36,6 +35,8 @@ func getPosts() ([]Post, error) {
 			if err := commentRows.Scan(&comment.Id, &comment.Author, &comment.Content, &comment.Creation); err != nil {
 				return nil, err
 			}
+			comment.TimeAgo_com = AboutTime(comment.Creation)
+
 			comments = append(comments, comment)
 		}
 		post.Comments = comments
