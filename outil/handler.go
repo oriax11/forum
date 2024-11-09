@@ -235,6 +235,11 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 				tpl.ExecuteTemplate(w, "login.html", erro)
 				return
 			}
+			for key , value := range sessions {
+				if value == email {
+					delete(sessions, key)
+				}
+			}
 			deleteAllCookies(w, r)
 
 			sessionID, err := generateSessionID()
