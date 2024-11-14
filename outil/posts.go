@@ -35,6 +35,9 @@ func getPosts() ([]Post, error) {
 			if err := commentRows.Scan(&comment.Id, &comment.Author, &comment.Content, &comment.Creation); err != nil {
 				return nil, err
 			}
+			db.QueryRow("SELECT COUNT(*) FROM Reactions WHERE reaction_type = ? AND comment_id = ?", "LIKE", comment.Id).Scan(&comment.Likes)
+			db.QueryRow("SELECT COUNT(*) FROM Reactions WHERE reaction_type = ? AND comment_id = ?", "DISLIKE", comment.Id).Scan(&comment.Dislikes)
+
 			comment.TimeAgo_com = AboutTime(comment.Creation)
 
 			comments = append(comments, comment)

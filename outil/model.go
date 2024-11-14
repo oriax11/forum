@@ -20,6 +20,8 @@ type Comment struct {
 	Author   string
 	Creation time.Time
 	TimeAgo_com   string
+	Likes		int
+	Dislikes	int
 }
 
 type Post struct {

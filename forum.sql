@@ -37,15 +37,15 @@ CREATE TABLE Reactions (
     UNIQUE(post_id, user_id)
 );
 
-CREATE TABLE Comment_Reaction (
-    com_reaction_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    post_id INTEGER,
+CREATE TABLE CommentReactions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    comment_id INTEGER,
     user_id INTEGER,
-    reaction_type TEXT CHECK(reaction_type IN ('LIKE', 'DISLIKE')), /* HNA KHASSNI NZID WN9SS*/
+    reaction_type TEXT CHECK(reaction_type IN ('LIKE', 'DISLIKE'))
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (post_id) REFERENCES Posts(post_id),
+    FOREIGN KEY (comment_id) REFERENCES Comment(comment_id),
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    UNIQUE(post_id, user_id)
+    UNIQUE(comment_id, user_id)
 );
 
 

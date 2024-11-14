@@ -154,7 +154,7 @@
                                     <path d="M12 4 3 15h6v5h6v-5h6z" class="icon_svg-stroke icon_svg-fill" 
                                           stroke-width="1.5" stroke="#e0e0e0" fill="none" stroke-linejoin="round"></path>
                                 </svg>
-                                <span class="counter-holder"></span>
+                                <span class="counter-holder">{{.Likes}}</span>
                             </button>
                         
                             <button name="dislike-btn" value="DISLIKE" class="reactions">
@@ -162,7 +162,7 @@
                                     <path d="m12 20 9-11h-6V4H9v5H3z" class="icon_svg-stroke icon_svg-fill" 
                                           stroke="#e0e0e0" fill="none" stroke-width="1.5" stroke-linejoin="round"></path>
                                 </svg>
-                                <span class="counter-holder"></span> 
+                                <span class="counter-holder">{{.Dislikes}}</span> 
                             </button>
                         </form>
                     </div>
