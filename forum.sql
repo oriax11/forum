@@ -7,15 +7,6 @@ CREATE TABLE Users (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- CREATE TABLE PostCategories (
---     category_id INTEGER PRIMARY KEY AUTOINCREMENT,
---     post_id INTEGER,
---     category_name TEXT  NOT NULL,
---     FOREIGN KEY (post_id) REFERENCES Posts(post_id)
--- );
-
-
-
 CREATE TABLE Posts (
     post_id INTEGER PRIMARY KEY AUTOINCREMENT, 
     user_id INTEGER,
@@ -23,31 +14,19 @@ CREATE TABLE Posts (
     content TEXT NOT NULL,
     categories TEXT  NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
 CREATE TABLE Reactions (
     reaction_id INTEGER PRIMARY KEY AUTOINCREMENT,
     post_id INTEGER,
     user_id INTEGER,
-    reaction_type TEXT CHECK(reaction_type IN ('LIKE', 'DISLIKE')), /* HNA KHASSNI NZID WN9SS*/
+    reaction_type TEXT CHECK(reaction_type IN ('LIKE', 'DISLIKE')),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (post_id) REFERENCES Posts(post_id),
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
     UNIQUE(post_id, user_id)
 );
-
-CREATE TABLE CommentReactions (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    comment_id INTEGER,
-    user_id INTEGER,
-    reaction_type TEXT CHECK(reaction_type IN ('LIKE', 'DISLIKE'))
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (comment_id) REFERENCES Comment(comment_id),
-    FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    UNIQUE(comment_id, user_id)
-);
-
 
 CREATE TABLE Comment (
     comment_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -58,4 +37,13 @@ CREATE TABLE Comment (
     FOREIGN KEY (post_id) REFERENCES Posts(post_id)
 );
 
-
+CREATE TABLE CommentReactions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    comment_id INTEGER,
+    user_id INTEGER,
+    reaction_type TEXT CHECK(reaction_type IN ('LIKE', 'DISLIKE')),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (comment_id) REFERENCES Comment(comment_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    UNIQUE(comment_id, user_id)
+);

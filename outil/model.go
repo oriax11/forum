@@ -15,7 +15,7 @@ type User struct {
 }
 
 type Comment struct {
-	Id       int
+	ID       int
 	Content  string
 	Author   string
 	Creation time.Time

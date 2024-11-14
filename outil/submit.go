@@ -131,7 +131,7 @@ func HandleFormSubmission(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
-		 fmt.Println(react_holder , post_id , userID)
+		fmt.Println(react_holder , post_id , userID)
 
 		}else if action == "comment_react" {
 			var userID int
@@ -165,7 +165,7 @@ func HandleFormSubmission(w http.ResponseWriter, r *http.Request) {
 		
 			if len(reaction_type) == 0 {
 				_, err = db.Exec(
-					"INSERT INTO CommentReactions (comment_id, user_id, reaction_type) VALUES (?, ?, ?)",
+					"INSERT INTO CommentReactions (comment_id, user_id, reaction_type) VALUES ($1, $2, $3)",
 					comment_id, userID, react_holder,
 				)
 				if err != nil {
@@ -196,7 +196,6 @@ func HandleFormSubmission(w http.ResponseWriter, r *http.Request) {
 					}
 				}
 			}
-			fmt.Println(react_holder , comment_id , userID)
 		
 		} else if action == "comment" {
 		var username string
@@ -223,7 +222,7 @@ func HandleFormSubmission(w http.ResponseWriter, r *http.Request) {
 			)
 			if err != nil {
 				fmt.Print(err, "insert")
-				http.Error(w, "comment creation failed", http.StatusInternalServerError)
+				http.Error(w, "Post creation failed", http.StatusInternalServerError)
 				return
 			}
 		} else {
