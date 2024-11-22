@@ -229,19 +229,63 @@ func HandleFormSubmission(w http.ResponseWriter, r *http.Request) {
 			fmt.Print("empty string")
 		}
 	} else if action == "Liked" {
-		rows, _ := db.Query(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at
-		FROM Posts p
-		JOIN Reactions r ON p.user_id = r.user_id
-		WHERE r.reaction_type = 'LIKE'`)
+		var id string
+		cookie, _ := r.Cookie("session_token")
+		email := sessions[cookie.Value]
+
+		db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&id)
+		rows, _ := db.Query(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
+						   FROM Posts p
+						   JOIN Users u ON p.user_id = u.user_id
+		JOIN Reactions r ON p.post_id = r.post_id
+		WHERE r.reaction_type = 'LIKE' AND r.user_id=?`, id)
 		defer rows.Close()
 		var posts []Post
 		for rows.Next() {
 			var post Post
-			rows.Scan(&post.ID, &post.Title, &post.Content, &post.Categories, &post.CreatedAt)
+			rows.Scan(&post.ID, &post.Title, &post.Content, &post.Categories, &post.CreatedAt, &post.Username)
+			db.QueryRow("SELECT COUNT(*) FROM Reactions where reaction_type = ? AND post_id = ?", "LIKE", post.ID).Scan(&post.Likes)
+			db.QueryRow("SELECT COUNT(*) FROM Reactions where reaction_type = ? AND post_id = ?", "DISLIKE", post.ID).Scan(&post.Dislikes)
+			db.QueryRow("SELECT COUNT(*) FROM Comment WHERE post_id = ?", post.ID).Scan(&post.Comments_counter)
+			// Get comments for each post
+			commentRows, _ := db.Query(`SELECT comment_id ,username , comment_content, comment_date
+										  FROM Comment WHERE post_id = ?
+										  ORDER BY comment_date ASC`, post.ID)
+
+			defer commentRows.Close()
+
+			var comments []Comment
+			for commentRows.Next() {
+				var comment Comment
+				commentRows.Scan(&comment.ID, &comment.Author, &comment.Content, &comment.Creation)
+				db.QueryRow("SELECT COUNT(*) FROM Comment_Reactions WHERE reaction_type = ? AND comment_id = ?", "LIKE", comment.ID).Scan(&comment.Likes)
+				db.QueryRow("SELECT COUNT(*) FROM Comment_Reactions WHERE reaction_type = ? AND comment_id = ?", "DISLIKE", comment.ID).Scan(&comment.Dislikes)
+
+				comment.TimeAgo_com = AboutTime(comment.Creation)
+
+				comments = append(comments, comment)
+			}
+			post.Comments = comments
+
+			post.TimeAgo = AboutTime(post.CreatedAt)
 			posts = append(posts, post)
 		}
-		fmt.Println(posts)
+		data := struct {
+			P       []Post
+			Message string
+		}{
+			P:       posts,
+			Message: "",
+		}
+
+		tpl.ExecuteTemplate(w, "forum.html", data)
+	} else if action == "created" {
+		// rows, _ := db.QueryRow(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
+		// 				   FROM Posts p
+		// 				   JOIN Users u ON p.user_id = u.user_id`)
+		// defer rows.Close()
 	}
+
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

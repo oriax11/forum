@@ -3,7 +3,6 @@ package forum_full
 import (
 	"database/sql"
 	"fmt"
-	"os"
 	"text/template"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -24,15 +23,16 @@ func init() {
 func InitDB() error {
 	var err error
 	db, err = sql.Open("sqlite3", "./forum.db")
-	sqlBytes, err := os.ReadFile("./forum.sql")
-	if err != nil {
-		fmt.Println("Error reading SQL file:", err)
-		return err
-	}
-	sqlQueries := string(sqlBytes)
 
-	// Execute the SQL queries
-	_, _ = db.Exec(sqlQueries)
+	// sqlBytes, err := os.ReadFile("./forum.sql")
+	// if err != nil {
+	// 	fmt.Println("Error reading SQL file:", err)
+	// 	return err
+	// }
+	// sqlQueries := string(sqlBytes)
+
+	// // Execute the SQL queries
+	// _, _ = db.Exec(sqlQueries)
 	return err
 }
 
