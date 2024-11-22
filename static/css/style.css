@@ -323,7 +323,6 @@ body {
 
 .post {
   border-top: 1px dashed var(--border-color);
-  padding-top: 20px;
   margin-top: 20px;
 }
 
@@ -359,8 +358,19 @@ body {
   color: var(--accent-primary);
   font-size: 12px;
   background-color: transparent;
-
 }
+.reactions:hover svg path {
+  stroke: var(--text-checkbox);
+  fill: var(--accent-primary);
+}
+
+.post_content {
+  margin-top: 20px;
+  padding-bottom: 20px;
+  word-wrap: break-word;
+  border-bottom: 1px dashed var(--border-color);
+}
+
 
 .reactions_holder {
   display: flex;
@@ -368,9 +378,18 @@ body {
   gap: 10px;
 }
 .reactions_holder .like_dislike {
-  background-color: var(--background-primary);
+  display: flex;
+  align-items: center;
+  text-align: center;
+  gap: 3px;
+  background-color: #1a1a1aa4;
   border-radius: 4px;
   padding: 4px;
+  padding-right: 8px;
+}
+.counter-holder {
+  color: var(--accent-primary);
+  font-size: 12px;
 }
 
 textarea:focus {
