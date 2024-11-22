@@ -49,7 +49,7 @@ body {
   box-shadow: 0 1px 1px rgba(255, 255, 255, 0.1);
   position: sticky;
   top: 0;
-  z-index: 1000; /* Ensure it stays above other elements */
+  z-index: 1000;
 }
 
 
@@ -279,7 +279,7 @@ body {
 
 .input-content {
   width: 97%;
-  font-size: 14px;
+  font-size: 16px;
   height: 100px;
   margin-bottom: 10px;
   padding: 10px;
@@ -300,7 +300,7 @@ body {
   background-color: var(--background-input);
   resize: none;
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .post-form button {
@@ -321,7 +321,7 @@ body {
 }
 
 .post {
-  border-top: 1px solid var(--border-color);
+  border-top: 1px dashed var(--border-color);
   padding-top: 20px;
   margin-top: 20px;
 }
@@ -363,6 +363,10 @@ body {
  .reactions svg {
   fill: none;
   stroke: var(--text-primary);
+}
+textarea:focus {
+  border: 1px solid var(--border-color);
+  outline: none;
 }
 
 .comment-container {

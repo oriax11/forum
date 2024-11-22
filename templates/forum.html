@@ -44,26 +44,29 @@
     
     <div class="stky-sidebar">
         <ul>
+            <li><a href="/">Home</a></li>
             <!-- <li><a href="#"><i class="fa-solid fa-list"></i> categories</a></li> -->
-             <form class="categories_selection" method="post">
-                &nbsp;&nbsp;<i class="fa-solid fa-list"></i>
-                <select class="category-select" name="categories">
-                    <option value="" disabled selected>Select Category</option>
-                    <option value="sport">All</option>
-                    <option value="general">General</option>
-                    <option value="news">News</option>
-                    <option value="tech">Tech</option>
-                    <option value="art">Art</option>
-                    <option value="sport">Sport</option>
-                </select>
-             </form>
-
-            <li><a href="#"> created posts</a></li>
+             <li>
+                <form class="categories_selection" method="post">
+                    &nbsp;&nbsp;<i class="fa-solid fa-list"></i>
+                    <select class="category-select" name="categories">
+                        <option value="" disabled selected>Select Category</option>
+                        <option value="sport">All</option>
+                        <option value="general">General</option>
+                        <option value="news">News</option>
+                        <option value="tech">Tech</option>
+                        <option value="art">Art</option>
+                        <option value="sport">Sport</option>
+                    </select>
+                 </form>
+             </li>
+            <li><a href="#"> Created posts</a></li>
+            <li>
             <form action="" method="post">
                 <input type="hidden" name="query" value="Liked">
-                <li><button class="liked_post" type="submit"><i class="fa-regular fa-heart"></i> liked posts</button></li>
+                <button class="liked_post" type="submit"><i class="fa-regular fa-heart"></i> liked posts</button>
             </form>
-            <li><a href="#">more*...</a></li>
+            </li>
         </ul>
     </div>
 
