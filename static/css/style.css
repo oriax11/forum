@@ -337,6 +337,7 @@ body {
   align-items: center;
 }
 
+
 .post-header_content {
   display: flex;
   align-items: center;
@@ -382,11 +383,22 @@ body {
   align-items: center;
   text-align: center;
   gap: 3px;
-  background-color: #1a1a1aa4;
+  background-color: #1a1a1a7e;
   border-radius: 4px;
   padding: 4px;
   padding-right: 8px;
 }
+.like_dislike-comments {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  gap: 3px;
+  width: 9%;
+  background-color: var(--background-checkbox);
+  border-radius: 4px;
+  padding: 4px;
+}
+
 .counter-holder {
   color: var(--accent-primary);
   font-size: 12px;
@@ -396,7 +408,16 @@ textarea:focus {
   border: 1px solid var(--border-color);
   outline: none;
 }
-
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px dashed var(--border-color);
+}
+#thecomment {
+  padding-bottom: 20px;
+  border-bottom: 1px dashed var(--border-color);
+}
 .comment-container {
   display: flex;
   gap: 10px;
