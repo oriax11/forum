@@ -47,18 +47,19 @@
             <li><a href="/">Home</a></li>
             <!-- <li><a href="#"><i class="fa-solid fa-list"></i> categories</a></li> -->
              <li>
-                <form class="categories_selection" method="post">
+                <form class="categories_selection" method="get" action="/filter">
+                    <input type="hidden" name="query" value="cat_filter">
                     &nbsp;&nbsp;<i class="fa-solid fa-list"></i>
-                    <select class="category-select" name="categories">
+                    <select class="category-select" name="categories" onchange="this.form.submit()">
                         <option value="" disabled selected>Select Category</option>
-                        <option value="sport">All</option>
-                        <option value="general">General</option>
-                        <option value="news">News</option>
-                        <option value="tech">Tech</option>
-                        <option value="art">Art</option>
-                        <option value="sport">Sport</option>
+                        <option value="General">General</option>
+                        <option value="News">News</option>
+                        <option value="Technology">Tech</option>
+                        <option value="Art">Art</option>
+                        <option value="Sport">Sport</option>
                     </select>
-                 </form>
+                </form>
+                
              </li>
             <li>
                 <form action="" method="post">

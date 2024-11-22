@@ -24,6 +24,8 @@ func main() {
 	http.HandleFunc("/guest", outil.GuestHandler)
 	http.HandleFunc("/logout", outil.LogoutHandler)
 	http.HandleFunc("/report", outil.ReportHandler)
+	http.HandleFunc("/filter", outil.FilterHandler)
+
 
 	// Start the server
 	log.Println("Server is running on port http://localhost:9080/")
