@@ -9,44 +9,11 @@ func getPosts() ([]Post, error) {
 		return nil, err
 	}
 	defer rows.Close()
-
 	var posts []Post
-	for rows.Next() {
-		var post Post
-		if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.Categories, &post.CreatedAt, &post.Username); err != nil {
-			return nil, err
-		}
-		// Get post reactions
-		db.QueryRow("SELECT COUNT(*) FROM Reactions where reaction_type = ? AND post_id = ?", "LIKE", post.ID).Scan(&post.Likes)
-		db.QueryRow("SELECT COUNT(*) FROM Reactions where reaction_type = ? AND post_id = ?", "DISLIKE", post.ID).Scan(&post.Dislikes)
-		db.QueryRow("SELECT COUNT(*) FROM Comment WHERE post_id = ?", post.ID).Scan(&post.Comments_counter)
 
-		// Get comments for each post
-		commentRows, err := db.Query(`SELECT comment_id, username, comment_content, comment_date
-									FROM Comment WHERE post_id = ?
-									ORDER BY comment_date ASC`, post.ID)
-		if err != nil {
-			return nil, err
-		}
-		defer commentRows.Close()
-
-		var comments []Comment
-		for commentRows.Next() {
-			var comment Comment
-			if err := commentRows.Scan(&comment.ID, &comment.Author, &comment.Content, &comment.Creation); err != nil {
-				return nil, err
-			}
-			// Get comment reactions
-			db.QueryRow("SELECT COUNT(*) FROM CommentReactions WHERE reaction_type = ? AND comment_id = ?", "LIKE", comment.ID).Scan(&comment.Likes)
-			db.QueryRow("SELECT COUNT(*) FROM CommentReactions WHERE reaction_type = ? AND comment_id = ?", "DISLIKE", comment.ID).Scan(&comment.Dislikes)
-
-			comment.TimeAgo_com = AboutTime(comment.Creation)
-			comments = append(comments, comment)
-		}
-		post.Comments = comments
-
-		post.TimeAgo = AboutTime(post.CreatedAt)
-		posts = append(posts, post)
+	posts, err = Getcontent(rows)
+	if err != nil {
+		return nil, err
 	}
 	return posts, nil
 }
