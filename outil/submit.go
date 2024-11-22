@@ -89,7 +89,7 @@ func HandleFormSubmission(w http.ResponseWriter, r *http.Request) {
 		post_id := r.FormValue("post_id")
 		var react_holder string
 		var reaction_type string
-		
+
 		if len(like_btn) == 0 && len(dislike_btn) > 0 {
 			react_holder = dislike_btn
 		} else if len(like_btn) > 0 && len(dislike_btn) == 0 {
@@ -131,73 +131,73 @@ func HandleFormSubmission(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
-		fmt.Println(react_holder , post_id , userID)
+		fmt.Println(react_holder, post_id, userID)
 
-		}else if action == "comment_react" {
-			var userID int
-		
-			_, err := r.Cookie("Guest_token")
-			if err == nil {
-				erro := Errors{
-					ErrorType: "Only registered Users can react!",
-				}
-				tpl.ExecuteTemplate(w, "login.html", erro)
+	} else if action == "comment_react" {
+		var userID int
+
+		_, err := r.Cookie("Guest_token")
+		if err == nil {
+			erro := Errors{
+				ErrorType: "Only registered Users can react!",
+			}
+			tpl.ExecuteTemplate(w, "login.html", erro)
+			return
+		}
+
+		cookie, _ := r.Cookie("session_token")
+		email := sessions[cookie.Value]
+
+		db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
+
+		like_btn := r.FormValue("like-btn")
+		dislike_btn := r.FormValue("dislike-btn")
+		comment_id := r.FormValue("comment_id")
+		var react_holder string
+		var reaction_type string
+
+		if len(like_btn) == 0 && len(dislike_btn) > 0 {
+			react_holder = dislike_btn
+		} else if len(like_btn) > 0 && len(dislike_btn) == 0 {
+			react_holder = like_btn
+		}
+		db.QueryRow("SELECT reaction_type FROM CommentReactions WHERE comment_id = ? AND user_id = ?", comment_id, userID).Scan(&reaction_type)
+
+		if len(reaction_type) == 0 {
+			_, err = db.Exec(
+				"INSERT INTO CommentReactions (comment_id, user_id, reaction_type) VALUES ($1, $2, $3)",
+				comment_id, userID, react_holder,
+			)
+			if err != nil {
+				fmt.Print(err, "insert")
+				http.Error(w, "Comment reaction failed", http.StatusInternalServerError)
 				return
 			}
-
-			cookie, _ := r.Cookie("session_token")
-			email := sessions[cookie.Value]
-		
-			db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
-
-			like_btn := r.FormValue("like-btn")
-			dislike_btn := r.FormValue("dislike-btn")
-			comment_id := r.FormValue("comment_id")
-			var react_holder string
-			var reaction_type string
-		
-			if len(like_btn) == 0 && len(dislike_btn) > 0 {
-				react_holder = dislike_btn
-			} else if len(like_btn) > 0 && len(dislike_btn) == 0 {
-				react_holder = like_btn
-			}
-			db.QueryRow("SELECT reaction_type FROM CommentReactions WHERE comment_id = ? AND user_id = ?", comment_id, userID).Scan(&reaction_type)
-		
-			if len(reaction_type) == 0 {
+		} else {
+			if react_holder == reaction_type {
 				_, err = db.Exec(
-					"INSERT INTO CommentReactions (comment_id, user_id, reaction_type) VALUES ($1, $2, $3)",
-					comment_id, userID, react_holder,
+					"DELETE FROM CommentReactions WHERE comment_id = ? AND user_id = ?",
+					comment_id, userID,
 				)
 				if err != nil {
-					fmt.Print(err, "insert")
-					http.Error(w, "Comment reaction failed", http.StatusInternalServerError)
+					fmt.Print(err, "Delete")
+					http.Error(w, "Failed to remove reaction", http.StatusInternalServerError)
 					return
 				}
 			} else {
-				if react_holder == reaction_type {
-					_, err = db.Exec(
-						"DELETE FROM CommentReactions WHERE comment_id = ? AND user_id = ?",
-						comment_id, userID,
-					)
-					if err != nil {
-						fmt.Print(err, "Delete")
-						http.Error(w, "Failed to remove reaction", http.StatusInternalServerError)
-						return
-					}
-				} else {
-					_, err = db.Exec(
-						"UPDATE CommentReactions SET reaction_type = ? WHERE comment_id = ? AND user_id = ?",
-						react_holder, comment_id, userID,
-					)
-					if err != nil {
-						fmt.Print(err, "Update")
-						http.Error(w, "Failed to update reaction", http.StatusInternalServerError)
-						return
-					}
+				_, err = db.Exec(
+					"UPDATE CommentReactions SET reaction_type = ? WHERE comment_id = ? AND user_id = ?",
+					react_holder, comment_id, userID,
+				)
+				if err != nil {
+					fmt.Print(err, "Update")
+					http.Error(w, "Failed to update reaction", http.StatusInternalServerError)
+					return
 				}
 			}
-		
-		} else if action == "comment" {
+		}
+
+	} else if action == "comment" {
 		var username string
 		comment_content := r.FormValue("comment-content")
 		post_id := r.FormValue("post_id")
@@ -280,12 +280,62 @@ func HandleFormSubmission(w http.ResponseWriter, r *http.Request) {
 
 		tpl.ExecuteTemplate(w, "forum.html", data)
 	} else if action == "created" {
+		var id string
+		cookie, _ := r.Cookie("session_token")
+		email := sessions[cookie.Value]
+
+		db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&id)
+		rows, _ := db.Query(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
+						   FROM Posts p
+						   JOIN Users u ON p.user_id = u.user_id
+						   WHERE u.user_id = ? `, id)
+
+		defer rows.Close()
+		var posts []Post
+		for rows.Next() {
+			var post Post
+			rows.Scan(&post.ID, &post.Title, &post.Content, &post.Categories, &post.CreatedAt, &post.Username)
+			db.QueryRow("SELECT COUNT(*) FROM Reactions where reaction_type = ? AND post_id = ?", "LIKE", post.ID).Scan(&post.Likes)
+			db.QueryRow("SELECT COUNT(*) FROM Reactions where reaction_type = ? AND post_id = ?", "DISLIKE", post.ID).Scan(&post.Dislikes)
+			db.QueryRow("SELECT COUNT(*) FROM Comment WHERE post_id = ?", post.ID).Scan(&post.Comments_counter)
+			// Get comments for each post
+			commentRows, _ := db.Query(`SELECT comment_id ,username , comment_content, comment_date
+															 FROM Comment WHERE post_id = ?
+															 ORDER BY comment_date ASC`, post.ID)
+
+			defer commentRows.Close()
+
+			var comments []Comment
+			for commentRows.Next() {
+				var comment Comment
+				commentRows.Scan(&comment.ID, &comment.Author, &comment.Content, &comment.Creation)
+				db.QueryRow("SELECT COUNT(*) FROM Comment_Reactions WHERE reaction_type = ? AND comment_id = ?", "LIKE", comment.ID).Scan(&comment.Likes)
+				db.QueryRow("SELECT COUNT(*) FROM Comment_Reactions WHERE reaction_type = ? AND comment_id = ?", "DISLIKE", comment.ID).Scan(&comment.Dislikes)
+
+				comment.TimeAgo_com = AboutTime(comment.Creation)
+
+				comments = append(comments, comment)
+			}
+			post.Comments = comments
+
+			post.TimeAgo = AboutTime(post.CreatedAt)
+			posts = append(posts, post)
+		}
+		data := struct {
+			P       []Post
+			Message string
+		}{
+			P:       posts,
+			Message: "",
+		}
+
+		tpl.ExecuteTemplate(w, "forum.html", data)
+
 		// rows, _ := db.QueryRow(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
 		// 				   FROM Posts p
 		// 				   JOIN Users u ON p.user_id = u.user_id`)
 		// defer rows.Close()
 	}
-
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
