@@ -28,7 +28,9 @@
 a {
   text-decoration: none;
 }
-
+button,a , option{
+  cursor: pointer;
+}
 * {
   font-family: 'Helvetica Neue', sans-serif;
 }
@@ -306,7 +308,7 @@ body {
 .post-form button {
   color: var(--accent-primary);
   background-color: transparent;
-  padding: 8px 16px;
+  padding: 6px 12px;
   border: 1px solid var(--accent-primary);
   cursor: pointer;
   font-size: 16px;
@@ -315,7 +317,6 @@ body {
 
 .post-form button:hover {
   color: var(--background-primary);
-  padding: 8px 16px;
   background-color: var(--accent-primary);
   cursor: pointer;
 }
@@ -354,16 +355,24 @@ body {
 
  .reactions {
   cursor: pointer;
-  color: var(--text-primary);
   border: none;
   color: var(--accent-primary);
+  font-size: 12px;
   background-color: transparent;
+
 }
 
- .reactions svg {
-  fill: none;
-  stroke: var(--text-primary);
+.reactions_holder {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
+.reactions_holder .like_dislike {
+  background-color: var(--background-primary);
+  border-radius: 4px;
+  padding: 4px;
+}
+
 textarea:focus {
   border: 1px solid var(--border-color);
   outline: none;
@@ -414,7 +423,8 @@ textarea:focus {
   box-shadow: 1px 0 5px var(--shadow-dark);
   border-left: 5px solid var(--accent-primary);
 }
-/* Sidebar styles */
+
+/**** Sidebar styles ****/
 .stky-sidebar {
   position: fixed;
   top: 15%;
@@ -434,21 +444,19 @@ textarea:focus {
   padding: 0;
   margin: 0;
 }
-
-.stky-sidebar li {
-  margin: 10px 0;
-}
-
 .stky-sidebar a {
   display: block;
   padding: 10px 20px;
   text-decoration: none;
   color: var(--accent-primary);
   font-size: 16px;
-  transition: background-color 0.2s, color 0.2s;
 }
-
-.stky-sidebar a:hover {
+.forms:hover {
+  cursor: pointer;
+  width: 100%;
+}
+.stky-sidebar a:hover ,.forms:hover{
+  cursor: pointer;
   background-color: var(--border-color);
   color: var(--accent-primary);
 }

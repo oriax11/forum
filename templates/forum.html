@@ -62,15 +62,16 @@
                 
              </li>
             <li>
-                <form action="" method="post">
+                <form class="forms" action="" method="post">
                     <input type="hidden" name="query" value="created">
-                    <button type="submit">Created Posts</button>
+                    <button class="liked_post" type="submit"><i class="fa-solid fa-signs-post"></i>     Created Posts</button>
                 </form>
             </li>
+
             <li>
-            <form action="" method="post">
+            <form class="forms" action="" method="post">
                 <input type="hidden" name="query" value="Liked">
-                <button class="liked_post" type="submit"><i class="fa-regular fa-heart"></i> liked posts</button>
+                <button class="liked_post" type="submit"><i class="fa-regular fa-heart"></i>    liked posts</button>
             </form>
             </li>
         </ul>
@@ -119,24 +120,28 @@
                     <form action="" method="post">
                         <input type="hidden" name="query" value="react">
                         <input type="hidden" name="post_id" value="{{.ID}}">
-                        <button name="like-btn" value="LIKE" class="reactions">
-                            <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 4 3 15h6v5h6v-5h6z" class="icon_svg-stroke icon_svg-fill" 
-                                      stroke-width="1.5" stroke="#e0e0e0" fill="none" stroke-linejoin="round"></path>
-                            </svg>
-                            <span class="counter-holder">{{.Likes}}</span>
-                        </button>
-                    
-                        <button name="dislike-btn" value="DISLIKE" class="reactions">
-                            <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path d="m12 20 9-11h-6V4H9v5H3z" class="icon_svg-stroke icon_svg-fill" 
-                                      stroke="#e0e0e0" fill="none" stroke-width="1.5" stroke-linejoin="round"></path>
-                            </svg>
-                            <span class="counter-holder">{{.Dislikes}}</span> 
-                        </button>
+                        <div class="reactions_holder">
+                            <div class="like_dislike">
+                                <button name="like-btn" value="LIKE" class="reactions">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 4 3 15h6v5h6v-5h6z" class="icon_svg-stroke icon_svg-fill" 
+                                              stroke-width="1.5" stroke="#e0e0e0" fill="none" stroke-linejoin="round"></path>
+                                    </svg>
+                                    <span class="counter-holder">{{.Likes}}</span>
+                                </button>
+                            
+                                <button name="dislike-btn" value="DISLIKE" class="reactions">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="m12 20 9-11h-6V4H9v5H3z" class="icon_svg-stroke icon_svg-fill" 
+                                              stroke="#e0e0e0" fill="none" stroke-width="1.5" stroke-linejoin="round"></path>
+                                    </svg>
+                                    <span class="counter-holder">{{.Dislikes}}</span> 
+                                </button>
+                            </div>
 
-                        <btn id="comment-btn"  class="reactions"><svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12.071 18.86c4.103 0 7.429-3.102 7.429-6.93C19.5 8.103 16.174 5 12.071 5s-7.429 3.103-7.429 6.93c0 1.291.379 2.5 1.037 3.534.32.501-1.551 3.058-1.112 3.467.46.429 3.236-1.295 3.803-.99 1.09.585 2.354.92 3.701.92Z" class="icon_svg-stroke icon_svg-fill" stroke="#e0e0e0" stroke-width="1.5" fill="none"></path></svg>{{.Comments_counter}}</btn>
-                    </form>
+                            <btn id="comment-btn"  class="reactions"><svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12.071 18.86c4.103 0 7.429-3.102 7.429-6.93C19.5 8.103 16.174 5 12.071 5s-7.429 3.103-7.429 6.93c0 1.291.379 2.5 1.037 3.534.32.501-1.551 3.058-1.112 3.467.46.429 3.236-1.295 3.803-.99 1.09.585 2.354.92 3.701.92Z" class="icon_svg-stroke icon_svg-fill" stroke="#e0e0e0" stroke-width="1.5" fill="none"></path></svg>{{.Comments_counter}}</btn>
+                        </div>
+                    </form> 
                 </div>
                 <div id="comment-form">
                     <form  action="" method="post">
