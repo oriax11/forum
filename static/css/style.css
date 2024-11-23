@@ -526,7 +526,16 @@ textarea:focus {
   background-color: var(--border-color);
   color: var(--accent-primary);
 }
+.post-header_content strong {
+  background-color: var(--background-checkbox);
+  border-radius: 4px;
+  padding: 4px;
+} 
 
+.categories::before {
+  content: '#';
+  font-size: 14px;
+}
 i{
   color: var(--accent-primary);
 }

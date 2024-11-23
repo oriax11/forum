@@ -160,9 +160,9 @@
                         <div class="comment-header">
                             <div class="flex">
                                 <i id="user_icon" class="fa-solid fa-user"></i>
-                                <strong>{{ .Author}}</strong>
+                                <strong style="font-size: 14px;">{{ .Author}}</strong>
                             </div>
-                            <p>{{.TimeAgo_com}}</p>
+                            <p style="font-size: 12px;">{{.TimeAgo_com}}</p>
                         </div>   
                         <p id="thecomment">{{.Content}}</p>
                         <form action="/" method="POST">
@@ -193,7 +193,7 @@
         </div>
         {{end}}
     <script>
-  let x = document.getElementsByClassName("fa-xmark");
+        let x = document.getElementsByClassName("fa-xmark");
         for (let i = 0; i < x.length; i++) {
             x[i].addEventListener("click", function() {
                 this.parentElement.parentElement.remove();
