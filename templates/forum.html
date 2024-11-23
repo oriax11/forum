@@ -62,15 +62,15 @@
                 
              </li>
             <li>
-                <form class="forms" action="" method="post">
+                <form class="forms" action="/created" method="get">
                     <input type="hidden" name="query" value="created">
                     <button class="liked_post" type="submit"><i class="fa-solid fa-signs-post"></i>     Created Posts</button>
                 </form>
             </li>
 
             <li>
-            <form class="forms" action="" method="post">
-                <input type="hidden" name="query" value="Liked">
+            <form class="forms" action="/liked" method="get">
+                <input type="hidden" name="query" value="liked">
                 <button class="liked_post" type="submit"><i class="fa-regular fa-heart"></i>    liked posts</button>
             </form>
             </li>
@@ -78,7 +78,7 @@
     </div>
 
     <div class="container">
-        <form  class="post-form" method="post">
+        <form  class="post-form"  action="/" method="post">
             <input type="hidden" name="query" value="newpost">
             <textarea  required class="input-title" name="title"  placeholder="title"></textarea>
             <textarea  required class="input-content" name="content"  placeholder="What is your question?"></textarea>
@@ -117,7 +117,7 @@
                 <p class="post_title">{{.Title}}</p>
                 <p class="post_content">{{.Content}}</p>
                 <div class="post-actions">
-                    <form action="" method="post">
+                    <form action="/" method="post">
                         <input type="hidden" name="query" value="react">
                         <input type="hidden" name="post_id" value="{{.ID}}">
                         <div class="reactions_holder">
@@ -147,7 +147,7 @@
                     </form> 
                 </div>
                 <div id="comment-form">
-                    <form  action="" method="post">
+                    <form  action="/" method="post">
                         <div class="comment-container">
                             <input type="hidden" name="query" value="comment">
                             <input type="hidden" name="post_id" value="{{.ID}}">

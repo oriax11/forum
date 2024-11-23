@@ -25,6 +25,9 @@ func main() {
 	http.HandleFunc("/logout", outil.LogoutHandler)
 	http.HandleFunc("/report", outil.ReportHandler)
 	http.HandleFunc("/filter", outil.FilterHandler)
+	http.HandleFunc("/created", outil.CreatedHandler)
+	http.HandleFunc("/liked", outil.LikedHandler)
+
 
 
 	// Start the server
