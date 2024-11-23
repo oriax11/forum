@@ -269,6 +269,26 @@
       btnLogout.addEventListener("click", () => {
         window.location.href = "/logout";
       });
+
+    //! checking the input are they filled
+    document.querySelector(".post-form").addEventListener("submit", function (event) {
+        const checkboxes = [...document.getElementsByName("type")]
+        const checksContainer = document.querySelector(".checks-container")
+        const isChecked = checkboxes.some(checkbox => checkbox.checked)
+
+        if (!isChecked) {
+        const validationError = document.createElement("p")
+        validationError.textContent = "Please select at least one type"
+        validationError.style.color = "#ff4b4b"
+        validationError.style.marginTop = "20px"
+        validationError.classList.add("validation-error")
+        event.preventDefault();
+
+        if (!document.querySelector(".validation-error")) {
+            checksContainer.appendChild(validationError)
+        }
+    }
+});
     </script>
 </body>
 </html>
