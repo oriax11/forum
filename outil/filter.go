@@ -112,6 +112,8 @@ func LikedHandler(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "Error rendering the forum page", http.StatusInternalServerError)
 			}
 
+		} else {
+			http.Error(w, "Invalid request ", http.StatusBadRequest)
 		}
 	} else {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
@@ -162,6 +164,8 @@ func CreatedHandler(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "Error rendering the forum page", http.StatusInternalServerError)
 			}
 
+		} else {
+			http.Error(w, "Invalid request ", http.StatusBadRequest)
 		}
 	} else {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
