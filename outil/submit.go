@@ -32,7 +32,6 @@ func HandleFormSubmission(w http.ResponseWriter, r *http.Request) {
 
 		Allcategories := strings.Join(category_type, " ")
 
-
 		if len(title) > 150 {
 			http.Error(w, "Post title cannot exceed 150 characters.", http.StatusBadRequest)
 			return
@@ -42,7 +41,12 @@ func HandleFormSubmission(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		cookie, _ := r.Cookie("session_token")
+		cookie, err := r.Cookie("session_token")
+		if err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
 		email := sessions[cookie.Value]
 
 		if len(category_type) == 0 {
@@ -73,11 +77,16 @@ func HandleFormSubmission(w http.ResponseWriter, r *http.Request) {
 			erro := Errors{
 				ErrorType: "Only registred Users can react!",
 			}
+			w.WriteHeader(http.StatusForbidden)
+
 			tpl.ExecuteTemplate(w, "login.html", erro)
 			return
 		}
-
-		cookie, _ := r.Cookie("session_token")
+		cookie, err := r.Cookie("session_token")
+		if err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
 		email := sessions[cookie.Value]
 
 		db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
@@ -139,11 +148,17 @@ func HandleFormSubmission(w http.ResponseWriter, r *http.Request) {
 			erro := Errors{
 				ErrorType: "Only registered Users can react!",
 			}
+			w.WriteHeader(http.StatusForbidden)
+
 			tpl.ExecuteTemplate(w, "login.html", erro)
 			return
 		}
 
-		cookie, _ := r.Cookie("session_token")
+		cookie, err := r.Cookie("session_token")
+		if err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
 		email := sessions[cookie.Value]
 
 		db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
@@ -204,12 +219,16 @@ func HandleFormSubmission(w http.ResponseWriter, r *http.Request) {
 			erro := Errors{
 				ErrorType: "Only registred Users can react!",
 			}
+			w.WriteHeader(http.StatusForbidden)
 			tpl.ExecuteTemplate(w, "login.html", erro)
 			return
 		}
 
-		cookie, _ := r.Cookie("session_token")
-		email := sessions[cookie.Value]
+		cookie, err := r.Cookie("session_token")
+		if err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}		email := sessions[cookie.Value]
 
 		db.QueryRow("SELECT username FROM Users WHERE email = ?", email).Scan(&username)
 
