@@ -22,6 +22,7 @@ func Postreact(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+
 	sessionCookie, err := r.Cookie("session_token")
 	if err != nil {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
@@ -71,6 +72,10 @@ func Postreact(w http.ResponseWriter, r *http.Request) {
 }
 
 func CommentReactions(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+		return
+	}
 	if r.Method == http.MethodPost {
 		action := r.FormValue("query")
 	if action == "comment_react" {

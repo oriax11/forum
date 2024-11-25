@@ -143,16 +143,14 @@
                         
                 </div>
                 <div id="comment-form">
-                    <form  action="/" method="post">
+                    <form action="/" method="post">
                         <div class="comment-container">
-                            <input type="hidden" name="query" value="comment">
-                            <input type="hidden" name="post_id" value="{{.ID}}">
-                            <input type="text" name="comment-content" placeholder="comment" class="comment-input">
-                            <button type="submit" class="comment-btn">Comment</button>
+                            <input type="text" name="comment-content" post-id="{{.ID}}" placeholder="comment" class="comment-input">
+                            <button type="button" class="comment-btn">Comment</button>
                         </div>
                     </form>
                     {{range .Comments}}
-                    <div class="comment-content">
+                    <div id="comments-container" class="comment-content">
                         <div class="comment-header">
                             <div class="flex">
                                 <i id="user_icon" class="fa-solid fa-user"></i>

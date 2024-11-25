@@ -17,7 +17,7 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if r.Method == http.MethodPost {
-		HandleFormSubmission(w, r)
+		CreatePost(w, r)
 		CommentReactions(w,r)
 		PostComment(w,r)
 		return

@@ -96,7 +96,6 @@ if (!document.querySelector(".validation-error")) {
 });
 
 
-document.addEventListener("DOMContentLoaded", function() {
 // Function to send AJAX request
 function sendReaction(postId, reactionType, callback) {
 fetch("/api/postreact", {
@@ -143,6 +142,8 @@ button.addEventListener("click", function(event) {
 });
 });
 
+
+
 // Add event listeners for dislike buttons
 document.querySelectorAll(".dislike-btn").forEach(button => {
 button.addEventListener("click", function(event) {
@@ -162,4 +163,85 @@ button.addEventListener("click", function(event) {
     });
 });
 });
+function sendComment(postId, commentContent, callback) {
+    fetch("/api/postComment", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            post_id: postId,
+            "comment-content": commentContent
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Failed to post comment.");
+        }
+        return response.json();
+    })
+    .then(data => {
+        callback(data);
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
+}
+
+document.querySelectorAll(".comment-btn").forEach(button => {
+    button.addEventListener("click", function(event) {
+        event.preventDefault();
+
+        const postId = this.previousElementSibling.getAttribute("post-id");
+        const commentContent = this.previousElementSibling.value;
+
+        sendComment(postId, commentContent, function(data) {
+            if (data.success) {
+                button.previousElementSibling.value = ''; // Clear the input field
+
+                // Dynamically create and display the new comment
+                const newCommentDiv = document.createElement("div");
+                newCommentDiv.className = "comment-content";
+
+                // Assuming `data.comment` contains the new comment details
+                newCommentDiv.innerHTML = `
+                        <div class="comment-header">
+                            <div class="flex">
+                                <i id="user_icon" class="fa-solid fa-user"></i>
+                                <strong style="font-size: 14px;">${data.username}</strong>
+                            </div>
+                            <p style="font-size: 12px;">${data.commentDate}</p>
+                        </div>   
+                        <p id="thecomment">${data.commentContent}</p>
+                        <form action="/" method="POST">
+                            <input type="hidden" name="query" value="comment_react">
+                            <input type="hidden" name="comment_id" value="${data.commentID}">
+                            <div class="like_dislike-comments">
+                                <button name="like-btn" value="LIKE" class="reactions">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 4 3 15h6v5h6v-5h6z" class="icon_svg-stroke icon_svg-fill" 
+                                              stroke-width="1.5" stroke="#e0e0e0" fill="none" stroke-linejoin="round"></path>
+                                    </svg>
+                                </button>
+                                <span class="counter-holder">0</span>
+                            
+                                <button name="dislike-btn" value="DISLIKE" class="reactions">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="m12 20 9-11h-6V4H9v5H3z" class="icon_svg-stroke icon_svg-fill" 
+                                              stroke="#e0e0e0" fill="none" stroke-width="1.5" stroke-linejoin="round"></path>
+                                    </svg>
+                                </button>
+                                <span class="counter-holder">0</span> 
+                            </div>
+                        </form>
+                `;
+
+                // Append the new comment to the comments container
+                const commentsContainer = document.getElementById("comments-container");
+                commentsContainer.insertBefore(newCommentDiv, commentsContainer.firstChild);
+
+                console.log("Comment posted successfully");
+            }
+        });
+    });
 });

@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func HandleFormSubmission(w http.ResponseWriter, r *http.Request) {
+func CreatePost(w http.ResponseWriter, r *http.Request) {
 	action := r.FormValue("query")
 
 	if action == "newpost" {
