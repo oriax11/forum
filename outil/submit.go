@@ -1,7 +1,6 @@
 package forum_full
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 )
@@ -69,113 +68,6 @@ func HandleFormSubmission(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-	}  else if action == "comment_react" {
-		var userID int
-
-		_, err := r.Cookie("Guest_token")
-		if err == nil {
-			erro := Errors{
-				ErrorType: "Only registered Users can react!",
-			}
-			w.WriteHeader(http.StatusForbidden)
-
-			tpl.ExecuteTemplate(w, "login.html", erro)
-			return
-		}
-
-		cookie, err := r.Cookie("session_token")
-		if err != nil {
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			return
-		}
-		email := sessions[cookie.Value]
-
-		db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
-
-		like_btn := r.FormValue("like-btn")
-		dislike_btn := r.FormValue("dislike-btn")
-		comment_id := r.FormValue("comment_id")
-		var react_holder string
-		var reaction_type string
-
-		if len(like_btn) == 0 && len(dislike_btn) > 0 {
-			react_holder = dislike_btn
-		} else if len(like_btn) > 0 && len(dislike_btn) == 0 {
-			react_holder = like_btn
-		}
-		db.QueryRow("SELECT reaction_type FROM CommentReactions WHERE comment_id = ? AND user_id = ?", comment_id, userID).Scan(&reaction_type)
-
-		if len(reaction_type) == 0 {
-			_, err = db.Exec(
-				"INSERT INTO CommentReactions (comment_id, user_id, reaction_type) VALUES ($1, $2, $3)",
-				comment_id, userID, react_holder,
-			)
-			if err != nil {
-				fmt.Print(err, "insert")
-				http.Error(w, "Comment reaction failed", http.StatusInternalServerError)
-				return
-			}
-		} else {
-			if react_holder == reaction_type {
-				_, err = db.Exec(
-					"DELETE FROM CommentReactions WHERE comment_id = ? AND user_id = ?",
-					comment_id, userID,
-				)
-				if err != nil {
-					fmt.Print(err, "Delete")
-					http.Error(w, "Failed to remove reaction", http.StatusInternalServerError)
-					return
-				}
-			} else {
-				_, err = db.Exec(
-					"UPDATE CommentReactions SET reaction_type = ? WHERE comment_id = ? AND user_id = ?",
-					react_holder, comment_id, userID,
-				)
-				if err != nil {
-					fmt.Print(err, "Update")
-					http.Error(w, "Failed to update reaction", http.StatusInternalServerError)
-					return
-				}
-			}
-		}
-
-	} else if action == "comment" {
-		var username string
-		comment_content := r.FormValue("comment-content")
-		post_id := r.FormValue("post_id")
-		_, err := r.Cookie("Guest_token")
-		if err == nil {
-			erro := Errors{
-				ErrorType: "Only registred Users can react!",
-			}
-			w.WriteHeader(http.StatusForbidden)
-			tpl.ExecuteTemplate(w, "login.html", erro)
-			return
-		}
-
-		cookie, err := r.Cookie("session_token")
-		if err != nil {
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			return
-		}
-		email := sessions[cookie.Value]
-
-		db.QueryRow("SELECT username FROM Users WHERE email = ?", email).Scan(&username)
-
-		if len(comment_content) > 0 {
-			_, err = db.Exec(
-				"INSERT INTO Comment (post_id ,username, comment_content) VALUES (?, ?, ?)",
-				post_id, username, comment_content,
-			)
-			if err != nil {
-				fmt.Print(err, "insert")
-				http.Error(w, "Post creation failed", http.StatusInternalServerError)
-				return
-			}
-		} else {
-			fmt.Print("empty string")
-		}
 	}
-
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

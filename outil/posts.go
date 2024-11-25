@@ -3,7 +3,54 @@ package forum_full
 import (
 	"database/sql"
 	"fmt"
+	"net/http"
 )
+
+func PostComment(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		action := r.FormValue("query")
+		if action == "comment" {
+			var username string
+			comment_content := r.FormValue("comment-content")
+			post_id := r.FormValue("post_id")
+			_, err := r.Cookie("Guest_token")
+			if err == nil {
+				erro := Errors{
+					ErrorType: "Only registred Users can react!",
+				}
+				w.WriteHeader(http.StatusForbidden)
+				tpl.ExecuteTemplate(w, "login.html", erro)
+				return
+			}
+	
+			cookie, err := r.Cookie("session_token")
+			if err != nil {
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				return
+			}
+			email := sessions[cookie.Value]
+	
+			db.QueryRow("SELECT username FROM Users WHERE email = ?", email).Scan(&username)
+	
+			if len(comment_content) > 0 {
+				_, err = db.Exec(
+					"INSERT INTO Comment (post_id ,username, comment_content) VALUES (?, ?, ?)",
+					post_id, username, comment_content,
+				)
+				if err != nil {
+					fmt.Print(err, "insert")
+					http.Error(w, "Post creation failed", http.StatusInternalServerError)
+					return
+				}
+			} else {
+				fmt.Print("empty string")
+			}
+		}
+	} else {
+		http.Error(w, "method not allowed", 400)
+		return
+	}
+}
 
 func getPosts() ([]Post, error) {
 	rows, err := db.Query(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
