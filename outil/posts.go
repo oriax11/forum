@@ -123,7 +123,7 @@ func Getcontent(rows *sql.Rows) ([]Post, error) {
 		// Get comments for each post
 		commentRows, err := db.Query(`SELECT comment_id, username, comment_content, comment_date 
                                     FROM Comment WHERE post_id = ?
-                                    ORDER BY comment_date ASC`, post.ID)
+                                    ORDER BY comment_date DESC`, post.ID)
 		if err != nil {
 			return nil, fmt.Errorf("failed to query comments: %w", err)
 		}

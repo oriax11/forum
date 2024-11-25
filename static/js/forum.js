@@ -187,25 +187,23 @@ function sendComment(postId, commentContent, callback) {
         console.error("Error:", error);
     });
 }
-
 document.querySelectorAll(".comment-btn").forEach(button => {
     button.addEventListener("click", function(event) {
         event.preventDefault();
 
-        const postId = this.previousElementSibling.getAttribute("post-id");
-        const commentContent = this.previousElementSibling.value;
+        const commentInput = button.previousElementSibling;
+        const postId = commentInput.getAttribute("post-id");
+        const commentContent = commentInput.value;
 
         sendComment(postId, commentContent, function(data) {
-            console.log(data)
             if (data.success) {
-
-                button.previousElementSibling.value = ''; // Clear the input field
+                // Clear the input field
+                commentInput.value = '';
 
                 // Dynamically create and display the new comment
                 const newCommentDiv = document.createElement("div");
                 newCommentDiv.className = "comment-content";
 
-                // Assuming `data.comment` contains the new comment details
                 newCommentDiv.innerHTML = `
                         <div class="comment-header">
                             <div class="flex">
@@ -238,12 +236,19 @@ document.querySelectorAll(".comment-btn").forEach(button => {
                         </form>
                 `;
 
-                // Append the new comment to the comments container
-                const commentsContainer = document.getElementById("comments-container");
-                commentsContainer.insertBefore(newCommentDiv, commentsContainer.firstChild);
+                // Find the correct comments container within the current post
+                const post = button.closest(".post");
+                const commentsContainer = post.querySelector(".comments-container");
+
+                if (commentsContainer) {
+                    commentsContainer.insertBefore(newCommentDiv, commentsContainer.firstChild);
+                } else {
+                    console.error("No comments container found for this post.");
+                }
 
                 console.log("Comment posted successfully");
             }
         });
     });
 });
+

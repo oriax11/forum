@@ -149,17 +149,17 @@
                             <button type="button" class="comment-btn">Comment</button>
                         </div>
                     </form>
-                    {{range .Comments}}
-                    <div id="comments-container">
+                    <div class="comments-container">
+                        {{range .Comments}}
                         <div class="comment-content">
                             <div class="comment-header">
                                 <div class="flex">
-                                    <i id="user_icon" class="fa-solid fa-user"></i>
+                                    <i class="fa-solid fa-user"></i>
                                     <strong style="font-size: 14px;">{{ .Author}}</strong>
                                 </div>
                                 <p style="font-size: 12px;">{{.TimeAgo_com}}</p>
                             </div>   
-                            <p id="thecomment">{{.Content}}</p>
+                            <p class="comment-text">{{.Content}}</p>
                             <form action="/" method="POST">
                                 <input type="hidden" name="query" value="comment_react">
                                 <input type="hidden" name="comment_id" value="{{.ID}}">
@@ -171,7 +171,6 @@
                                         </svg>
                                     </button>
                                     <span class="counter-holder">{{.Likes}}</span>
-                                
                                     <button name="dislike-btn" value="DISLIKE" class="reactions">
                                         <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path d="m12 20 9-11h-6V4H9v5H3z" class="icon_svg-stroke icon_svg-fill" 
@@ -182,8 +181,8 @@
                                 </div>
                             </form>
                         </div>
+                        {{end}}
                     </div>
-                {{end}}
                 </div>   
             </div>
         </div>
