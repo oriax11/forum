@@ -69,78 +69,7 @@ func HandleFormSubmission(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-	} else if action == "react" {
-		var userID int
-
-		_, err := r.Cookie("Guest_token")
-		if err == nil {
-			erro := Errors{
-				ErrorType: "Only registred Users can react!",
-			}
-			w.WriteHeader(http.StatusForbidden)
-
-			tpl.ExecuteTemplate(w, "login.html", erro)
-			return
-		}
-		cookie, err := r.Cookie("session_token")
-		if err != nil {
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			return
-		}
-		email := sessions[cookie.Value]
-
-		db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
-
-		like_btn := r.FormValue("like-btn")
-		dislike_btn := r.FormValue("dislike-btn")
-		post_id := r.FormValue("post_id")
-		var react_holder string
-		var reaction_type string
-
-		if len(like_btn) == 0 && len(dislike_btn) > 0 {
-			react_holder = dislike_btn
-		} else if len(like_btn) > 0 && len(dislike_btn) == 0 {
-			react_holder = like_btn
-		}
-
-		db.QueryRow("SELECT reaction_type FROM Reactions WHERE post_id = ? AND user_id = ?", post_id, userID).Scan(&reaction_type)
-
-		if len(reaction_type) == 0 {
-			_, err = db.Exec(
-				"INSERT INTO Reactions (post_id ,user_id, reaction_type) VALUES (?, ?, ?)",
-				post_id, userID, react_holder,
-			)
-			if err != nil {
-				fmt.Print(err, "insert")
-				http.Error(w, "Post creation failed", http.StatusInternalServerError)
-				return
-			}
-		} else {
-			if react_holder == reaction_type {
-				_, err = db.Exec(
-					"DELETE FROM Reactions WHERE post_id = ? AND user_id = ?",
-					post_id, userID,
-				)
-				if err != nil {
-					fmt.Print(err, "Delete")
-					http.Error(w, " Failed to remove reaction", http.StatusInternalServerError)
-					return
-				}
-			} else {
-				_, err = db.Exec(
-					"UPDATE Reactions SET reaction_type = ? WHERE post_id = ? AND user_id = ?",
-					react_holder, post_id, userID,
-				)
-				if err != nil {
-					fmt.Print(err, "Update")
-					http.Error(w, "Post creation failed", http.StatusInternalServerError)
-					return
-				}
-			}
-		}
-		fmt.Println(react_holder, post_id, userID)
-
-	} else if action == "comment_react" {
+	}  else if action == "comment_react" {
 		var userID int
 
 		_, err := r.Cookie("Guest_token")
@@ -228,7 +157,8 @@ func HandleFormSubmission(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
-		}		email := sessions[cookie.Value]
+		}
+		email := sessions[cookie.Value]
 
 		db.QueryRow("SELECT username FROM Users WHERE email = ?", email).Scan(&username)
 

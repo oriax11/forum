@@ -27,6 +27,10 @@ func main() {
 	http.HandleFunc("/filter", outil.FilterHandler)
 	http.HandleFunc("/created", outil.CreatedHandler)
 	http.HandleFunc("/liked", outil.LikedHandler)
+	http.HandleFunc("/api/postreact", outil.Postreact)
+	// http.HandleFunc("/api/commentreact", outil.Commentreact)
+
+
 
 
 

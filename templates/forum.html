@@ -117,26 +117,23 @@
                 <p class="post_title">{{.Title}}</p>
                 <p class="post_content">{{.Content}}</p>
                 <div class="post-actions">
-                    <form action="/" method="post">
-                        <input type="hidden" name="query" value="react">
-                        <input type="hidden" name="post_id" value="{{.ID}}">
                         <div class="reactions_holder">
                             <div class="like_dislike">
-                                <button name="like-btn" value="LIKE" class="reactions">
+                                <button name="like-btn" value="LIKE" class="reactions like-btn" data-post-id="{{.ID}}">
                                     <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M12 4 3 15h6v5h6v-5h6z" class="icon_svg-stroke icon_svg-fill" 
                                               stroke-width="1.5" stroke="#e0e0e0" fill="none" stroke-linejoin="round"></path>
                                     </svg>
                                 </button>
-                                <span class="counter-holder">{{.Likes}}</span>
+                                <span class="counter-holder like-count">{{.Likes}}</span>
                             
-                                <button name="dislike-btn" value="DISLIKE" class="reactions">
+                                <button name="dislike-btn" value="DISLIKE" class="reactions dislike-btn" data-post-id="{{.ID}}">
                                     <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path d="m12 20 9-11h-6V4H9v5H3z" class="icon_svg-stroke icon_svg-fill" 
                                               stroke="#e0e0e0" fill="none" stroke-width="1.5" stroke-linejoin="round"></path>
                                     </svg>
                                 </button>
-                                <span class="counter-holder">{{.Dislikes}}</span> 
+                                <span class="counter-holder dislike-count">{{.Dislikes}}</span>
                             </div>
 
                             <btn id="comment-btn"  class="reactions"><svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12.071 18.86c4.103 0 7.429-3.102 7.429-6.93C19.5 8.103 16.174 5 12.071 5s-7.429 3.103-7.429 6.93c0 1.291.379 2.5 1.037 3.534.32.501-1.551 3.058-1.112 3.467.46.429 3.236-1.295 3.803-.99 1.09.585 2.354.92 3.701.92Z" class="icon_svg-stroke icon_svg-fill" stroke="#e0e0e0" stroke-width="1.5" fill="none"></path></svg></btn>
@@ -144,7 +141,6 @@
                         </div>
 
                         
-                    </form> 
                 </div>
                 <div id="comment-form">
                     <form  action="/" method="post">
@@ -289,6 +285,76 @@
         }
     }
 });
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Function to send AJAX request
+    function sendReaction(postId, reactionType, callback) {
+        fetch("/api/postreact", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                post_id: postId,
+                reaction_type: reactionType
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to react.");
+            }
+            return response.json();
+        })
+        .then(data => {
+            callback(data);
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+    }
+
+    // Add event listeners for like buttons
+    document.querySelectorAll(".like-btn").forEach(button => {
+        button.addEventListener("click", function(event) {
+            event.preventDefault();
+            const postId = this.getAttribute("data-post-id");
+            sendReaction(postId, "LIKE", function(data) {
+                if (data.success) {
+                // Update the like count
+                const likeCount = button.nextElementSibling;
+                likeCount.textContent = data.likes;
+
+                // Update the dislike count
+                const dislikeButton = button.parentElement.querySelector(".dislike-btn");
+                const dislikeCount = dislikeButton.nextElementSibling;
+                dislikeCount.textContent = data.dislikes;
+                }
+            });
+        });
+    });
+
+    // Add event listeners for dislike buttons
+    document.querySelectorAll(".dislike-btn").forEach(button => {
+        button.addEventListener("click", function(event) {
+            event.preventDefault();
+            const postId = this.getAttribute("data-post-id");
+            sendReaction(postId, "DISLIKE", function(data) {
+                if (data.success) {
+                // Update the like count
+                const DislikeCount = button.nextElementSibling;
+                DislikeCount.textContent = data.dislikes;
+
+                // Update the dislike count
+                const likeButton = button.parentElement.querySelector(".like-btn");
+                const likeCount = likeButton.nextElementSibling;
+                likeCount.textContent = data.likes;
+                }
+            });
+        });
+    });
+});
+
     </script>
 </body>
 </html>
