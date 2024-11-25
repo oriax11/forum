@@ -8,70 +8,77 @@ import (
 )
 
 func PostComment(w http.ResponseWriter, r *http.Request) {
-    // Validate request method
-    if r.Method != http.MethodPost {
-        http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-        return
-    }
+	// Validate request method
+	if r.Method != http.MethodPost {
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+		return
+	}
 
-    // Decode request body
-    var CommentData struct {
-        PostID  string `json:"post_id"`
-        Content string `json:"comment-content"`
-    }
-    if err := json.NewDecoder(r.Body).Decode(&CommentData); err != nil {
-        http.Error(w, "Invalid request body", http.StatusBadRequest)
-        return
-    }
+	// Decode request body
+	var CommentData struct {
+		PostID  string `json:"post_id"`
+		Content string `json:"comment_content"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&CommentData); err != nil {
+		fmt.Println(err)
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
 
-    // Validate session
-    sessionCookie, err := r.Cookie("session_token")
-    if err != nil {
-        http.Error(w, "Unauthorized", http.StatusUnauthorized)
-        return
-    }
+	// Validate session
+	sessionCookie, err := r.Cookie("session_token")
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
 
-    // Get username from session
-    email := sessions[sessionCookie.Value]
-    var username string
-    err = db.QueryRow("SELECT username FROM Users WHERE email = ?", email).Scan(&username)
-    if err != nil {
-        http.Error(w, "User not found", http.StatusUnauthorized)
-        return
-    }
+	// Get username from session
+	email := sessions[sessionCookie.Value]
+	var username string
+	err = db.QueryRow("SELECT username FROM Users WHERE email = ?", email).Scan(&username)
+	if err != nil {
+		http.Error(w, "User not found", http.StatusUnauthorized)
+		return
+	}
 
-    // Validate comment content
-    if CommentData.Content == "" {
-        http.Error(w, "Comment cannot be empty", http.StatusBadRequest)
-        return
-    }
+	// Validate comment content
+	if CommentData.Content == "" {
+		http.Error(w, "Comment cannot be empty", http.StatusBadRequest)
+		return
+	}
 
-    // Insert comment
-    _, err = db.Exec(
-        "INSERT INTO Comment (post_id, username, comment_content) VALUES (?, ?, ?)",
-        CommentData.PostID, username, CommentData.Content,
-    )
-    if err != nil {
-        http.Error(w, "Failed to insert comment", http.StatusInternalServerError)
-        return
-    }
+	// Insert comment
+	_, err = db.Exec(
+		"INSERT INTO Comment (post_id, username, comment_content) VALUES (?, ?, ?)",
+		CommentData.PostID, username, CommentData.Content,
+	)
+	if err != nil {
+		http.Error(w, "Failed to insert comment", http.StatusInternalServerError)
+		return
+	}
 
-    var commentID int
-    var commentDate string
-	db.QueryRow("SELECT LAST_INSERT_ID(), NOW()").Scan(&commentID, &commentDate)
+	var commentID int
+	var commentDate string
+	db.QueryRow(`
+		SELECT comment_id, comment_date
+		FROM Comment
+		WHERE post_id = ? AND username = ?
+		ORDER BY comment_date DESC
+		LIMIT 1
+	`, CommentData.PostID, username).Scan(&commentID, &commentDate)
 
 	fmt.Println(commentDate, commentID)
-    
-    w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(map[string]interface{}{
-        "success": true,
-        "comment": map[string]interface{}{
-            "id": commentID,
-            "username": username,
-            "content": CommentData.Content,
-            "date": commentDate,
-        },
-    })
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"success": true,
+		"comment": map[string]interface{}{
+			"id":       commentID,
+			"username": username,
+			"content":  CommentData.Content,
+			"date":     commentDate,
+		},
+	})
 }
 
 func getPosts() ([]Post, error) {
