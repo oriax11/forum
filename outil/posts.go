@@ -82,7 +82,21 @@ func PostComment(w http.ResponseWriter, r *http.Request) {
 }
 
 func getPosts() ([]Post, error) {
-	
+	rows, err := db.Query(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
+						   FROM Posts p
+						   JOIN Users u ON p.user_id = u.user_id
+						   ORDER BY p.created_at DESC`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var posts []Post
+
+	posts, err = Getcontent(rows)
+	if err != nil {
+		return nil, err
+	}
+	return posts, nil
 }
 
 func Getcontent(rows *sql.Rows) ([]Post, error) {
@@ -160,16 +174,7 @@ func CommentReact(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Decode request body
-	var CommentReact struct {
-		CommentID  string `json:"comment_id"`
-		ReactionType string `json:"reaction_type"`
-	}
 	
-	if err := json.NewDecoder(r.Body).Decode(&CommentReact); err != nil {
-		fmt.Println(err)
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
-		return
-	}
 
 	// Validate session
 	sessionCookie, err := r.Cookie("session_token")
