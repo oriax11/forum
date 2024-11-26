@@ -59,7 +59,14 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 
 		db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
 
-		
+		_, err = db.Exec(
+			"INSERT INTO Posts (user_id, title, content, categories) VALUES (?, ?, ?, ?)",
+			userID, title, content, Allcategories,
+		)
+		if err != nil {
+			http.Error(w, "Post creation failed", http.StatusInternalServerError)
+			return
+		}
 
 	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
