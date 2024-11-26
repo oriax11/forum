@@ -29,6 +29,7 @@ func main() {
 	http.HandleFunc("/liked", outil.LikedHandler)
 	http.HandleFunc("/api/postreact", outil.Postreact)
 	http.HandleFunc("/api/postComment", outil.PostComment)
+	http.HandleFunc("/api/postCommentReact", outil.CommentReact)
 
 
 

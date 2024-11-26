@@ -18,8 +18,6 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	if r.Method == http.MethodPost {
 		CreatePost(w, r)
-		CommentReactions(w,r)
-		PostComment(w,r)
 		return
 	}
 
