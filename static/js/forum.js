@@ -187,6 +187,7 @@ function sendComment(postId, commentContent, callback) {
         console.error("Error:", error);
     });
 }
+
 document.querySelectorAll(".comment-btn").forEach(button => {
     button.addEventListener("click", function(event) {
         event.preventDefault();
@@ -194,10 +195,12 @@ document.querySelectorAll(".comment-btn").forEach(button => {
         const commentInput = button.previousElementSibling;
         const postId = commentInput.getAttribute("post-id");
         const commentContent = commentInput.value;
-
         sendComment(postId, commentContent, function(data) {
             if (data.success) {
-                // Clear the input field
+                const post = button.closest(".post");
+                const comment_counter = post.querySelector(".comments_counter");
+
+                comment_counter.textContent = parseInt(comment_counter.textContent) + 1
                 commentInput.value = '';
 
                 // Dynamically create and display the new comment
@@ -237,7 +240,6 @@ document.querySelectorAll(".comment-btn").forEach(button => {
                 `;
 
                 // Find the correct comments container within the current post
-                const post = button.closest(".post");
                 const commentsContainer = post.querySelector(".comments-container");
 
                 if (commentsContainer) {
