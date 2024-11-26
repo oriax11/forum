@@ -215,12 +215,9 @@ document.querySelectorAll(".comment-btn").forEach(button => {
                             </div>
                             <p style="font-size: 12px;">${data.comment.date}</p>
                         </div>   
-                        <p id="thecomment">${data.comment.content}</p>
-                        <form action="/" method="POST">
-                            <input type="hidden" name="query" value="comment_react">
-                            <input type="hidden" name="comment_id" value="${data.comment.id}">
+                        <p class="comment-text">${data.comment.content}</p>
                             <div class="like_dislike-comments">
-                                <button name="like-btn" value="LIKE" class="reactions">
+                                <button name="comment-like-btn" value="LIKE" class="reactions comment-like-btn" commentid="${data.comment.id}">
                                     <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M12 4 3 15h6v5h6v-5h6z" class="icon_svg-stroke icon_svg-fill" 
                                               stroke-width="1.5" stroke="#e0e0e0" fill="none" stroke-linejoin="round"></path>
@@ -228,7 +225,7 @@ document.querySelectorAll(".comment-btn").forEach(button => {
                                 </button>
                                 <span class="counter-holder">0</span>
                             
-                                <button name="dislike-btn" value="DISLIKE" class="reactions">
+                                <button name="comment-islike-btn" value="DISLIKE" class="reactions comment-dislike-btn"  commentid="${data.comment.id}">
                                     <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path d="m12 20 9-11h-6V4H9v5H3z" class="icon_svg-stroke icon_svg-fill" 
                                               stroke="#e0e0e0" fill="none" stroke-width="1.5" stroke-linejoin="round"></path>
@@ -236,7 +233,6 @@ document.querySelectorAll(".comment-btn").forEach(button => {
                                 </button>
                                 <span class="counter-holder">0</span> 
                             </div>
-                        </form>
                 `;
 
                 // Find the correct comments container within the current post
@@ -250,6 +246,49 @@ document.querySelectorAll(".comment-btn").forEach(button => {
 
                 console.log("Comment posted successfully");
             }
+
+            document.querySelectorAll(".comment-like-btn").forEach(button => {
+                button.addEventListener("click", function(event) {
+                    event.preventDefault();
+                    const commentid = this.getAttribute("commentid");
+                    sendCommentReaction(commentid, "LIKE", function(data) {
+                        if (data.success) {
+                        // Update the like count
+                        const likeCount = button.nextElementSibling;
+                        likeCount.textContent = data.likes;
+                
+                        // Update the dislike count
+                        const dislikeButton = button.parentElement.querySelector(".comment-dislike-btn");
+                        const dislikeCount = dislikeButton.nextElementSibling;
+                        dislikeCount.textContent = data.dislikes;
+                        }
+                    });
+                });
+                });
+                
+                
+                
+                // Add event listeners for dislike buttons
+                document.querySelectorAll(".comment-dislike-btn").forEach(button => {
+                button.addEventListener("click", function(event) {
+                    event.preventDefault();
+                    const commentid = this.getAttribute("commentid");
+                    sendCommentReaction(commentid, "DISLIKE", function(data) {
+                        if (data.success) {
+                        // Update the like count
+                        const DislikeCount = button.nextElementSibling;
+                        DislikeCount.textContent = data.dislikes;
+                
+                        // Update the dislike count
+                        const likeButton = button.parentElement.querySelector(".comment-like-btn");
+                        const likeCount = likeButton.nextElementSibling;
+                        likeCount.textContent = data.likes;
+                        }
+                    });
+                });
+                });
+
+
         });
     });
 });
