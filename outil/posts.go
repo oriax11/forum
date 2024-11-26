@@ -174,7 +174,16 @@ func CommentReact(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Decode request body
+	var CommentReact struct {
+		CommentID  string `json:"comment_id"`
+		ReactionType string `json:"reaction_type"`
+	}
 	
+	if err := json.NewDecoder(r.Body).Decode(&CommentReact); err != nil {
+		fmt.Println(err)
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
 
 	// Validate session
 	sessionCookie, err := r.Cookie("session_token")
