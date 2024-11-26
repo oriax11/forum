@@ -289,12 +289,10 @@ function sendCommentReaction(CommentID, reactionType, callback) {
     
 // Add event listeners for like buttons
 document.querySelectorAll(".comment-like-btn").forEach(button => {
-    console.log("wsl hna")
     button.addEventListener("click", function(event) {
         event.preventDefault();
         const commentid = this.getAttribute("commentid");
         sendCommentReaction(commentid, "LIKE", function(data) {
-            console.log(data)
             if (data.success) {
             // Update the like count
             const likeCount = button.nextElementSibling;
