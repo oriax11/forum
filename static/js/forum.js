@@ -258,7 +258,8 @@ document.querySelectorAll(".comment-btn").forEach(button => {
 
 // Function to send AJAX request
 function sendCommentReaction(CommentID, reactionType, callback) {
-    fetch("/api/postreact", {
+    console.log("here")
+    fetch("/api/postCommentReact", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -268,6 +269,7 @@ function sendCommentReaction(CommentID, reactionType, callback) {
             reaction_type: reactionType
         })
     })
+
     .then(response => {
         if (!response.ok) {
             throw new Error("Failed to react.");
@@ -286,18 +288,20 @@ function sendCommentReaction(CommentID, reactionType, callback) {
 
     
 // Add event listeners for like buttons
-document.querySelectorAll(".like-btn").forEach(button => {
+document.querySelectorAll(".comment-like-btn").forEach(button => {
+    console.log("wsl hna")
     button.addEventListener("click", function(event) {
         event.preventDefault();
-        const postId = this.getAttribute("commentid");
-        sendReaction(postId, "LIKE", function(data) {
+        const commentid = this.getAttribute("commentid");
+        sendCommentReaction(commentid, "LIKE", function(data) {
+            console.log(data)
             if (data.success) {
             // Update the like count
             const likeCount = button.nextElementSibling;
             likeCount.textContent = data.likes;
     
             // Update the dislike count
-            const dislikeButton = button.parentElement.querySelector(".dislike-btn");
+            const dislikeButton = button.parentElement.querySelector(".comment-dislike-btn");
             const dislikeCount = dislikeButton.nextElementSibling;
             dislikeCount.textContent = data.dislikes;
             }
@@ -308,18 +312,18 @@ document.querySelectorAll(".like-btn").forEach(button => {
     
     
     // Add event listeners for dislike buttons
-    document.querySelectorAll(".dislike-btn").forEach(button => {
+    document.querySelectorAll(".comment-dislike-btn").forEach(button => {
     button.addEventListener("click", function(event) {
         event.preventDefault();
-        const postId = this.getAttribute("commentid");
-        sendReaction(postId, "DISLIKE", function(data) {
+        const commentid = this.getAttribute("commentid");
+        sendCommentReaction(commentid, "DISLIKE", function(data) {
             if (data.success) {
             // Update the like count
             const DislikeCount = button.nextElementSibling;
             DislikeCount.textContent = data.dislikes;
     
             // Update the dislike count
-            const likeButton = button.parentElement.querySelector(".like-btn");
+            const likeButton = button.parentElement.querySelector(".comment-like-btn");
             const likeCount = likeButton.nextElementSibling;
             likeCount.textContent = data.likes;
             }

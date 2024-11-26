@@ -160,16 +160,15 @@
                                 <p style="font-size: 12px;">{{.TimeAgo_com}}</p>
                             </div>   
                             <p class="comment-text">{{.Content}}</p>
-                            <form action="/" method="POST">
                                 <div class="like_dislike-comments">
-                                    <button name="like-btn" value="LIKE" class="reactions" commentid="{{.ID}}">
+                                    <button name="comment-like-btn" value="LIKE" class="reactions comment-like-btn" commentid="{{.ID}}">
                                         <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M12 4 3 15h6v5h6v-5h6z" class="icon_svg-stroke icon_svg-fill" 
                                                   stroke-width="1.5" stroke="#e0e0e0" fill="none" stroke-linejoin="round"></path>
                                         </svg>
                                     </button>
                                     <span class="counter-holder">{{.Likes}}</span>
-                                    <button name="dislike-btn" value="DISLIKE" class="reactions"  commentid="{{.ID}}">
+                                    <button name="comment-dislike-btn" value="DISLIKE" class="reactions comment-dislike-btn"  commentid="{{.ID}}">
                                         <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path d="m12 20 9-11h-6V4H9v5H3z" class="icon_svg-stroke icon_svg-fill" 
                                                   stroke="#e0e0e0" fill="none" stroke-width="1.5" stroke-linejoin="round"></path>
@@ -177,7 +176,6 @@
                                     </button>
                                     <span class="counter-holder">{{.Dislikes}}</span> 
                                 </div>
-                            </form>
                         </div>
                         {{end}}
                     </div>

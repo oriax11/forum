@@ -168,6 +168,7 @@ func Getcontent(rows *sql.Rows) ([]Post, error) {
 }
 
 func CommentReact(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("hello")
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
