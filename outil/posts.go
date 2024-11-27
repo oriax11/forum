@@ -67,7 +67,6 @@ func PostComment(w http.ResponseWriter, r *http.Request) {
 		LIMIT 1
 	`, CommentData.PostID, username).Scan(&commentID, &commentDate)
 
-	fmt.Println(commentDate, commentID)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]interface{}{
