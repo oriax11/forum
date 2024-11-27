@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -250,14 +249,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 			// Store session information in memory
 			sessions[sessionID] = email
-
-			// Set session cookie
-			http.SetCookie(w, &http.Cookie{
-				Name:     "session_token",
-				Value:    sessionID,
-				Expires:  time.Now().Add(1 * time.Hour),
-				HttpOnly: true,
-			})
+			name := "session_token"
+			saisirCookie(w, sessionID, name)
 
 			// login = true
 			fmt.Println("Successfully logged in")
@@ -294,11 +287,8 @@ func GuestHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Store guest session information in memory
 	sessions[sessionID] = "guest"
-	http.SetCookie(w, &http.Cookie{
-		Name:     "Guest_token",
-		Value:    sessionID,
-		Expires:  time.Now().Add(1 * time.Hour),
-		HttpOnly: false,
-	})
+	name := "Guest_token"
+	saisirCookie(w, sessionID, name)
+
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

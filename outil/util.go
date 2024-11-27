@@ -38,6 +38,15 @@ func generateSessionID() (string, error) {
 	return base64.URLEncoding.EncodeToString(bytes), nil
 }
 
+func saisirCookie(w http.ResponseWriter, sessionID string, name string) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     name,
+		Value:    sessionID,
+		Expires:  time.Now().Add(1 * time.Hour),
+		HttpOnly: false,
+	})
+}
+
 // Delete all cookies
 func deleteAllCookies(w http.ResponseWriter, r *http.Request) {
 	for _, cookie := range r.Cookies() {
