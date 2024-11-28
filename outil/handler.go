@@ -106,62 +106,77 @@ func Userinfo(email string) (User, error) {
 
 // Register Handler
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodPost {
+	cookie, err := r.Cookie("session_token")
+	if err == nil {
+		sessionID := cookie.Value
+		email, sessionExists := sessions[sessionID]
+		if sessionExists && email != "" {
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
+		}
+	}
+
+	switch r.Method {
+	case http.MethodGet:
+		err := tpl.ExecuteTemplate(w, "register.html", nil)
+		if err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		}
+
+	case http.MethodPost:
 		action := r.FormValue("query")
-		if action == "reg" {
-			username := r.FormValue("username")
-			email := r.FormValue("email")
-			fullname := r.FormValue("fullname")
-			password := r.FormValue("password")
-
-			if len(username) > 20 {
-				erro := Errors{
-					ErrorType: "Username cannot exceed 20 characters.",
-				}
-				tpl.ExecuteTemplate(w, "register.html", erro)
-				return
-			}
-			if len(password) < 8 {
-				erro := Errors{
-					ErrorType: "Password cannot be less than 8 characters.",
-				}
-				tpl.ExecuteTemplate(w, "register.html", erro)
-				return
-			}
-
-			hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-			if err != nil {
-				http.Error(w, "Error processing password", http.StatusInternalServerError)
-				return
-			}
-
-			_, err = db.Exec("INSERT INTO Users (username, email, fullname, password) VALUES (?, ?, ?, ?)",
-				username, email, fullname, string(hashedPassword))
-			if err != nil {
-				if strings.Contains(err.Error(), "UNIQUE constraint failed: Users.username") {
-					erro := Errors{
-						ErrorType: "Username already exists",
-					}
-					tpl.ExecuteTemplate(w, "register.html", erro)
-					return
-				}
-				http.Error(w, "User registration failed", http.StatusInternalServerError)
-				return
-			}
-
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
-		} else {
-			http.Error(w, "Bad request\nHmmm its looks like you are lost!!", http.StatusBadRequest)
+		if action != "reg" {
+			http.Error(w, "Bad request\nHmmm, it looks like you are lost!!", http.StatusBadRequest)
 			return
 		}
 
-	} else if r.Method == http.MethodGet {
-		tpl.ExecuteTemplate(w, "register.html", nil)
-	} else {
-		http.Error(w, "Method Not Allowed!!", http.StatusMethodNotAllowed)
-		return
+		username := r.FormValue("username")
+		email := r.FormValue("email")
+		fullname := r.FormValue("fullname")
+		password := r.FormValue("password")
+
+		if len(username) > 20 {
+			erro := Errors{
+				ErrorType: "Username cannot exceed 20 characters.",
+			}
+			tpl.ExecuteTemplate(w, "register.html", erro)
+			return
+		}
+		if len(password) < 8 {
+			erro := Errors{
+				ErrorType: "Password cannot be less than 8 characters.",
+			}
+			tpl.ExecuteTemplate(w, "register.html", erro)
+			return
+		}
+
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+		if err != nil {
+			http.Error(w, "Error processing password", http.StatusInternalServerError)
+			return
+		}
+
+		_, err = db.Exec("INSERT INTO Users (username, email, fullname, password) VALUES (?, ?, ?, ?)",
+			username, email, fullname, string(hashedPassword))
+		if err != nil {
+			if strings.Contains(err.Error(), "UNIQUE constraint failed: Users.username") {
+				erro := Errors{
+					ErrorType: "Username already exists",
+				}
+				tpl.ExecuteTemplate(w, "register.html", erro)
+				return
+			}
+			http.Error(w, "User registration failed", http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+
+	default:
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 	}
 }
+
 
 // Profile Handler
 func ProfileHandler(w http.ResponseWriter, r *http.Request) {
@@ -202,6 +217,7 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
 	tpl.ExecuteTemplate(w, "404.html", nil)
 }
+
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	_, err := r.Cookie("session_token")
 	if err == nil {
