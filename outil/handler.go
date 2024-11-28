@@ -84,7 +84,6 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		// No valid cookie, redirect to login
 
-		fmt.Println("hee")
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 	}
 }
