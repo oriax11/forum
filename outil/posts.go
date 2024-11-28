@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 )
 
 func PostComment(w http.ResponseWriter, r *http.Request) {
@@ -58,7 +59,7 @@ func PostComment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var commentID int
-	var commentDate string
+	var commentDate time.Time
 	db.QueryRow(`
 		SELECT comment_id, comment_date
 		FROM Comment
@@ -66,6 +67,8 @@ func PostComment(w http.ResponseWriter, r *http.Request) {
 		ORDER BY comment_date DESC
 		LIMIT 1
 	`, CommentData.PostID, username).Scan(&commentID, &commentDate)
+	comment_date:=AboutTime(commentDate)
+
 
 
 	w.Header().Set("Content-Type", "application/json")
@@ -75,7 +78,7 @@ func PostComment(w http.ResponseWriter, r *http.Request) {
 			"id":       commentID,
 			"username": username,
 			"content":  CommentData.Content,
-			"date":     commentDate,
+			"date":     comment_date,
 		},
 	})
 }
