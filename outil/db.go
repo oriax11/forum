@@ -3,7 +3,7 @@ package forum_full
 import (
 	"database/sql"
 	"fmt"
-	"text/template"
+	"html/template"
 
 	_ "github.com/mattn/go-sqlite3"
 )

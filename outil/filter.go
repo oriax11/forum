@@ -137,7 +137,8 @@ func CreatedHandler(w http.ResponseWriter, r *http.Request) {
 	var id string
 	cookie, err := r.Cookie("session_token")
 	if err != nil {
-		http.Error(w, "Failed to load Posts", http.StatusInternalServerError)
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
 	}
 	email := sessions[cookie.Value]
 	if r.Method == http.MethodGet {
@@ -145,7 +146,7 @@ func CreatedHandler(w http.ResponseWriter, r *http.Request) {
 		action := r.URL.Query().Get("query")
 		if action == "created" {
 			db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&id)
-			rows, _ := db.Query(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
+			rows, err := db.Query(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
 							   FROM Posts p
 							   JOIN Users u ON p.user_id = u.user_id
 							   WHERE u.user_id = ? `, id)

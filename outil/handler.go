@@ -19,7 +19,6 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 		CreatePost(w, r)
 		return
 	}
-
 	guestCookie, err := r.Cookie("Guest_token")
 	if err != nil && err != http.ErrNoCookie {
 		http.Error(w, "Error retrieving cookies", http.StatusInternalServerError)
@@ -34,7 +33,7 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 
 	posts, err := getPosts()
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
 		http.Error(w, "Failed to load posts", http.StatusInternalServerError)
 		return
 	}
@@ -84,6 +83,8 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		// No valid cookie, redirect to login
+
+		fmt.Println("hee")
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 	}
 }
@@ -201,78 +202,92 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
 	tpl.ExecuteTemplate(w, "404.html", nil)
 }
-
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	action := r.FormValue("query")
-	if r.Method == http.MethodPost {
-		if action == "login" {
-			email := r.FormValue("email")
-			password := r.FormValue("password")
-
-			type Cred struct {
-				HashedPassword string
-			}
-			var cred Cred
-
-			err := db.QueryRow("SELECT password FROM Users WHERE email = ?", email).Scan(&cred.HashedPassword)
-			if err == sql.ErrNoRows {
-				erro := Errors{
-					ErrorType: "No user with this email!",
-				}
-				tpl.ExecuteTemplate(w, "login.html", erro)
-				return
-			} else if err != nil {
-				http.Error(w, "Database error", http.StatusInternalServerError)
+	_, err := r.Cookie("session_token")
+	if err == nil {
+		cookie, err := r.Cookie("session_token")
+		if err == nil {
+			sessionID := cookie.Value
+			email, sessionExists := sessions[sessionID]
+	
+			if !sessionExists || email == "" {
+				deleteAllCookies(w,r)
+				http.Redirect(w, r, "/login", http.StatusSeeOther)
 				return
 			}
-
-			err = bcrypt.CompareHashAndPassword([]byte(cred.HashedPassword), []byte(password))
-			if err != nil {
-				erro := Errors{
-					ErrorType: "Incorrect password!",
-				}
-				tpl.ExecuteTemplate(w, "login.html", erro)
-				return
-			}
-			for key, value := range sessions {
-				if value == email {
-					delete(sessions, key)
-				}
-			}
-			deleteAllCookies(w, r)
-
-			sessionID, err := generateSessionID()
-			if err != nil {
-				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-				return
-			}
-
-			// Store session information in memory
-			sessions[sessionID] = email
-			name := "session_token"
-			saisirCookie(w, sessionID, name)
-
-			// login = true
-			fmt.Println("Successfully logged in")
-
+	
 			http.Redirect(w, r, "/", http.StatusSeeOther)
 			return
-		} else {
-			http.Error(w, "Bad request\nHmmm its looks like you are lost!!", http.StatusBadRequest)
-			return
 		}
-	} else if r.Method == http.MethodGet {
+	}	
+
+	switch r.Method {
+	case http.MethodGet:
 		err := tpl.ExecuteTemplate(w, "login.html", nil)
 		if err != nil {
-			fmt.Println("login template error :", err)
-			http.Error(w, "Internal Server Error", 500)
+			fmt.Println("login template error:", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		}
 
-	} else {
-		http.Error(w, "Method Not Allowed!!", http.StatusMethodNotAllowed)
-		return
+	case http.MethodPost:
+		action := r.FormValue("query")
+		if action != "login" {
+			http.Error(w, "Bad request\nHmmm, it looks like you are lost!!", http.StatusBadRequest)
+			return
+		}
+
+		email := r.FormValue("email")
+		password := r.FormValue("password")
+
+		type Cred struct {
+			HashedPassword string
+		}
+		var cred Cred
+		err := db.QueryRow("SELECT password FROM Users WHERE email = ?", email).Scan(&cred.HashedPassword)
+		if err == sql.ErrNoRows {
+			erro := Errors{
+				ErrorType: "No user with this email!",
+			}
+			tpl.ExecuteTemplate(w, "login.html", erro)
+			return
+		} else if err != nil {
+			http.Error(w, "Database error", http.StatusInternalServerError)
+			return
+		}
+
+		err = bcrypt.CompareHashAndPassword([]byte(cred.HashedPassword), []byte(password))
+		if err != nil {
+			erro := Errors{
+				ErrorType: "Incorrect password!",
+			}
+			tpl.ExecuteTemplate(w, "login.html", erro)
+			return
+		}
+
+		for key, value := range sessions {
+			if value == email {
+				delete(sessions, key)
+			}
+		}
+		deleteAllCookies(w, r)
+
+		sessionID, err := generateSessionID()
+		if err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		sessions[sessionID] = email
+		saisirCookie(w, sessionID, "session_token")
+
+		fmt.Println("Successfully logged in")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+
+	default:
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 	}
 }
+
 
 func GuestHandler(w http.ResponseWriter, r *http.Request) {
 	cookies := r.Cookies()
