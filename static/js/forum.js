@@ -366,4 +366,6 @@ document.querySelectorAll(".comment-like-btn").forEach(button => {
             }
         });
     });
-    });
+});
+
+

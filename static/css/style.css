@@ -539,6 +539,23 @@ textarea:focus {
 i{
   color: var(--accent-primary);
 }
+.levetate_container {
+  position: fixed;
+  top: 90%;
+  right: 5%;
+  display: flex;
+  justify-content: flex-end;
+
+}
+.levetate {
+  padding: 18px;
+  background-color: #ff4b4b;
+  border-radius: 8px;
+}
+.levetate i {
+  color: #ccc;
+  font-size: 18px;
+}
 
 /* Responsive styles */
 @media (max-width: 768px) {
