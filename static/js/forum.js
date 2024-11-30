@@ -193,6 +193,10 @@ function sendComment(postId, commentContent, callback) {
     });
 }
 
+
+
+let like = document.querySelectorAll(".comment-like-btn")
+let dislike  = document.querySelectorAll(".comment-dislike-btn")
 document.querySelectorAll(".comment-btn").forEach(button => {
     button.addEventListener("click", function(event) {
         event.preventDefault();
@@ -251,47 +255,9 @@ document.querySelectorAll(".comment-btn").forEach(button => {
 
                 console.log("Comment posted successfully");
             }
-
-            document.querySelectorAll(".comment-like-btn").forEach(button => {
-                button.addEventListener("click", function(event) {
-                    event.preventDefault();
-                    const commentid = this.getAttribute("commentid");
-                    sendCommentReaction(commentid, "LIKE", function(data) {
-                        if (data.success) {
-                        // Update the like count
-                        const likeCount = button.nextElementSibling;
-                        likeCount.textContent = data.likes;
-                
-                        // Update the dislike count
-                        const dislikeButton = button.parentElement.querySelector(".comment-dislike-btn");
-                        const dislikeCount = dislikeButton.nextElementSibling;
-                        dislikeCount.textContent = data.dislikes;
-                        }
-                    });
-                });
-                });            
-                
-                // Add event listeners for dislike buttons
-                document.querySelectorAll(".comment-dislike-btn").forEach(button => {
-                button.addEventListener("click", function(event) {
-                    event.preventDefault();
-                    const commentid = this.getAttribute("commentid");
-                    sendCommentReaction(commentid, "DISLIKE", function(data) {
-                        if (data.success) {
-                        // Update the like count
-                        const DislikeCount = button.nextElementSibling;
-                        DislikeCount.textContent = data.dislikes;
-                
-                        // Update the dislike count
-                        const likeButton = button.parentElement.querySelector(".comment-like-btn");
-                        const likeCount = likeButton.nextElementSibling;
-                        likeCount.textContent = data.likes;
-                        }
-                    });
-                });
-                });
-
-
+            
+             like = document.querySelectorAll(".comment-like-btn")
+             dislike  = document.querySelectorAll(".comment-dislike-btn")
         });
     });
 });
@@ -325,7 +291,7 @@ function sendCommentReaction(CommentID, reactionType, callback) {
     }
     
 // Add event listeners for like buttons
-document.querySelectorAll(".comment-like-btn").forEach(button => {
+like.forEach(button => {
     button.addEventListener("click", function(event) {
         event.preventDefault();
         const commentid = this.getAttribute("commentid");
@@ -345,7 +311,7 @@ document.querySelectorAll(".comment-like-btn").forEach(button => {
     });
     
     // Add event listeners for dislike buttons
-    document.querySelectorAll(".comment-dislike-btn").forEach(button => {
+    dislike.forEach(button => {
     button.addEventListener("click", function(event) {
         event.preventDefault();
         const commentid = this.getAttribute("commentid");
