@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <title>intouch</title>
 </head>
-<body id="top">
+<body>
     <nav class="navbar">
-        <img class="logo" src="static/img/logo.svg" alt="logo">
+        <a href="/"><img class="logo" src="static/img/logo.svg" alt="logo"></a>
         <div class="nav-buttons">
           <div class="user-info-container">
             <span id="Username">{{.Message}}</span>
@@ -42,10 +42,9 @@
         </div>
       </nav>
     
-    <div class="stky-sidebar" >
+    <div class="stky-sidebar">
         <ul>
-            <li><a href="/">Home</a></li>
-            <!-- <li><a href="#"><i class="fa-solid fa-list"></i> categories</a></li> -->
+            <!-- <li><a href="/">Home</a></li> -->
              <li>
                 <form class="categories_selection" method="get" action="/filter">
                     <input type="hidden" name="query" value="cat_filter">
@@ -61,14 +60,14 @@
                 </form>
                 
              </li>
-            <li>
+            <li class="created_liked">
                 <form class="forms" action="/created" method="get">
                     <input type="hidden" name="query" value="created">
                     <button class="liked_post" type="submit"><i class="fa-solid fa-signs-post"></i>     Created Posts</button>
                 </form>
             </li>
 
-            <li>
+            <li class="created_liked">
             <form class="forms" action="/liked" method="get">
                 <input type="hidden" name="query" value="liked">
                 <button class="liked_post" type="submit"><i class="fa-regular fa-heart"></i>    liked posts</button>
@@ -77,7 +76,7 @@
         </ul>
     </div>
 
-    <div class="container">
+    <div class="container hero">
         <form  class="post-form"  action="/" method="post">
             <input type="hidden" name="query" value="newpost">
             <textarea  required class="input-title" name="title"  placeholder="title"></textarea>
@@ -186,6 +185,7 @@
         <div class="levetate_container">
             <a href="#top" class="levetate"><i class="fa-solid fa-jet-fighter-up"></i></a>
         </div>
+        <script src="static/js/forum.js"></script>
         <script src="static/js/forum.js"></script>
 </body>
 </html>

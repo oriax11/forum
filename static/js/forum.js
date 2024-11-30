@@ -37,13 +37,18 @@ function cookieExists(name) {
 }
 
 if (cookieExists('Guest_token')) {
-    const form = document.querySelector('.post-form');
-    if (form) {
-        form.querySelectorAll('input, textarea, button').forEach(element => {
-            element.disabled = true;
-            form.style.opacity = "40%"
-        })
-    }
+    // const form = document.querySelector('.post-form');
+    const container = document.querySelector('.hero');
+    const created_liked = document.querySelectorAll('.created_liked');
+    const stikysideBar = document.querySelector('.stky-sidebar');
+    created_liked.forEach(element => {
+        element.style.display = "none";
+    });
+    container.style.display = "none";
+    stikysideBar.style.hieght = "0px";
+        // form.querySelectorAll('input, textarea, button').forEach(element => {
+            // form.style.display = "none";
+        // })
 }
 })
 const commentBtns = document.querySelectorAll("#comment-btn");
@@ -264,9 +269,7 @@ document.querySelectorAll(".comment-btn").forEach(button => {
                         }
                     });
                 });
-                });
-                
-                
+                });            
                 
                 // Add event listeners for dislike buttons
                 document.querySelectorAll(".comment-dislike-btn").forEach(button => {
@@ -292,8 +295,6 @@ document.querySelectorAll(".comment-btn").forEach(button => {
         });
     });
 });
-
-
 
 // Function to send AJAX request
 function sendCommentReaction(CommentID, reactionType, callback) {
@@ -322,9 +323,6 @@ function sendCommentReaction(CommentID, reactionType, callback) {
         console.error("Error:", error);
     });
     }
-
-
-
     
 // Add event listeners for like buttons
 document.querySelectorAll(".comment-like-btn").forEach(button => {
@@ -346,8 +344,6 @@ document.querySelectorAll(".comment-like-btn").forEach(button => {
     });
     });
     
-    
-    
     // Add event listeners for dislike buttons
     document.querySelectorAll(".comment-dislike-btn").forEach(button => {
     button.addEventListener("click", function(event) {
@@ -367,5 +363,3 @@ document.querySelectorAll(".comment-like-btn").forEach(button => {
         });
     });
 });
-
-
