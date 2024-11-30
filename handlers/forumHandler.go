@@ -10,6 +10,12 @@ import (
 
 // Forum Handler
 func ForumHandler(w http.ResponseWriter, r *http.Request) {
+	_, err := r.Cookie("session_token")
+    if err == nil {
+        http.Redirect(w, r, "/", http.StatusSeeOther)
+        return
+    }
+    
 	if r.URL.Path != "/" {
 		NotFound(w, r)
 		return
