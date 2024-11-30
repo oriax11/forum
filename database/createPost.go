@@ -11,6 +11,11 @@ import (
 func CreatePost(w http.ResponseWriter, r *http.Request) {
 	action := r.FormValue("query")
 
+	// if action != "newpost" {
+	// 	http.Error(w, "Bad request\nHmmm, it looks like you are lost!!", http.StatusBadRequest)
+	// 	return
+	// }
+
 	if action == "newpost" {
 		_, err := r.Cookie("Guest_token")
 		if err == nil {
@@ -70,5 +75,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		}
 
 	}
+
+	
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
