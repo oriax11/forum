@@ -1,7 +1,10 @@
-package forum_full
+package handlers
 
 import (
 	"net/http"
+
+	"forum_full/database"
+	"forum_full/utils"
 )
 
 func FilterHandler(w http.ResponseWriter, r *http.Request) {
@@ -36,7 +39,7 @@ func FilterHandler(w http.ResponseWriter, r *http.Request) {
 
 	email, sessionExists := "", false
 	if sessionCookie != nil {
-		email, sessionExists = sessions[sessionCookie.Value]
+		email, sessionExists = database.Sessions[sessionCookie.Value]
 	}
 
 	if !sessionExists && guestCookie == nil {
@@ -46,10 +49,10 @@ func FilterHandler(w http.ResponseWriter, r *http.Request) {
 
 	var id string
 	if sessionExists {
-		db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&id)
+		database.DB.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&id)
 	}
 
-	rows, err := db.Query(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
+	rows, err := database.DB.Query(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
 						   FROM Posts p
 						   JOIN Users u ON p.user_id = u.user_id
 						   WHERE p.categories LIKE ?`, "%"+category+"%")
@@ -59,7 +62,7 @@ func FilterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 
-	posts, err := Getcontent(rows)
+	posts, err := database.Getcontent(rows)
 	if err != nil {
 		http.Error(w, "Failed to load Posts", http.StatusInternalServerError)
 		return
@@ -67,33 +70,33 @@ func FilterHandler(w http.ResponseWriter, r *http.Request) {
 
 	if guestCookie != nil {
 		data := struct {
-			P       []Post
+			P       []utils.Post
 			Message string
 		}{
 			P:       posts,
 			Message: "",
 		}
-		if err := tpl.ExecuteTemplate(w, "forum.html", data); err != nil {
+		if err := database.Tpl.ExecuteTemplate(w, "forum.html", data); err != nil {
 			http.Error(w, "Error rendering the forum page", http.StatusInternalServerError)
 		}
 		return
 	}
 
 	if sessionExists {
-		userInfo, err := Userinfo(email)
+		userInfo, err := database.GetUserInfo(email)
 		if err != nil {
 			http.Error(w, "Failed to load user info", http.StatusInternalServerError)
 			return
 		}
 
 		data := struct {
-			P       []Post
+			P       []utils.Post
 			Message string
 		}{
 			P:       posts,
 			Message: userInfo.Username,
 		}
-		if err := tpl.ExecuteTemplate(w, "forum.html", data); err != nil {
+		if err := database.Tpl.ExecuteTemplate(w, "forum.html", data); err != nil {
 			http.Error(w, "Error rendering the forum page", http.StatusInternalServerError)
 		}
 		return
@@ -110,13 +113,13 @@ func LikedHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
-	email := sessions[cookie.Value]
+	email := database.Sessions[cookie.Value]
 	if r.Method == http.MethodGet {
 
 		action := r.URL.Query().Get("query")
 		if action == "liked" {
-			db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&id)
-			rows, err := db.Query(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
+			database.DB.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&id)
+			rows, err := database.DB.Query(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
 							   FROM Posts p
 							   JOIN Users u ON p.user_id = u.user_id
 			JOIN Reactions r ON p.post_id = r.post_id
@@ -125,25 +128,25 @@ func LikedHandler(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "Failed to load Posts", http.StatusInternalServerError)
 			}
 			defer rows.Close()
-			posts, err := Getcontent(rows)
+			posts, err := database.Getcontent(rows)
 			if err != nil {
 				http.Error(w, "Failed to load Posts", http.StatusInternalServerError)
 			}
-			userInfo, err := Userinfo(email)
+			userInfo, err :=  database.GetUserInfo(email)
 			if err != nil {
 				http.Error(w, "Failed to load user info", http.StatusInternalServerError)
 				return
 			}
 
 			data := struct {
-				P       []Post
+				P       []utils.Post
 				Message string
 			}{
 				P:       posts,
 				Message: userInfo.Username,
 			}
 
-			err = tpl.ExecuteTemplate(w, "forum.html", data)
+			err = database.Tpl.ExecuteTemplate(w, "forum.html", data)
 			if err != nil {
 				http.Error(w, "Error rendering the forum page", http.StatusInternalServerError)
 			}
@@ -166,13 +169,13 @@ func CreatedHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
-	email := sessions[cookie.Value]
+	email := database.Sessions[cookie.Value]
 	if r.Method == http.MethodGet {
 
 		action := r.URL.Query().Get("query")
 		if action == "created" {
-			db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&id)
-			rows, err := db.Query(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
+			database.DB.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&id)
+			rows, err := database.DB.Query(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
 							   FROM Posts p
 							   JOIN Users u ON p.user_id = u.user_id
 							   WHERE u.user_id = ? `, id)
@@ -180,25 +183,25 @@ func CreatedHandler(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "Failed to load Posts", http.StatusInternalServerError)
 			}
 			defer rows.Close()
-			posts, err := Getcontent(rows)
+			posts, err := database.Getcontent(rows)
 			if err != nil {
 				http.Error(w, "Failed to load Posts", http.StatusInternalServerError)
 			}
-			userInfo, err := Userinfo(email)
+			userInfo, err :=  database.GetUserInfo(email)
 			if err != nil {
 				http.Error(w, "Failed to load user info", http.StatusInternalServerError)
 				return
 			}
 
 			data := struct {
-				P       []Post
+				P       []utils.Post
 				Message string
 			}{
 				P:       posts,
 				Message: userInfo.Username,
 			}
 
-			err = tpl.ExecuteTemplate(w, "forum.html", data)
+			err = database.Tpl.ExecuteTemplate(w, "forum.html", data)
 			if err != nil {
 				http.Error(w, "Error rendering the forum page", http.StatusInternalServerError)
 			}

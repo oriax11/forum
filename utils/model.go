@@ -1,4 +1,4 @@
-package forum_full
+package utils
 
 import "time"
 

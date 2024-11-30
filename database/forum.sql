@@ -1,4 +1,5 @@
-CREATE TABLE Users (
+--Usres Table--
+CREATE TABLE IF NOT EXISTS Users (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT, 
     username TEXT UNIQUE NOT NULL,
     email TEXT UNIQUE NOT NULL,
@@ -7,7 +8,7 @@ CREATE TABLE Users (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE Posts (
+CREATE TABLE  IF NOT EXISTS Posts (
     post_id INTEGER PRIMARY KEY AUTOINCREMENT, 
     user_id INTEGER,
     title TEXT NOT NULL,
@@ -17,7 +18,7 @@ CREATE TABLE Posts (
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
-CREATE TABLE Reactions (
+CREATE TABLE  IF NOT EXISTS Reactions (
     reaction_id INTEGER PRIMARY KEY AUTOINCREMENT,
     post_id INTEGER,
     user_id INTEGER,
@@ -28,7 +29,7 @@ CREATE TABLE Reactions (
     UNIQUE(post_id, user_id)
 );
 
-CREATE TABLE Comment (
+CREATE TABLE  IF NOT EXISTS Comment (
     comment_id INTEGER PRIMARY KEY AUTOINCREMENT,
     post_id INTEGER,
     username TEXT,
@@ -37,7 +38,7 @@ CREATE TABLE Comment (
     FOREIGN KEY (post_id) REFERENCES Posts(post_id)
 );
 
-CREATE TABLE CommentReactions (
+CREATE TABLE  IF NOT EXISTS CommentReactions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     comment_id INTEGER,
     user_id INTEGER,

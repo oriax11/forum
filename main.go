@@ -1,15 +1,16 @@
 package main
 
 import (
-	outil "forum_full/outil"
 	"log"
 	"net/http"
+
+	"forum_full/database"
+	"forum_full/handlers"
 )
 
-var err error
 
 func main() {
-	err = outil.InitDB()
+	err := database.InitDB()
 	if err != nil {
 		log.Fatal("Failed to open the database:", err)
 	}
@@ -17,24 +18,20 @@ func main() {
 
 	// Set up routes
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-	http.HandleFunc("/", outil.ForumHandler)
-	http.HandleFunc("/register", outil.RegisterHandler)
-	http.HandleFunc("/login", outil.LoginHandler)
-	http.HandleFunc("/profile", outil.ProfileHandler)
-	http.HandleFunc("/404", outil.NotFound)
-	http.HandleFunc("/guest", outil.GuestHandler)
-	http.HandleFunc("/logout", outil.LogoutHandler)
-	http.HandleFunc("/report", outil.ReportHandler)
-	http.HandleFunc("/filter", outil.FilterHandler)
-	http.HandleFunc("/created", outil.CreatedHandler)
-	http.HandleFunc("/liked", outil.LikedHandler)
-	http.HandleFunc("/api/postreact", outil.Postreact)
-	http.HandleFunc("/api/postComment", outil.PostComment)
-	http.HandleFunc("/api/postCommentReact", outil.CommentReact)
-
-
-
-
+	http.HandleFunc("/", handlers.ForumHandler)
+	http.HandleFunc("/register", handlers.RegisterHandler)
+	http.HandleFunc("/login", handlers.LoginHandler)
+	http.HandleFunc("/profile", handlers.ProfileHandler)
+	http.HandleFunc("/404", handlers.NotFound)
+	http.HandleFunc("/guest", handlers.GuestHandler)
+	http.HandleFunc("/logout", handlers.LogoutHandler)
+	http.HandleFunc("/report", handlers.ReportHandler)
+	http.HandleFunc("/filter", handlers.FilterHandler)
+	http.HandleFunc("/created", handlers.CreatedHandler)
+	http.HandleFunc("/liked", handlers.LikedHandler)
+	http.HandleFunc("/api/postreact", database.Postreact)
+	http.HandleFunc("/api/postComment", database.PostComment)
+	http.HandleFunc("/api/postCommentReact", database.CommentReact)
 
 	// Start the server
 	log.Println("Server is running on port http://localhost:9080/")

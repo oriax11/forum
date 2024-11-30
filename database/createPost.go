@@ -1,20 +1,23 @@
-package forum_full
+package database
 
 import (
 	"net/http"
 	"strings"
+
+	"forum_full/utils"
 )
 
+//func Creat Posts
 func CreatePost(w http.ResponseWriter, r *http.Request) {
 	action := r.FormValue("query")
 
 	if action == "newpost" {
 		_, err := r.Cookie("Guest_token")
 		if err == nil {
-			erro := Errors{
+			erro := utils.Errors{
 				ErrorType: "Please Log in to post posts!",
 			}
-			tpl.ExecuteTemplate(w, "login.html", erro)
+			Tpl.ExecuteTemplate(w, "login.html", erro)
 			return
 		}
 
@@ -46,7 +49,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		email := sessions[cookie.Value]
+		email := Sessions[cookie.Value]
 
 		if len(category_type) == 0 {
 			http.Error(w, "category cannot be emty", http.StatusBadRequest)
@@ -57,9 +60,9 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		db.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
+		DB.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
 
-		_, err = db.Exec(
+		_, err = DB.Exec(
 			"INSERT INTO Posts (user_id, title, content, categories) VALUES (?, ?, ?, ?)",
 			userID, title, content, Allcategories,
 		)
