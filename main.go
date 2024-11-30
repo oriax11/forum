@@ -14,7 +14,6 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to open the database:", err)
 	}
-	//
 
 	// Set up routes
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))

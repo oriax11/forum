@@ -11,10 +11,10 @@ import (
 func CreatePost(w http.ResponseWriter, r *http.Request) {
 	action := r.FormValue("query")
 
-	// if action != "newpost" {
-	// 	http.Error(w, "Bad request\nHmmm, it looks like you are lost!!", http.StatusBadRequest)
-	// 	return
-	// }
+	if action != "newpost" {
+		http.Error(w, "Bad request\nHmmm, it looks like you are lost!!", http.StatusBadRequest)
+		return
+	}
 
 	if action == "newpost" {
 		_, err := r.Cookie("Guest_token")
@@ -64,7 +64,6 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-
 		_, err = DB.Exec(
 			"INSERT INTO Posts (user_id, title, content, categories) VALUES (?, ?, ?, ?)",
 			userID, title, content, Allcategories,
@@ -76,6 +75,5 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

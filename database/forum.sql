@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS Users (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+--Posts Table--
 CREATE TABLE  IF NOT EXISTS Posts (
     post_id INTEGER PRIMARY KEY AUTOINCREMENT, 
     user_id INTEGER,
@@ -18,6 +19,7 @@ CREATE TABLE  IF NOT EXISTS Posts (
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
+--Posts reactions Table--
 CREATE TABLE  IF NOT EXISTS Reactions (
     reaction_id INTEGER PRIMARY KEY AUTOINCREMENT,
     post_id INTEGER,
@@ -29,6 +31,7 @@ CREATE TABLE  IF NOT EXISTS Reactions (
     UNIQUE(post_id, user_id)
 );
 
+--Comments Table--
 CREATE TABLE  IF NOT EXISTS Comment (
     comment_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
@@ -40,6 +43,7 @@ CREATE TABLE  IF NOT EXISTS Comment (
     FOREIGN KEY (post_id) REFERENCES Posts(post_id)
 );
 
+--Comment reactions Table--
 CREATE TABLE  IF NOT EXISTS CommentReactions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     comment_id INTEGER,

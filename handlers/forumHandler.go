@@ -96,7 +96,6 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 
 func GuestHandler(w http.ResponseWriter, r *http.Request) {
 
-
 	cookies := r.Cookies()
 	if len(cookies) != 0 {
 		utils.DeleteAllCookies(w, r)
