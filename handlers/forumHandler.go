@@ -10,12 +10,6 @@ import (
 
 // Forum Handler
 func ForumHandler(w http.ResponseWriter, r *http.Request) {
-	_, err := r.Cookie("session_token")
-    if err == nil {
-        http.Redirect(w, r, "/", http.StatusSeeOther)
-        return
-    }
-    
 	if r.URL.Path != "/" {
 		NotFound(w, r)
 		return
@@ -66,7 +60,7 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		userInfo, err :=  database.GetUserInfo(userID)
+		userInfo, err := database.GetUserInfo(userID)
 		if err != nil {
 			http.Error(w, "Failed to load user info", http.StatusInternalServerError)
 			return
@@ -88,11 +82,9 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		// No valid cookie, redirect to login
-
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 	}
 }
-
 
 func GuestHandler(w http.ResponseWriter, r *http.Request) {
 
