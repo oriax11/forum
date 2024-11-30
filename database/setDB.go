@@ -26,13 +26,13 @@ func InitDB() error {
 	return err
 }
 
-func GetUserInfo(email string) (utils.User, error) {
-	row := DB.QueryRow(`SELECT user_id, username, email, fullname, created_at FROM Users WHERE email = ?`, email)
+func GetUserInfo(userID string) (utils.User, error) {
+	row := DB.QueryRow(`SELECT user_id, username, email, fullname, created_at FROM Users WHERE user_id = ?`, userID)
 
 	var user utils.User
 	if err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Fullname, &user.Created_at); err != nil {
 		if err == sql.ErrNoRows {
-			return utils.User{}, fmt.Errorf("no user found with email: %s", email)
+			return utils.User{}, fmt.Errorf("no user found with Id: %s", userID)
 		}
 		return utils.User{}, err
 	}

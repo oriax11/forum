@@ -37,21 +37,15 @@ func FilterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	email, sessionExists := "", false
+	userID, sessionExists := "", false
 	if sessionCookie != nil {
-		email, sessionExists = database.Sessions[sessionCookie.Value]
+		userID, sessionExists = database.Sessions[sessionCookie.Value]
 	}
 
 	if !sessionExists && guestCookie == nil {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
-
-	var id string
-	if sessionExists {
-		database.DB.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&id)
-	}
-
 	rows, err := database.DB.Query(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
 						   FROM Posts p
 						   JOIN Users u ON p.user_id = u.user_id
@@ -83,7 +77,7 @@ func FilterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if sessionExists {
-		userInfo, err := database.GetUserInfo(email)
+		userInfo, err := database.GetUserInfo(userID)
 		if err != nil {
 			http.Error(w, "Failed to load user info", http.StatusInternalServerError)
 			return
@@ -106,24 +100,22 @@ func FilterHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func LikedHandler(w http.ResponseWriter, r *http.Request) {
-	var id string
 	cookie, err := r.Cookie("session_token")
 	if err != nil {
 
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
-	email := database.Sessions[cookie.Value]
+	userID := database.Sessions[cookie.Value]
 	if r.Method == http.MethodGet {
 
 		action := r.URL.Query().Get("query")
 		if action == "liked" {
-			database.DB.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&id)
 			rows, err := database.DB.Query(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
 							   FROM Posts p
 							   JOIN Users u ON p.user_id = u.user_id
 			JOIN Reactions r ON p.post_id = r.post_id
-			WHERE r.reaction_type = 'LIKE' AND r.user_id=?`, id)
+			WHERE r.reaction_type = 'LIKE' AND r.user_id=?`, userID)
 			if err != nil {
 				http.Error(w, "Failed to load Posts", http.StatusInternalServerError)
 			}
@@ -132,7 +124,7 @@ func LikedHandler(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				http.Error(w, "Failed to load Posts", http.StatusInternalServerError)
 			}
-			userInfo, err :=  database.GetUserInfo(email)
+			userInfo, err :=  database.GetUserInfo(userID)
 			if err != nil {
 				http.Error(w, "Failed to load user info", http.StatusInternalServerError)
 				return
@@ -162,23 +154,21 @@ func LikedHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func CreatedHandler(w http.ResponseWriter, r *http.Request) {
-	var id string
 	cookie, err := r.Cookie("session_token")
 	if err != nil {
 
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
-	email := database.Sessions[cookie.Value]
+	userID := database.Sessions[cookie.Value]
 	if r.Method == http.MethodGet {
 
 		action := r.URL.Query().Get("query")
 		if action == "created" {
-			database.DB.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&id)
 			rows, err := database.DB.Query(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
 							   FROM Posts p
 							   JOIN Users u ON p.user_id = u.user_id
-							   WHERE u.user_id = ? `, id)
+							   WHERE u.user_id = ? `, userID)
 			if err != nil {
 				http.Error(w, "Failed to load Posts", http.StatusInternalServerError)
 			}
@@ -187,7 +177,7 @@ func CreatedHandler(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				http.Error(w, "Failed to load Posts", http.StatusInternalServerError)
 			}
-			userInfo, err :=  database.GetUserInfo(email)
+			userInfo, err :=  database.GetUserInfo(userID)
 			if err != nil {
 				http.Error(w, "Failed to load user info", http.StatusInternalServerError)
 				return

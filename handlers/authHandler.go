@@ -160,7 +160,12 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		database.Sessions[sessionID] = email
+		var userID string 
+		database.DB.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
+
+
+
+		database.Sessions[sessionID] = userID
 		utils.SetCookies(w, sessionID, "session_token")
 
 		fmt.Println("Successfully logged in")

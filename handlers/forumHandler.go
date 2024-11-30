@@ -54,13 +54,13 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	} else if sessionCookie != nil {
 		// Logged-in user
-		email, exists := database.Sessions[sessionCookie.Value]
+		userID, exists := database.Sessions[sessionCookie.Value]
 		if !exists {
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
 
-		userInfo, err :=  database.GetUserInfo(email)
+		userInfo, err :=  database.GetUserInfo(userID)
 		if err != nil {
 			http.Error(w, "Failed to load user info", http.StatusInternalServerError)
 			return

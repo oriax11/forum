@@ -21,7 +21,6 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		userID := 1
 
 		if err := r.ParseForm(); err != nil {
 			http.Error(w, "Failed to parse form", http.StatusBadRequest)
@@ -49,7 +48,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		email := Sessions[cookie.Value]
+		userID := Sessions[cookie.Value]
 
 		if len(category_type) == 0 {
 			http.Error(w, "category cannot be emty", http.StatusBadRequest)
@@ -60,7 +59,6 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		DB.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
 
 		_, err = DB.Exec(
 			"INSERT INTO Posts (user_id, title, content, categories) VALUES (?, ?, ?, ?)",

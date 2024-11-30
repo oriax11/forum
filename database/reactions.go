@@ -28,13 +28,7 @@ func Postreact(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	email := Sessions[sessionCookie.Value]
-	var userID int
-	if err := DB.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID); err != nil {
-		http.Error(w, "User not found", http.StatusUnauthorized)
-		return
-	}
-
+	userID := Sessions[sessionCookie.Value]
 	var currentReaction string
 	DB.QueryRow("SELECT reaction_type FROM Reactions WHERE post_id = ? AND user_id = ?", reactionData.PostID, userID).Scan(&currentReaction)
 
@@ -96,14 +90,7 @@ func CommentReact(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get username from session
-	email := Sessions[sessionCookie.Value]
-	var userID int
-	err = DB.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
-	if err != nil {
-		http.Error(w, "User not found", http.StatusUnauthorized)
-		return
-	}
-
+	userID := Sessions[sessionCookie.Value]
 	var currentReaction string
 	DB.QueryRow("SELECT reaction_type FROM CommentReactions WHERE comment_id = ? AND user_id = ?", CommentReact.CommentID, userID).Scan(&currentReaction)
 

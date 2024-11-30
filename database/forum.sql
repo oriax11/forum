@@ -31,10 +31,12 @@ CREATE TABLE  IF NOT EXISTS Reactions (
 
 CREATE TABLE  IF NOT EXISTS Comment (
     comment_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
     post_id INTEGER,
     username TEXT,
     comment_content TEXT NOT NULL,
     comment_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
     FOREIGN KEY (post_id) REFERENCES Posts(post_id)
 );
 
