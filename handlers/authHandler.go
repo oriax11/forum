@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"forum_full/database"
 	"forum_full/utils"
@@ -37,20 +36,20 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Bad request\nHmmm, it looks like you are lost!!", http.StatusBadRequest)
 			return
 		}
+		var user utils.User
+		user.Username = r.FormValue("username")
+		user.Email = r.FormValue("email")
+		user.Fullname = r.FormValue("fullname")
+		user.Password = r.FormValue("password")
 
-		username := r.FormValue("username")
-		email := r.FormValue("email")
-		fullname := r.FormValue("fullname")
-		password := r.FormValue("password")
-
-		if len(username) > 20 {
+		if len(user.Username) > 20 {
 			erro := utils.Errors{
 				ErrorType: "Username cannot exceed 20 characters.",
 			}
 			database.Tpl.ExecuteTemplate(w, "register.html", erro)
 			return
 		}
-		if len(password) < 8 {
+		if len(user.Password) < 8 {
 			erro := utils.Errors{
 				ErrorType: "Password cannot be less than 8 characters.",
 			}
@@ -58,23 +57,13 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+		// Add user to database
+		err := database.AddUser(user)
 		if err != nil {
-			http.Error(w, "Error processing password", http.StatusInternalServerError)
-			return
-		}
-
-		_, err = database.DB.Exec("INSERT INTO Users (username, email, fullname, password) VALUES (?, ?, ?, ?)",
-			username, email, fullname, string(hashedPassword))
-		if err != nil {
-			if strings.Contains(err.Error(), "UNIQUE constraint failed: Users.username") {
-				erro := utils.Errors{
-					ErrorType: "Username already exists",
-				}
-				database.Tpl.ExecuteTemplate(w, "register.html", erro)
-				return
+			err := utils.Errors{
+				ErrorType: "User alrready Exist",
 			}
-			http.Error(w, "User registration failed", http.StatusInternalServerError)
+			database.Tpl.ExecuteTemplate(w, "register.html", err)
 			return
 		}
 
@@ -160,10 +149,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		var userID string 
+		var userID string
 		database.DB.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
-
-
 
 		database.Sessions[sessionID] = userID
 		utils.SetCookies(w, sessionID, "session_token")
@@ -175,7 +162,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 	}
 }
-
 
 // Logout Handler
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
