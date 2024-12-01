@@ -1,14 +1,11 @@
 package handlers
 
 import (
-	"database/sql"
 	"fmt"
 	"net/http"
 
 	"forum_full/database"
 	"forum_full/utils"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 // Register Handler
@@ -111,28 +108,12 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		email := r.FormValue("email")
 		password := r.FormValue("password")
 
-		type Cred struct {
-			HashedPassword string
-		}
-		var cred Cred
-		err := database.DB.QueryRow("SELECT password FROM Users WHERE email = ?", email).Scan(&cred.HashedPassword)
-		if err == sql.ErrNoRows {
-			erro := utils.Errors{
-				ErrorType: "No user with this email!",
-			}
-			database.Tpl.ExecuteTemplate(w, "login.html", erro)
-			return
-		} else if err != nil {
-			http.Error(w, "Database error", http.StatusInternalServerError)
-			return
-		}
-
-		err = bcrypt.CompareHashAndPassword([]byte(cred.HashedPassword), []byte(password))
+		err := database.GetUser(email, password)
 		if err != nil {
-			erro := utils.Errors{
-				ErrorType: "Incorrect password!",
+			err := utils.Errors{
+				ErrorType: err.Error(),
 			}
-			database.Tpl.ExecuteTemplate(w, "login.html", erro)
+			database.Tpl.ExecuteTemplate(w, "login.html", err)
 			return
 		}
 
