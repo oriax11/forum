@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"regexp"
 
 	"forum_full/database"
 	"forum_full/utils"
@@ -39,21 +40,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		user.Fullname = r.FormValue("fullname")
 		user.Password = r.FormValue("password")
 
-		if len(user.Username) > 20 {
-			erro := utils.Errors{
-				ErrorType: "Username cannot exceed 20 characters.",
-			}
-			database.Tpl.ExecuteTemplate(w, "register.html", erro)
-			return
-		}
-		if len(user.Password) < 8 {
-			erro := utils.Errors{
-				ErrorType: "Password cannot be less than 8 characters.",
-			}
-			database.Tpl.ExecuteTemplate(w, "register.html", erro)
-			return
-		}
-
+		CheckCredentials(user, w)
 		// Add user to database
 		err := database.AddUser(user)
 		if err != nil {
@@ -68,6 +55,46 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	default:
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+func CheckCredentials(user utils.User, w http.ResponseWriter) {
+	if len(user.Username) > 15 {
+		erro := utils.Errors{
+			ErrorType: "Username cannot exceed 15 characters.",
+		}
+		database.Tpl.ExecuteTemplate(w, "register.html", erro)
+		return
+	}
+	if len(user.Password) < 8 {
+		erro := utils.Errors{
+			ErrorType: "Password cannot be less than 8 characters.",
+		}
+		database.Tpl.ExecuteTemplate(w, "register.html", erro)
+		return
+	}
+	// check Password Format
+	// regPassword := regexp.MustCompile(`[a-zA-Z]*\d*[@$!%*?&]*`)
+	// if !regPassword.MatchString(user.Password) {
+	// 	err := utils.Errors{
+	// 		ErrorType: `Must be at least :
+	// 		1 lower case
+	// 		1 upper case
+	// 		1 Number
+	// 		1 special character (@$!%*?&)`,
+	// 	}
+	// 	database.Tpl.ExecuteTemplate(w, "register.html", err)
+	// 	return
+	// }
+
+	// check email Format
+	regEmail := regexp.MustCompile(`^[^@\s]+@[^@\s]+\.[^@\s]{3,4}$`)
+	if !regEmail.MatchString(user.Email) {
+		err := utils.Errors{
+			ErrorType: "Email Format Incorrect Try Again",
+		}
+		database.Tpl.ExecuteTemplate(w, "register.html", err)
+		return
 	}
 }
 
