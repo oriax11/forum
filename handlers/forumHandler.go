@@ -101,7 +101,7 @@ func GuestHandler(w http.ResponseWriter, r *http.Request) {
 	// Store guest session information in memory
 	database.Sessions[sessionID] = "guest"
 	name := "Guest_token"
-	utils.SetCookies(w, sessionID, name)
+	utils.SetCookies(w, sessionID, name, false )
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

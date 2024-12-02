@@ -168,9 +168,9 @@ body {
   background-color: var(--border-color);
 }
 
-.dropdown:hover .dropdown-content {
+/* .dropdown:hover .dropdown-content {
   display: block;
-}
+} */
 
 /* Responsive styles */
 @media (max-width: 768px) {
@@ -191,7 +191,7 @@ body {
   }
 }
 
-.container {
+.container, .post-form_container {
   max-width: 1100px;
   margin: 20px auto;
   background-color: var(--background-secondary);

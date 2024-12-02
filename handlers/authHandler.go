@@ -66,7 +66,7 @@ func CheckCredentials(user utils.User, w http.ResponseWriter) {
 		database.Tpl.ExecuteTemplate(w, "register.html", erro)
 		return
 	}
-	if len(user.Password) < 8 {
+	if len(user.Password) < 8 || len(user.Password) > 32 {
 		erro := utils.Errors{
 			ErrorType: "Password cannot be less than 8 characters.",
 		}
@@ -161,7 +161,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		database.DB.QueryRow("SELECT user_id FROM Users WHERE email = ?", email).Scan(&userID)
 
 		database.Sessions[sessionID] = userID
-		utils.SetCookies(w, sessionID, "session_token")
+		utils.SetCookies(w, sessionID, "session_token", true )
 
 		fmt.Println("Successfully logged in")
 		http.Redirect(w, r, "/", http.StatusSeeOther)

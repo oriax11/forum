@@ -29,7 +29,6 @@ if (usernameElement && usernameElement.textContent.trim() !== "") {
         bug_tbn.style.display = "none";
     }
 }
-document.addEventListener("DOMContentLoaded", function () {
 
     function cookieExists(name) {
         const cookies = document.cookie.split('; ');
@@ -38,19 +37,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (cookieExists('Guest_token')) {
         // const form = document.querySelector('.post-form');
-        const container = document.querySelector('.hero');
+        const container = document.querySelector('.post-form_container');
+        console.log("ihgqsdfd")
         const created_liked = document.querySelectorAll('.created_liked');
         const stikysideBar = document.querySelector('.stky-sidebar');
         created_liked.forEach(element => {
             element.style.display = "none";
-        });
+        })
         container.style.display = "none";
         stikysideBar.style.hieght = "0px";
-        // form.querySelectorAll('input, textarea, button').forEach(element => {
-        // form.style.display = "none";
-        // })
     }
-})
+
 const commentBtns = document.querySelectorAll("#comment-btn");
 const commentForms = document.querySelectorAll("#comment-form");
 
