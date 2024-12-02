@@ -18,17 +18,10 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 		database.CreatePost(w, r)
 		return
 	}
-	guestCookie, err := r.Cookie("Guest_token")
-	if err != nil && err != http.ErrNoCookie {
-		http.Error(w, "Error retrieving cookies", http.StatusInternalServerError)
-		return
-	}
+	guestCookie, _ := r.Cookie("Guest_token")
 
-	sessionCookie, err := r.Cookie("session_token")
-	if err != nil && err != http.ErrNoCookie {
-		http.Error(w, "Error retrieving cookies", http.StatusInternalServerError)
-		return
-	}
+	sessionCookie, _ := r.Cookie("session_token")
+
 
 	posts, err := database.GetPosts()
 	if err != nil {
