@@ -25,7 +25,6 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 
 	posts, err := database.GetPosts()
 	if err != nil {
-		// fmt.Println(err)
 		http.Error(w, "Failed to load posts", http.StatusInternalServerError)
 		return
 	}
@@ -34,17 +33,18 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 		// Guest user, render index with posts only
 		data := struct {
 			P       []utils.Post
-			Message string
+			Username string
 		}{
 			P:       posts,
-			Message: "",
+			Username: "",
 		}
 
-		err = database.Tpl.ExecuteTemplate(w, "forum.html", data) // Use a different template for guests if needed
+		err = database.Tpl.ExecuteTemplate(w, "forum.html", data)
 		if err != nil {
 			fmt.Println(err)
 			http.Error(w, "Error rendering the forum page", http.StatusInternalServerError)
 		}
+		
 	} else if sessionCookie != nil {
 		// Logged-in user
 		userID, exists := database.Sessions[sessionCookie.Value]
@@ -61,10 +61,10 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 
 		data := struct {
 			P       []utils.Post
-			Message string
+			Username string
 		}{
 			P:       posts,
-			Message: userInfo.Username,
+			Username: userInfo.Username,
 		}
 
 		err = database.Tpl.ExecuteTemplate(w, "forum.html", data)

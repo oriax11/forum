@@ -25,8 +25,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 			Tpl.ExecuteTemplate(w, "login.html", erro)
 			return
 		}
-
-
+		
 		if err := r.ParseForm(); err != nil {
 			http.Error(w, "Failed to parse form", http.StatusBadRequest)
 			return
@@ -54,6 +53,10 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		}
 
 		userID := Sessions[cookie.Value]
+		if (userID == "") {
+			http.Error(w,"Faild to load Post", http.StatusInternalServerError)
+			return
+		}
 
 		if len(category_type) == 0 {
 			http.Error(w, "category cannot be emty", http.StatusBadRequest)

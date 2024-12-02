@@ -29,6 +29,12 @@ func Postreact(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userID := Sessions[sessionCookie.Value]
+	if userID == "" {
+		fmt.Print("hello")
+		http.Error(w, "Failed to update reaction", http.StatusInternalServerError)
+		return
+	}
+	
 	var currentReaction string
 	DB.QueryRow("SELECT reaction_type FROM Reactions WHERE post_id = ? AND user_id = ?", reactionData.PostID, userID).Scan(&currentReaction)
 
@@ -91,6 +97,10 @@ func CommentReact(w http.ResponseWriter, r *http.Request) {
 
 	// Get username from session
 	userID := Sessions[sessionCookie.Value]
+	if userID == "" {
+		http.Error(w, "Failed to update reaction", http.StatusInternalServerError)
+		return
+	}
 	var currentReaction string
 	DB.QueryRow("SELECT reaction_type FROM CommentReactions WHERE comment_id = ? AND user_id = ?", CommentReact.CommentID, userID).Scan(&currentReaction)
 

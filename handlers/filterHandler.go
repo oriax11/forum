@@ -16,13 +16,13 @@ func FilterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	action := r.URL.Query().Get("query")
+	action := r.FormValue("query")
 	if action != "cat_filter" {
 		http.Error(w, "Invalid action", http.StatusBadRequest)
 		return
 	}
 
-	category := r.URL.Query().Get("categories")
+	category := r.FormValue("categories")
 	categoriesField := []string{"General", "Art", "News", "Technology", "Sport"}
 	isValidCategory := false
 	for _, value := range categoriesField {
@@ -40,6 +40,10 @@ func FilterHandler(w http.ResponseWriter, r *http.Request) {
 	userID, sessionExists := "", false
 	if sessionCookie != nil {
 		userID, sessionExists = database.Sessions[sessionCookie.Value]
+		if userID == "" {
+			http.Error(w, "Failed to Load Post", http.StatusInternalServerError)
+			return
+		}
 	}
 
 	if !sessionExists && guestCookie == nil {
@@ -65,12 +69,13 @@ func FilterHandler(w http.ResponseWriter, r *http.Request) {
 	if guestCookie != nil {
 		data := struct {
 			P       []utils.Post
-			Message string
+			Username string
 		}{
 			P:       posts,
-			Message: "",
+			Username: "",
 		}
 		if err := database.Tpl.ExecuteTemplate(w, "forum.html", data); err != nil {
+
 			http.Error(w, "Error rendering the forum page", http.StatusInternalServerError)
 		}
 		return
@@ -85,10 +90,10 @@ func FilterHandler(w http.ResponseWriter, r *http.Request) {
 
 		data := struct {
 			P       []utils.Post
-			Message string
+			Username string
 		}{
 			P:       posts,
-			Message: userInfo.Username,
+			Username: userInfo.Username,
 		}
 		if err := database.Tpl.ExecuteTemplate(w, "forum.html", data); err != nil {
 			http.Error(w, "Error rendering the forum page", http.StatusInternalServerError)
@@ -107,6 +112,10 @@ func LikedHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	userID := database.Sessions[cookie.Value]
+	if userID == "" {
+		http.Error(w, "Failed to Load Liked Posts", http.StatusInternalServerError)
+		return
+	}
 	if r.Method == http.MethodGet {
 
 		action := r.URL.Query().Get("query")
@@ -132,10 +141,10 @@ func LikedHandler(w http.ResponseWriter, r *http.Request) {
 
 			data := struct {
 				P       []utils.Post
-				Message string
+				Username string
 			}{
 				P:       posts,
-				Message: userInfo.Username,
+				Username: userInfo.Username,
 			}
 
 			err = database.Tpl.ExecuteTemplate(w, "forum.html", data)
@@ -161,6 +170,10 @@ func CreatedHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	userID := database.Sessions[cookie.Value]
+	if userID == "" {
+		http.Error(w, "Failed to Load Posts", http.StatusInternalServerError)
+		return
+	}
 	if r.Method == http.MethodGet {
 
 		action := r.URL.Query().Get("query")
@@ -185,10 +198,10 @@ func CreatedHandler(w http.ResponseWriter, r *http.Request) {
 
 			data := struct {
 				P       []utils.Post
-				Message string
+				Username string
 			}{
 				P:       posts,
-				Message: userInfo.Username,
+				Username: userInfo.Username,
 			}
 
 			err = database.Tpl.ExecuteTemplate(w, "forum.html", data)

@@ -1,7 +1,7 @@
 let x = document.getElementsByClassName("fa-xmark");
 for (let i = 0; i < x.length; i++) {
     x[i].addEventListener("click", function () {
-        this.parentElement.parentElement.remove();
+        this.closest(".container").remove();
     })
 }
 const usernameElement = document.getElementById("Username");
@@ -38,7 +38,6 @@ if (usernameElement && usernameElement.textContent.trim() !== "") {
     if (cookieExists('Guest_token')) {
         // const form = document.querySelector('.post-form');
         const container = document.querySelector('.post-form_container');
-        console.log("ihgqsdfd")
         const created_liked = document.querySelectorAll('.created_liked');
         const stikysideBar = document.querySelector('.stky-sidebar');
         created_liked.forEach(element => {

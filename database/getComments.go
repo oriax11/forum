@@ -36,6 +36,10 @@ func PostComment(w http.ResponseWriter, r *http.Request) {
 	
 	// Get username from session
 	userID := Sessions[sessionCookie.Value]
+	if userID == "" {
+		http.Error(w, "Failed to update comment", http.StatusInternalServerError)
+		return
+	}
 	var username string
 	err = DB.QueryRow("SELECT username FROM Users WHERE user_id = ?", userID).Scan(&username)
 	
