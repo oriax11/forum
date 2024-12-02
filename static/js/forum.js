@@ -190,16 +190,15 @@ function sendComment(postId, commentContent, callback) {
 }
 
 
-let like = document.querySelectorAll(".comment-like-btn")
-let dislike = document.querySelectorAll(".comment-dislike-btn")
+
 document.querySelectorAll(".comment-btn").forEach(button => {
-    button.addEventListener("click", function (event) {
+    button.addEventListener("click", function(event) {
         event.preventDefault();
 
         const commentInput = button.previousElementSibling;
         const postId = commentInput.getAttribute("post-id");
         const commentContent = commentInput.value;
-        sendComment(postId, commentContent, function (data) {
+        sendComment(postId, commentContent, function(data) {
             if (data.success) {
                 const post = button.closest(".post");
                 const comment_counter = post.querySelector(".comments_counter");
@@ -251,8 +250,48 @@ document.querySelectorAll(".comment-btn").forEach(button => {
                 console.log("Comment posted successfully");
             }
 
-            like = document.querySelectorAll(".comment-like-btn")
-            dislike = document.querySelectorAll(".comment-dislike-btn")
+            document.querySelectorAll(".comment-like-btn").forEach(button => {
+                button.addEventListener("click", function(event) {
+                    event.preventDefault();
+                    const commentid = this.getAttribute("commentid");
+                    sendCommentReaction(commentid, "LIKE", function(data) {
+                        if (data.success) {
+                        // Update the like count
+                        const likeCount = button.nextElementSibling;
+                        likeCount.textContent = data.likes;
+                
+                        // Update the dislike count
+                        const dislikeButton = button.parentElement.querySelector(".comment-dislike-btn");
+                        const dislikeCount = dislikeButton.nextElementSibling;
+                        dislikeCount.textContent = data.dislikes;
+                        }
+                    });
+                });
+                });
+                
+                
+                
+                // Add event listeners for dislike buttons
+                document.querySelectorAll(".comment-dislike-btn").forEach(button => {
+                button.addEventListener("click", function(event) {
+                    event.preventDefault();
+                    const commentid = this.getAttribute("commentid");
+                    sendCommentReaction(commentid, "DISLIKE", function(data) {
+                        if (data.success) {
+                        // Update the like count
+                        const DislikeCount = button.nextElementSibling;
+                        DislikeCount.textContent = data.dislikes;
+                
+                        // Update the dislike count
+                        const likeButton = button.parentElement.querySelector(".comment-like-btn");
+                        const likeCount = likeButton.nextElementSibling;
+                        likeCount.textContent = data.likes;
+                        }
+                    });
+                });
+                });
+
+
         });
     });
 });
@@ -273,60 +312,60 @@ function sendCommentReaction(CommentID, reactionType, callback) {
         })
     })
 
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Failed to react.");
-            }
-            return response.json();
-        })
-        .then(data => {
-            callback(data);
-        })
-        .catch(error => {
-            console.error("Error:", error);
-        });
-}
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Failed to react.");
+        }
+        return response.json();
+    })
+    .then(data => {
+        callback(data);
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
+    }
 
 
 
-
+    
 // Add event listeners for like buttons
 document.querySelectorAll(".comment-like-btn").forEach(button => {
-    button.addEventListener("click", function (event) {
+    button.addEventListener("click", function(event) {
         event.preventDefault();
         const commentid = this.getAttribute("commentid");
-        sendCommentReaction(commentid, "LIKE", function (data) {
+        sendCommentReaction(commentid, "LIKE", function(data) {
             if (data.success) {
-                // Update the like count
-                const likeCount = button.nextElementSibling;
-                likeCount.textContent = data.likes;
-
-                // Update the dislike count
-                const dislikeButton = button.parentElement.querySelector(".comment-dislike-btn");
-                const dislikeCount = dislikeButton.nextElementSibling;
-                dislikeCount.textContent = data.dislikes;
+            // Update the like count
+            const likeCount = button.nextElementSibling;
+            likeCount.textContent = data.likes;
+    
+            // Update the dislike count
+            const dislikeButton = button.parentElement.querySelector(".comment-dislike-btn");
+            const dislikeCount = dislikeButton.nextElementSibling;
+            dislikeCount.textContent = data.dislikes;
             }
         });
     });
-});
-
-
-
-// Add event listeners for dislike buttons
-document.querySelectorAll(".comment-dislike-btn").forEach(button => {
-    button.addEventListener("click", function (event) {
+    });
+    
+    
+    
+    // Add event listeners for dislike buttons
+    document.querySelectorAll(".comment-dislike-btn").forEach(button => {
+    button.addEventListener("click", function(event) {
         event.preventDefault();
         const commentid = this.getAttribute("commentid");
-        sendCommentReaction(commentid, "DISLIKE", function (data) {
+        sendCommentReaction(commentid, "DISLIKE", function(data) {
             if (data.success) {
-                // Update the like count
-                const DislikeCount = button.nextElementSibling;
-                DislikeCount.textContent = data.dislikes;
-
-                // Update the dislike count
-                const likeButton = button.parentElement.querySelector(".comment-like-btn");
-                const likeCount = likeButton.nextElementSibling;
-                likeCount.textContent = data.likes;
+            // Update the like count
+            const DislikeCount = button.nextElementSibling;
+            DislikeCount.textContent = data.dislikes;
+    
+            // Update the dislike count
+            const likeButton = button.parentElement.querySelector(".comment-like-btn");
+            const likeCount = likeButton.nextElementSibling;
+            likeCount.textContent = data.likes;
             }
         });
     });
