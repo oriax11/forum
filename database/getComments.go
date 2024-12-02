@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"forum_full/utils"
@@ -15,7 +16,7 @@ func PostComment(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
 	}
-	
+
 	// Decode request body
 	var CommentData struct {
 		PostID  string `json:"post_id"`
@@ -26,14 +27,14 @@ func PostComment(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
-	
+
 	// Validate session
 	sessionCookie, err := r.Cookie("session_token")
 	if err != nil {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
-	
+
 	// Get username from session
 	userID := Sessions[sessionCookie.Value]
 	if userID == "" {
@@ -42,7 +43,6 @@ func PostComment(w http.ResponseWriter, r *http.Request) {
 	}
 	var username string
 	err = DB.QueryRow("SELECT username FROM Users WHERE user_id = ?", userID).Scan(&username)
-	
 	if err != nil {
 		http.Error(w, "User not found", http.StatusUnauthorized)
 		return
@@ -54,19 +54,18 @@ func PostComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
+	CommentData.Content = strings.Trim(CommentData.Content, " ")
 
 	// Insert comment
 	_, err = DB.Exec(
 		"INSERT INTO Comment (user_id ,post_id, username, comment_content) VALUES ( ?,?, ?, ?)",
-		userID,CommentData.PostID, username, CommentData.Content,
+		userID, CommentData.PostID, username, CommentData.Content,
 	)
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, "Failed to insert comment", http.StatusInternalServerError)
 		return
 	}
-	
 
 	var commentID int
 	var commentDate time.Time
@@ -78,7 +77,6 @@ func PostComment(w http.ResponseWriter, r *http.Request) {
 		LIMIT 1
 	`, CommentData.PostID, userID).Scan(&commentID, &commentDate)
 	comment_date := utils.AboutTime(commentDate)
-
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]interface{}{
