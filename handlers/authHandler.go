@@ -9,7 +9,12 @@ import (
 	"forum_full/utils"
 )
 
-// Register Handler
+// RegisterHandler handles a request to the /register endpoint. It checks if the
+// user is already logged in and redirects them to the home page if they are.
+// If the request is a GET request, it renders the register.html template. If the
+// request is a POST request, it validates the form data and adds the user to the
+// database. If the user already exists, it renders the register.html template with
+// an error message.
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("session_token")
 	if err == nil {
@@ -23,12 +28,14 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
+		// Render the register.html template
 		err := database.Tpl.ExecuteTemplate(w, "register.html", nil)
 		if err != nil {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		}
 
 	case http.MethodPost:
+		// Validate the form data
 		action := r.FormValue("query")
 		if action != "reg" {
 			http.Error(w, "Bad request\nHmmm, it looks like you are lost!!", http.StatusBadRequest)
@@ -40,24 +47,32 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		user.Fullname = r.FormValue("fullname")
 		user.Password = r.FormValue("password")
 
+		// Check if the user credentials are valid
 		CheckCredentials(user, w)
-		// Add user to database
+
+		// Add the user to the database
 		err := database.AddUser(user)
 		if err != nil {
 			err := utils.Errors{
-				ErrorType: "User alrready Exist",
+				ErrorType: "User already Exist",
 			}
 			database.Tpl.ExecuteTemplate(w, "register.html", err)
 			return
 		}
 
+		// Redirect the user to the login page
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 
 	default:
+		// Method Not Allowed
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 	}
 }
 
+// CheckCredentials checks if the user credentials are valid. It checks if the
+// username length is greater than 15 characters, and if the password length is
+// less than 8 characters or greater than 32 characters. If the user credentials
+// are invalid, it renders the register.html template with an error message.
 func CheckCredentials(user utils.User, w http.ResponseWriter) {
 	if len(user.Username) > 15 {
 		erro := utils.Errors{

@@ -26,15 +26,21 @@ func InitDB() error {
 	return err
 }
 
+// GetUserInfo retrieves a user from the database by ID
 func GetUserInfo(userID string) (utils.User, error) {
+	// Query the database for the user with the given ID
 	row := DB.QueryRow(`SELECT user_id, username, email, fullname, created_at FROM Users WHERE user_id = ?`, userID)
 
 	var user utils.User
+	// Scan the row into the user struct
 	if err := row.Scan(&user.ID, &user.Username, &user.Email, &user.Fullname, &user.Created_at); err != nil {
+		// If no rows were found, return an error
 		if err == sql.ErrNoRows {
-			return utils.User{}, fmt.Errorf("no user found with Id: %s", userID)
+			return utils.User{}, fmt.Errorf("no user found with ID: %s", userID)
 		}
+		// Otherwise, return the error
 		return utils.User{}, err
 	}
+	// Return the user without error
 	return user, nil
 }

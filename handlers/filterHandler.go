@@ -7,6 +7,7 @@ import (
 	"forum_full/utils"
 )
 
+// FilterHandler handles a GET request to filter posts by category.
 func FilterHandler(w http.ResponseWriter, r *http.Request) {
 	guestCookie, _ := r.Cookie("Guest_token")
 	sessionCookie, _ := r.Cookie("session_token")
@@ -50,6 +51,7 @@ func FilterHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
+	// Query the database to get the posts that match the category
 	rows, err := database.DB.Query(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
 						   FROM Posts p
 						   JOIN Users u ON p.user_id = u.user_id
@@ -60,6 +62,7 @@ func FilterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 
+	// Get the posts content and comments
 	posts, err := database.Getcontent(rows)
 	if err != nil {
 		http.Error(w, "Failed to load Posts", http.StatusInternalServerError)
@@ -82,6 +85,7 @@ func FilterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if sessionExists {
+		// Get the user info
 		userInfo, err := database.GetUserInfo(userID)
 		if err != nil {
 			http.Error(w, "Failed to load user info", http.StatusInternalServerError)
