@@ -11,7 +11,7 @@ import (
 func AddUser(user utils.User) error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	_, err = DB.Exec("INSERT INTO Users (username, email, fullname, password) VALUES (?, ?, ?, ?)",
