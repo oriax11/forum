@@ -191,11 +191,12 @@
 
 
         <form method="get" class="pagination">
-            <button type="submit" name="offset" value="0" name="limit" value="3">Previous</button>
-            <a href="/?offset=0&limit=3">1</a>
-            <a href="/?offset=3&limit=3">2</a>
-            <a href="/?offset=6&limit=9">3</a>
-            <button type="submit" name="offset" value="9" name="limit" value="3">Next</button>
+            <button type="submit" name="offset" value="0" name="limit" value="7">Start</button>
+        
+            <button type="submit" name="offset" value="{{.PrevOffset}}" name="limit" value="7" {{if eq .Offset 0}}disabled{{end}}>Previous</button>
+        
+            <button type="submit" name="offset" value="{{.NextOffset}}" name="limit" value="7">Next</button>
+        
         </form>
         
         

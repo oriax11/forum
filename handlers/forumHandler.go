@@ -26,7 +26,7 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Default pagination parameters
 	offset := 0
-	limit := 3
+	limit := 7
 
 	// Get pagination parameters from the request
 	offsetStr := r.FormValue("offset")
@@ -55,6 +55,13 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Determine offsets for pagination buttons
+	prevOffset := offset - limit
+	if prevOffset < 0 {
+		prevOffset = 0
+	}
+	nextOffset := offset + limit
+
 	// Check cookies for user session or guest
 	guestCookie, _ := r.Cookie("Guest_token")
 	sessionCookie, _ := r.Cookie("session_token")
@@ -62,15 +69,19 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 	if guestCookie != nil {
 		// Guest user data
 		data := struct {
-			P       []utils.Post
-			Username string
-			Offset   int
-			Limit    int
+			P         []utils.Post
+			Username  string
+			Offset    int
+			Limit     int
+			PrevOffset int
+			NextOffset int
 		}{
-			P:       posts,
-			Username: "",
-			Offset:   offset,
-			Limit:    limit,
+			P:         posts,
+			Username:  "",
+			Offset:    offset,
+			Limit:     limit,
+			PrevOffset: prevOffset,
+			NextOffset: nextOffset,
 		}
 
 		err = database.Tpl.ExecuteTemplate(w, "forum.html", data)
@@ -93,15 +104,19 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		data := struct {
-			P       []utils.Post
-			Username string
-			Offset   int
-			Limit    int
+			P         []utils.Post
+			Username  string
+			Offset    int
+			Limit     int
+			PrevOffset int
+			NextOffset int
 		}{
-			P:       posts,
-			Username: userInfo.Username,
-			Offset:   offset,
-			Limit:    limit,
+			P:         posts,
+			Username:  userInfo.Username,
+			Offset:    offset,
+			Limit:     limit,
+			PrevOffset: prevOffset,
+			NextOffset: nextOffset,
 		}
 
 		err = database.Tpl.ExecuteTemplate(w, "forum.html", data)
@@ -115,6 +130,7 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 	}
 }
+
 
 // GuestHandler handles requests for guest users, generating a session and redirecting them to the homepage.
 func GuestHandler(w http.ResponseWriter, r *http.Request) {
