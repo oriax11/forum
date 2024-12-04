@@ -370,3 +370,45 @@ document.querySelectorAll(".comment-like-btn").forEach(button => {
         });
     });
 });
+
+
+// pagination hellper
+function Pagination(heroes) {
+    paginationDiv.innerHTML = ""
+    const pageCount = Math.ceil(heroes.length / rowsPerPage)
+    let startPage = Math.max(1, currPage - 1)
+    let endPage = Math.min(pageCount, currPage + 1)
+    if (currPage > 1) {
+        const prevButton = document.createElement("button")
+        prevButton.textContent = "Previous"
+        prevButton.addEventListener("click", () => {
+            currPage--
+            insertData(heroes)
+            Pagination(heroes)
+        })
+        paginationDiv.appendChild(prevButton)
+    }
+    for (let i = startPage; i <= endPage; i++) {
+        const button = document.createElement("button")
+        button.textContent = i
+        button.addEventListener("click", () => {
+            currPage = i
+            insertData(heroes)
+            Pagination(heroes)
+        })
+        if (i === currPage) {
+            button.style.fontWeight = "bold"
+        }
+        paginationDiv.appendChild(button)
+    }
+    if (currPage < pageCount) {
+        const nextButton = document.createElement("button")
+        nextButton.textContent = "Next"
+        nextButton.addEventListener("click", () => {
+            currPage++
+            insertData(heroes)
+            Pagination(heroes)
+        })
+        paginationDiv.appendChild(nextButton)
+    }
+}

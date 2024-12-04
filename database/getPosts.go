@@ -10,17 +10,19 @@ import (
 // GetPosts retrieves all posts from the database.
 //
 // It returns a slice of Post objects containing all the posts from the database.
-func GetPosts() ([]utils.Post, error) {
-	// Query the database for all posts
+func GetPosts(limit, offset int) ([]utils.Post, error) {
+	// Query the database with LIMIT and OFFSET
 	rows, err := DB.Query(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
 						   FROM Posts p
 						   JOIN Users u ON p.user_id = u.user_id
-						   ORDER BY p.created_at DESC`)
+						   ORDER BY p.created_at DESC
+						   LIMIT ? OFFSET ?`, limit, offset)
 	if err != nil {
 		// If there is an error querying the database, return it
 		return nil, err
 	}
 	defer rows.Close()
+	
 	var posts []utils.Post
 
 	// Call the helper function to get the post content
@@ -31,6 +33,7 @@ func GetPosts() ([]utils.Post, error) {
 	}
 	return posts, nil
 }
+
 
 func Getcontent(rows *sql.Rows) ([]utils.Post, error) {
 	var posts []utils.Post

@@ -3,40 +3,74 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"forum_full/database"
 	"forum_full/utils"
 )
 
-// Forum Handler
+
+// ForumHandler handles the forum homepage with pagination.
 func ForumHandler(w http.ResponseWriter, r *http.Request) {
+	// Ensure the correct route
 	if r.URL.Path != "/" {
-		NotFound(w, r)
+		http.NotFound(w, r)
 		return
 	}
+
+	// Handle post creation
 	if r.Method == http.MethodPost {
 		database.CreatePost(w, r)
 		return
 	}
-	guestCookie, _ := r.Cookie("Guest_token")
 
-	sessionCookie, _ := r.Cookie("session_token")
+	// Default pagination parameters
+	offset := 0
+	limit := 3
 
+	// Get pagination parameters from the request
+	offsetStr := r.FormValue("offset")
+	limitStr := r.FormValue("limit")
 
-	posts, err := database.GetPosts()
+	// Parse the offset
+	if offsetStr != "" {
+		parsedOffset, err := strconv.Atoi(offsetStr)
+		if err == nil {
+			offset = parsedOffset
+		}
+	}
+
+	// Parse the limit
+	if limitStr != "" {
+		parsedLimit, err := strconv.Atoi(limitStr)
+		if err == nil {
+			limit = parsedLimit
+		}
+	}
+
+	// Fetch posts using offset and limit
+	posts, err := database.GetPosts(limit, offset)
 	if err != nil {
 		http.Error(w, "Failed to load posts", http.StatusInternalServerError)
 		return
 	}
 
+	// Check cookies for user session or guest
+	guestCookie, _ := r.Cookie("Guest_token")
+	sessionCookie, _ := r.Cookie("session_token")
+
 	if guestCookie != nil {
-		// Guest user, render index with posts only
+		// Guest user data
 		data := struct {
 			P       []utils.Post
 			Username string
+			Offset   int
+			Limit    int
 		}{
 			P:       posts,
 			Username: "",
+			Offset:   offset,
+			Limit:    limit,
 		}
 
 		err = database.Tpl.ExecuteTemplate(w, "forum.html", data)
@@ -44,7 +78,6 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 			http.Error(w, "Error rendering the forum page", http.StatusInternalServerError)
 		}
-		
 	} else if sessionCookie != nil {
 		// Logged-in user
 		userID, exists := database.Sessions[sessionCookie.Value]
@@ -62,9 +95,13 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 		data := struct {
 			P       []utils.Post
 			Username string
+			Offset   int
+			Limit    int
 		}{
 			P:       posts,
 			Username: userInfo.Username,
+			Offset:   offset,
+			Limit:    limit,
 		}
 
 		err = database.Tpl.ExecuteTemplate(w, "forum.html", data)
@@ -81,7 +118,6 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 
 // GuestHandler handles requests for guest users, generating a session and redirecting them to the homepage.
 func GuestHandler(w http.ResponseWriter, r *http.Request) {
-
 	// Retrieve all cookies from the request
 	cookies := r.Cookies()
 	if len(cookies) != 0 {

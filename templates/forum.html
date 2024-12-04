@@ -182,6 +182,24 @@
             </div>
         </div>
         {{end}}
+        
+        <!-- <form method="get" class="pagination">
+            <a href="/?offset=&limit=">1</a>
+            <a href="/?offset=&limit=">2</a>
+            <a href="/?offset=&limit=">3</a>
+        </form> -->
+
+
+        <form method="get" class="pagination">
+            <button type="submit" name="offset" value="0" name="limit" value="3">Previous</button>
+            <a href="/?offset=0&limit=3">1</a>
+            <a href="/?offset=3&limit=3">2</a>
+            <a href="/?offset=6&limit=9">3</a>
+            <button type="submit" name="offset" value="9" name="limit" value="3">Next</button>
+        </form>
+        
+        
+
         <div class="levetate_container">
             <a href="#top" class="levetate"><i class="fa-solid fa-jet-fighter-up"></i></a>
         </div>
