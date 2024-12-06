@@ -100,7 +100,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		user.Email = r.FormValue("email")
 		user.Password = r.FormValue("password")
 
-		if err := database.GetUser(user.Email, user.Password); err != nil {
+		userID, err := database.GetUser(user.Email, user.Password)
+		if err != nil {
 			database.Tpl.ExecuteTemplate(w, "login.html", utils.Errors{ErrorType: err.Error()})
 			return
 		}
@@ -118,11 +119,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		var userID string
-		database.DB.QueryRow("SELECT user_id FROM Users WHERE email = ?", user.Email).Scan(&userID)
-		fmt.Println("test" ,userID)
 		database.Sessions[sessionID] = userID
-		fmt.Println(database.Sessions[sessionID])
 		utils.SetCookies(w, sessionID, "session_token", true)
 
 		fmt.Println("Successfully logged in")
