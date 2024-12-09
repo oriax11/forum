@@ -112,9 +112,11 @@ func FilterHandler(w http.ResponseWriter, r *http.Request) {
 		data := struct {
 			P        []utils.Post
 			Username string
+			Offset int 
 		}{
 			P:        posts,
 			Username: userInfo.Username,
+			Offset : offset,
 		}
 		if err := database.Tpl.ExecuteTemplate(w, "forum.html", data); err != nil {
 			fmt.Println(err)
