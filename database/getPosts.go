@@ -10,13 +10,13 @@ import (
 // GetPosts retrieves all posts from the database.
 //
 // It returns a slice of Post objects containing all the posts from the database.
-func GetPosts(limit, offset int) ([]utils.Post, error) {
+func GetPosts(offset int) ([]utils.Post, error) {
 	// Query the database with LIMIT and OFFSET
 	rows, err := DB.Query(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
 						   FROM Posts p
 						   JOIN Users u ON p.user_id = u.user_id
 						   ORDER BY p.created_at DESC
-						   LIMIT ? OFFSET ?`, limit, offset)
+						   LIMIT 6 OFFSET ?`, offset)
 	if err != nil {
 		// If there is an error querying the database, return it
 		return nil, err

@@ -25,13 +25,10 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Default pagination parameters
-	offset := 0
-	limit := 7
+	offset := 0 
 
 	// Get pagination parameters from the request
 	offsetStr := r.FormValue("offset")
-	limitStr := r.FormValue("limit")
-
 	// Parse the offset
 	if offsetStr != "" {
 		parsedOffset, err := strconv.Atoi(offsetStr)
@@ -40,27 +37,17 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Parse the limit
-	if limitStr != "" {
-		parsedLimit, err := strconv.Atoi(limitStr)
-		if err == nil {
-			limit = parsedLimit
-		}
-	}
+
 
 	// Fetch posts using offset and limit
-	posts, err := database.GetPosts(limit, offset)
+	posts, err := database.GetPosts(offset)
 	if err != nil {
 		http.Error(w, "Failed to load posts", http.StatusInternalServerError)
 		return
 	}
 
 	// Determine offsets for pagination buttons
-	prevOffset := offset - limit
-	if prevOffset < 0 {
-		prevOffset = 0
-	}
-	nextOffset := offset + limit
+
 
 	// Check cookies for user session or guest
 	guestCookie, _ := r.Cookie("Guest_token")
@@ -72,16 +59,10 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 			P         []utils.Post
 			Username  string
 			Offset    int
-			Limit     int
-			PrevOffset int
-			NextOffset int
 		}{
 			P:         posts,
 			Username:  "",
-			Offset:    offset,
-			Limit:     limit,
-			PrevOffset: prevOffset,
-			NextOffset: nextOffset,
+			Offset:    offset + 6,
 		}
 
 		err = database.Tpl.ExecuteTemplate(w, "forum.html", data)
@@ -107,16 +88,12 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 			P         []utils.Post
 			Username  string
 			Offset    int
-			Limit     int
-			PrevOffset int
-			NextOffset int
+
 		}{
 			P:         posts,
 			Username:  userInfo.Username,
 			Offset:    offset,
-			Limit:     limit,
-			PrevOffset: prevOffset,
-			NextOffset: nextOffset,
+
 		}
 
 		err = database.Tpl.ExecuteTemplate(w, "forum.html", data)
