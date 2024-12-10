@@ -3,33 +3,49 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"net/http"
+	"strconv"
 
 	"forum_full/utils"
 )
 
+type Pagination struct {
+	CurrentPage int
+	PageSize    int
+	OffSet      int
+	HasPrevious bool
+	HasNext     bool
+	PrevPage    string
+	NextPage    string
+}
+
 // GetPosts retrieves all posts from the database.
-//
 // It returns a slice of Post objects containing all the posts from the database.
-func GetPosts() ([]utils.Post, error) {
-	// Query the database for all posts
+func GetPosts(r *http.Request) ([]utils.Post, *Pagination, error) {
+	var totalPosts int
+	if err := DB.QueryRow("SELECT COUNT(*) FROM Posts").Scan(&totalPosts); err != nil {
+		return nil, nil, fmt.Errorf("failed to get total posts count")
+	}
+
+	pagination := GetPagination(r, totalPosts, "?")
+
+	// Query the database with LIMIT and OFFSET
 	rows, err := DB.Query(`SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
 						   FROM Posts p
 						   JOIN Users u ON p.user_id = u.user_id
-						   ORDER BY p.created_at DESC`)
+						   ORDER BY p.created_at DESC
+						   LIMIT ? OFFSET ?`, pagination.PageSize, pagination.OffSet)
 	if err != nil {
-		// If there is an error querying the database, return it
-		return nil, err
+		return nil, nil, err
 	}
 	defer rows.Close()
-	var posts []utils.Post
 
-	// Call the helper function to get the post content
-	posts, err = Getcontent(rows)
+	posts, err := Getcontent(rows)
 	if err != nil {
-		// If there is an error getting the post content, return it
-		return nil, err
+		return nil, nil, err
 	}
-	return posts, nil
+
+	return posts, pagination, nil
 }
 
 func Getcontent(rows *sql.Rows) ([]utils.Post, error) {
@@ -98,4 +114,27 @@ func Getcontent(rows *sql.Rows) ([]utils.Post, error) {
 	}
 
 	return posts, nil
+}
+
+// GetPagination extracts pagination parameters
+func GetPagination(r *http.Request, totalPosts int, url string) (*Pagination) {
+	currentPage := 1
+	pageSize := 2
+	totalPages := (totalPosts + pageSize - 1) / pageSize
+
+	if page, err := strconv.Atoi(r.URL.Query().Get("page")); err == nil && page > 0 && page <= totalPages {
+		currentPage = page
+	}
+
+	offset := (currentPage - 1) * pageSize
+
+	return &Pagination{
+		CurrentPage: currentPage,
+		PageSize:    pageSize,
+		OffSet:      offset,
+		HasNext:     currentPage < totalPages,
+		HasPrevious: currentPage > 1,
+		PrevPage:    fmt.Sprintf("/%spage=%v", url, currentPage-1),
+		NextPage:    fmt.Sprintf("/%spage=%v", url, currentPage+1),
+	}
 }
