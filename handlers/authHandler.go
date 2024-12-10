@@ -9,6 +9,31 @@ import (
 	"forum_full/utils"
 )
 
+// CheckSession checks if a valid session exists in the request.
+//
+// If there is no session, it returns true to allow the request to proceed.
+// If the session is invalid, it clears the cookies and redirects to the login page.
+// If the session is valid, it redirects to the home page.
+func CheckSession(w http.ResponseWriter, r *http.Request) bool {
+    cookie, err := r.Cookie("session_token")
+    if err != nil {
+        // No cookie, allow request to proceed.
+        return true
+    }
+
+    if _, sessionExists := database.Sessions[cookie.Value]; !sessionExists {
+        // Invalid session, clear cookies and redirect to login.
+        utils.DeleteAllCookies(w, r)
+        http.Redirect(w, r, "/login", http.StatusSeeOther)
+        return false
+    }
+
+    // Valid session, redirect to the home page.
+    http.Redirect(w, r, "/", http.StatusSeeOther)
+    return false
+}
+
+
 // RegisterHandler handles a request to the /register endpoint. It checks if the
 // user is already logged in and redirects them to the home page if they are.
 // If the request is a GET request, it renders the register.html template. If the
@@ -16,6 +41,10 @@ import (
 // database. If the user already exists, it renders the register.html template with
 // an error message.
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	if !CheckSession(w, r) {
+        return
+}
+
 	if cookie, err := r.Cookie("session_token"); err == nil {
 		if _, sessionExists := database.Sessions[cookie.Value]; !sessionExists {
 			utils.DeleteAllCookies(w, r)
@@ -72,6 +101,9 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	if !CheckSession(w, r) {
+        return
+}
 	if cookie, err := r.Cookie("session_token"); err == nil {
 		if _, sessionExists := database.Sessions[cookie.Value]; !sessionExists {
 			utils.DeleteAllCookies(w, r)
