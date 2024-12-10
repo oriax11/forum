@@ -27,14 +27,14 @@
 
             </div>
             <div class="dropdown">
-                <a id="btn-logout">
+                <a id="btn-dropdown">
                     <i class="fa-solid fa-bars"></i>
                 </a>
                 <div class="dropdown-content">
                     <a href="/logout" id="btn-logout-dropdown">
                         <i class="fa-solid fa-power-off"></i> Logout
                     </a>
-                    <a href="/report" class="bug-tbn" target="_blank">
+                    <a href="/report" class="bug-btn" target="_blank">
                         <i class="fa-solid fa-bug"></i> Report a Bug
                     </a>
                 </div>
@@ -81,7 +81,6 @@
 
     <div class="post-form_container">
         <form class="post-form" action="/" method="post">
-            <input type="hidden" name="query" value="newpost">
             <textarea required class="input-title" name="title" placeholder="title"></textarea>
             <textarea required class="input-content" name="content" placeholder="What is your question?"></textarea>
             <div class="params-container">
