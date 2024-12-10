@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="static/css/style.css" />
+    <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <title>intouch</title>
 </head>
 <body>
     <nav class="navbar">
-        <a href="/"><img class="logo" src="static/img/logo.svg" alt="logo"></a>
+        <a href="/"><img class="logo" src="/static/img/logo.svg" alt="logo"></a>
         <div class="nav-buttons">
           <div class="user-info-container">
             <span id="Username">{{.Username}}</span>
@@ -46,30 +46,25 @@
         <ul>
             <!-- <li><a href="/">Home</a></li> -->
              <li>
-                <form class="categories_selection" method="get" action="/filter">
-                    <input type="hidden" name="query" value="cat_filter">
+                <div class="categories_selection">
                     &nbsp;&nbsp;<i class="fa-solid fa-list"></i>
-                    <select class="category-select" name="categories" onchange="this.form.submit()">
-                        <option value="" disabled selected>Select Category</option>
-                        <option value="General">General</option>
-                        <option value="News">News</option>
-                        <option value="Technology">Tech</option>
-                        <option value="Art">Art</option>
-                        <option value="Sport">Sport</option>
-                    </select>
-                </form>
-                
+                    <ul>
+                        <li><a href="/filter/General">General</a></li>
+                        <li><a href="/filter/News">News</a></li>
+                        <li><a href="/filter/Technology">Tech</a></li>
+                        <li><a href="/filter/Art">Art</a></li>
+                        <li><a href="/filter/Sport">Sport</a></li>
+                    </ul>
+                </div>
              </li>
             <li class="created_liked">
                 <form class="forms" action="/created" method="get">
-                    <input type="hidden" name="query" value="created">
                     <button class="liked_post" type="submit"><i class="fa-solid fa-signs-post"></i>     Created Posts</button>
                 </form>
             </li>
 
             <li class="created_liked">
             <form class="forms" action="/liked" method="get">
-                <input type="hidden" name="query" value="liked">
                 <button class="liked_post" type="submit"><i class="fa-regular fa-heart"></i>    liked posts</button>
             </form>
             </li>
@@ -191,19 +186,19 @@
 
 
         <form method="get" class="pagination">
-            <button type="submit" name="offset" value="0" name="limit" value="7">Start</button>
+            <button type="submit" name="offset" value="0">Start</button>
         
-            <button type="submit" name="offset" value="{{.PrevOffset}}" name="limit" value="7" {{if eq .Offset 0}}disabled{{end}}>Previous</button>
+            <button type="submit" name="offset" value="{{ if gt .Offset 7 }}{{ sub .Offset 7 }}{{ else }}0{{ end }}"  {{ if eq .Offset 0 }} disabled {{end}}>Previous</button>
         
-            <button type="submit" name="offset" value="{{.NextOffset}}" name="limit" value="7">Next</button>
-        
+            <button type="submit" name="offset" value="{{ add .Offset 7 }}">Next</button>
         </form>
+        
         
         
 
         <div class="levetate_container">
             <a href="#top" class="levetate"><i class="fa-solid fa-jet-fighter-up"></i></a>
         </div>
-    <script src="static/js/forum.js"></script>
+    <script src="/static/js/forum.js"></script>
 </body>
 </html>
