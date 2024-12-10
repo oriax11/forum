@@ -25,6 +25,49 @@
   --shadow-dark: rgba(0, 0, 0, 0.1);
 }
 
+/* Add to your style.css */
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0;
+  padding: 10px;
+}
+
+.pagination-link {
+  color: var(--accent-primary);
+  padding: 8px 16px;
+  border: 1px solid var(--accent-primary);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.pagination-link:hover {
+  background-color: var(--accent-primary);
+  color: var(--background-primary);
+}
+
+.pagination-current {
+  color: var(--accent-primary);
+  padding: 8px 16px;
+  border: 1px solid var(--accent-primary);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .pagination-controls {
+      flex-wrap: wrap;
+  }
+  
+  .pagination-link, .pagination-current {
+      padding: 6px 12px;
+      font-size: 14px;
+  }
+}
+/* *********************************************************************** */
+
+
 a {
   text-decoration: none;
 }
@@ -108,7 +151,7 @@ body {
   transition: all 0.3s ease;
 }
 
-#btn-logout {
+#btn-dropdown {
   background-color: var(--accent-primary);
   color: var(--accent-primary);
   width: 40px;
@@ -120,7 +163,7 @@ body {
   transition: all 0.3s ease;
 }
 
-#btn-logout i {
+#btn-dropdown i {
   margin-top: 30%;
   color: var(--background-checkbox);
   font-size: 18px;
@@ -306,7 +349,7 @@ body {
   font-size: 16px;
 }
 
-.post-form button, .pagination button {
+.post-form button {
   color: var(--accent-primary);
   background-color: transparent;
   padding: 6px 12px;
@@ -316,7 +359,7 @@ body {
   transition: all 0.3s ease;
 }
 
-.post-form button:hover ,.pagination button:hover {
+.post-form button:hover {
   color: var(--background-primary);
   background-color: var(--accent-primary);
   cursor: pointer;
@@ -605,14 +648,4 @@ i{
 .levetate i {
   color: #ccc;
   font-size: 18px;
-}
- 
-/* pagination */
-.pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin: 20px 0;
-  font-family: Arial, sans-serif;
 }

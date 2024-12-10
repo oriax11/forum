@@ -25,7 +25,7 @@ func main() {
 	http.HandleFunc("/guest", handlers.GuestHandler)
 	http.HandleFunc("/logout", handlers.LogoutHandler)
 	http.HandleFunc("/report", handlers.ReportHandler)
-	http.HandleFunc("/filter/", handlers.FilterHandler)
+	http.HandleFunc("/filter", handlers.FilterHandler)
 	http.HandleFunc("/created", handlers.CreatedHandler)
 	http.HandleFunc("/liked", handlers.LikedHandler)
 	http.HandleFunc("/api/postreact", database.Postreact)

@@ -11,10 +11,10 @@ CREATE TABLE IF NOT EXISTS Users (
 --Posts Table--
 CREATE TABLE  IF NOT EXISTS Posts (
     post_id INTEGER PRIMARY KEY AUTOINCREMENT, 
-    user_id INTEGER,
+    user_id INTEGER NOT NULL, 
     title TEXT NOT NULL,
     content TEXT NOT NULL,
-    categories TEXT  NOT NULL,
+    categories TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
 );
@@ -22,8 +22,8 @@ CREATE TABLE  IF NOT EXISTS Posts (
 --Posts reactions Table--
 CREATE TABLE  IF NOT EXISTS Reactions (
     reaction_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    post_id INTEGER,
-    user_id INTEGER,
+    post_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
     reaction_type TEXT CHECK(reaction_type IN ('LIKE', 'DISLIKE')),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (post_id) REFERENCES Posts(post_id) ON DELETE CASCADE,
@@ -34,8 +34,8 @@ CREATE TABLE  IF NOT EXISTS Reactions (
 --Comments Table--
 CREATE TABLE  IF NOT EXISTS Comment (
     comment_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER,
-    post_id INTEGER,
+    user_id INTEGER NOT NULL,
+    post_id INTEGER NOT NULL,
     username TEXT,
     comment_content TEXT NOT NULL,
     comment_date DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -46,8 +46,8 @@ CREATE TABLE  IF NOT EXISTS Comment (
 --Comment reactions Table--
 CREATE TABLE  IF NOT EXISTS CommentReactions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    comment_id INTEGER,
-    user_id INTEGER,
+    comment_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
     reaction_type TEXT CHECK(reaction_type IN ('LIKE', 'DISLIKE')),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (comment_id) REFERENCES Comment(comment_id) ON DELETE CASCADE,

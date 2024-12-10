@@ -1,81 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="static/css/style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <title>intouch</title>
 </head>
+
 <body>
     <nav class="navbar">
-        <a href="/"><img class="logo" src="/static/img/logo.svg" alt="logo"></a>
+        <a href="/"><img class="logo" src="static/img/logo.svg" alt="logo"></a>
         <div class="nav-buttons">
-          <div class="user-info-container">
-            <span id="Username">{{.Username}}</span>
-            <form action="/profile" method="get">
-                <input type="hidden" name="query" value="profile">
-                <div class="user-info-container">
-                    <button type="submit" id="pf_btn"> 
-                         <!-- <i id="user_icon" class="fa-solid fa-user"></i> -->
-                         <i id="user_icon" class="fa-regular fa-user"></i>
-                    </button>
-                </div>
-            </form>
-            
-          </div>
-          <div class="dropdown">
-            <a id="btn-logout">
-              <i class="fa-solid fa-bars"></i>
-            </a>
-            <div class="dropdown-content">
-              <a href="/logout" id="btn-logout-dropdown">
-                <i class="fa-solid fa-power-off"></i> Logout
-              </a>
-              <a href="/report" class="bug-tbn" target="_blank">
-                <i class="fa-solid fa-bug"></i> Report a Bug
-              </a>
+            <div class="user-info-container">
+                <span id="Username">{{.Username}}</span>
+                <form action="/profile" method="get">
+                    <input type="hidden" name="query" value="profile">
+                    <div class="user-info-container">
+                        <button type="submit" id="pf_btn">
+                            <!-- <i id="user_icon" class="fa-solid fa-user"></i> -->
+                            <i id="user_icon" class="fa-regular fa-user"></i>
+                        </button>
+                    </div>
+                </form>
+
             </div>
-          </div>
-          <a href="/login" id="login_btn" class="login">Login</a>
-          <a href="/register" id="register_btn" class="register">Register</a>
+            <div class="dropdown">
+                <a id="btn-dropdown">
+                    <i class="fa-solid fa-bars"></i>
+                </a>
+                <div class="dropdown-content">
+                    <a href="/logout" id="btn-logout-dropdown">
+                        <i class="fa-solid fa-power-off"></i> Logout
+                    </a>
+                    <a href="/report" class="bug-btn" target="_blank">
+                        <i class="fa-solid fa-bug"></i> Report a Bug
+                    </a>
+                </div>
+            </div>
+            <a href="/login" id="login_btn" class="login">Login</a>
+            <a href="/register" id="register_btn" class="register">Register</a>
         </div>
-      </nav>
-    
+    </nav>
+
     <div class="stky-sidebar">
         <ul>
             <!-- <li><a href="/">Home</a></li> -->
-             <li>
-                <div class="categories_selection">
+            <li>
+                <form class="categories_selection" method="get" action="/filter">
+                    <input type="hidden" name="query" value="cat_filter">
                     &nbsp;&nbsp;<i class="fa-solid fa-list"></i>
-                    <ul>
-                        <li><a href="/filter/General">General</a></li>
-                        <li><a href="/filter/News">News</a></li>
-                        <li><a href="/filter/Technology">Tech</a></li>
-                        <li><a href="/filter/Art">Art</a></li>
-                        <li><a href="/filter/Sport">Sport</a></li>
-                    </ul>
-                </div>
-             </li>
+                    <select class="category-select" name="categories" onchange="this.form.submit()">
+                        <option value="" disabled selected>Select Category</option>
+                        <option value="General">General</option>
+                        <option value="News">News</option>
+                        <option value="Technology">Tech</option>
+                        <option value="Art">Art</option>
+                        <option value="Sport">Sport</option>
+                    </select>
+                </form>
+
+            </li>
             <li class="created_liked">
                 <form class="forms" action="/created" method="get">
-                    <button class="liked_post" type="submit"><i class="fa-solid fa-signs-post"></i>     Created Posts</button>
+                    <input type="hidden" name="query" value="created">
+                    <button class="liked_post" type="submit"><i class="fa-solid fa-signs-post"></i> Created
+                        Posts</button>
                 </form>
             </li>
 
             <li class="created_liked">
-            <form class="forms" action="/liked" method="get">
-                <button class="liked_post" type="submit"><i class="fa-regular fa-heart"></i>    liked posts</button>
-            </form>
+                <form class="forms" action="/liked" method="get">
+                    <input type="hidden" name="query" value="liked">
+                    <button class="liked_post" type="submit"><i class="fa-regular fa-heart"></i> liked posts</button>
+                </form>
             </li>
         </ul>
     </div>
 
     <div class="post-form_container">
-        <form  class="post-form"  action="/" method="post">
-            <input type="hidden" name="query" value="newpost">
-            <textarea  required class="input-title" name="title"  placeholder="title"></textarea>
-            <textarea  required class="input-content" name="content"  placeholder="What is your question?"></textarea>
+        <form class="post-form" action="/" method="post">
+            <textarea required class="input-title" name="title" placeholder="title"></textarea>
+            <textarea required class="input-content" name="content" placeholder="What is your question?"></textarea>
             <div class="params-container">
                 <div class="checks-container">
                     <input name="type" type="checkbox" id="General" value="General" class="checkbox-text">
@@ -88,117 +95,122 @@
                     <label for="Sport">Sport</label>
                     <input name="type" type="checkbox" id="News" value="News" class="checkbox-text">
                     <label for="News">News</label>
-                </div>                                 
-                <button class="publish_btn"  type="submit">Publish</button>
+                </div>
+                <button class="publish_btn" type="submit">Publish</button>
             </div>
         </form>
     </div>
     {{range .P}}
-        <div class="container">
-            <div class="post-header"> 
-                <div class="post-header_content">
-                    <i id="user_icon" class="fa-solid fa-user"></i>
-                    <strong>{{.Username}}</strong>
-                </div>
+    <div class="container">
+        <div class="post-header">
+            <div class="post-header_content">
+                <i id="user_icon" class="fa-solid fa-user"></i>
+                <strong>{{.Username}}</strong>
+            </div>
             <i function="onclick()" class="fa-solid fa-xmark"></i>
-          </div>
-            <div class="post">
-               
-                <div class="post-header">
-                    <h5 class="categories">{{.Categories}}</h5>
-                    <h5>{{.TimeAgo}}</h5>
-                </div>
-                <p class="post_title">{{.Title}}</p>
-                <p class="post_content">{{.Content}}</p>
-                <div class="post-actions">
-                        <div class="reactions_holder">
-                            <div class="like_dislike">
-                                <button name="like-btn" value="LIKE" class="reactions like-btn" data-post-id="{{.ID}}">
-                                    <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M12 4 3 15h6v5h6v-5h6z" class="icon_svg-stroke icon_svg-fill" 
-                                              stroke-width="1.5" stroke="#e0e0e0" fill="none" stroke-linejoin="round"></path>
-                                    </svg>
-                                </button>
-                                <span class="counter-holder like-count">{{.Likes}}</span>
-                            
-                                <button name="dislike-btn" value="DISLIKE" class="reactions dislike-btn" data-post-id="{{.ID}}">
-                                    <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="m12 20 9-11h-6V4H9v5H3z" class="icon_svg-stroke icon_svg-fill" 
-                                              stroke="#e0e0e0" fill="none" stroke-width="1.5" stroke-linejoin="round"></path>
-                                    </svg>
-                                </button>
-                                <span class="counter-holder dislike-count">{{.Dislikes}}</span>
-                            </div>
+        </div>
+        <div class="post">
 
-                            <btn id="comment-btn"  class="reactions"><svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12.071 18.86c4.103 0 7.429-3.102 7.429-6.93C19.5 8.103 16.174 5 12.071 5s-7.429 3.103-7.429 6.93c0 1.291.379 2.5 1.037 3.534.32.501-1.551 3.058-1.112 3.467.46.429 3.236-1.295 3.803-.99 1.09.585 2.354.92 3.701.92Z" class="icon_svg-stroke icon_svg-fill" stroke="#e0e0e0" stroke-width="1.5" fill="none"></path></svg></btn>
-                            <span class="counter-holder comments_counter">{{.Comments_counter}}</span> 
-                        </div>
+            <div class="post-header">
+                <h5 class="categories">{{.Categories}}</h5>
+                <h5>{{.TimeAgo}}</h5>
+            </div>
+            <p class="post_title">{{.Title}}</p>
+            <p class="post_content">{{.Content}}</p>
+            <div class="post-actions">
+                <div class="reactions_holder">
+                    <div class="like_dislike">
+                        <button name="like-btn" value="LIKE" class="reactions like-btn" data-post-id="{{.ID}}">
+                            <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 4 3 15h6v5h6v-5h6z" class="icon_svg-stroke icon_svg-fill"
+                                    stroke-width="1.5" stroke="#e0e0e0" fill="none" stroke-linejoin="round"></path>
+                            </svg>
+                        </button>
+                        <span class="counter-holder like-count">{{.Likes}}</span>
 
-                        
-                </div>
-                <div id="comment-form">
-                    <form action="/" method="post">
-                        <div class="comment-container">
-                            <input type="text" name="comment-content" post-id="{{.ID}}" placeholder="comment" class="comment-input">
-                            <button type="submit" class="comment-btn">Comment</button>
-                        </div>
-                    </form>
-                    <div class="comments-container">
-                        {{range .Comments}}
-                        <div class="comment-content">
-                            <div class="comment-header">
-                                <div class="flex">
-                                    <i class="fa-solid fa-user"></i>
-                                    <strong style="font-size: 14px;">{{ .Author}}</strong>
-                                </div>
-                                <p style="font-size: 12px;">{{.TimeAgo_com}}</p>
-                            </div>   
-                            <p class="comment-text">{{.Content}}</p>
-                                <div class="like_dislike-comments">
-                                    <button name="comment-like-btn" value="LIKE" class="reactions comment-like-btn" commentid="{{.ID}}">
-                                        <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M12 4 3 15h6v5h6v-5h6z" class="icon_svg-stroke icon_svg-fill" 
-                                                  stroke-width="1.5" stroke="#e0e0e0" fill="none" stroke-linejoin="round"></path>
-                                        </svg>
-                                    </button>
-                                    <span class="counter-holder">{{.Likes}}</span>
-                                    <button name="comment-dislike-btn" value="DISLIKE" class="reactions comment-dislike-btn"  commentid="{{.ID}}">
-                                        <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="m12 20 9-11h-6V4H9v5H3z" class="icon_svg-stroke icon_svg-fill" 
-                                                  stroke="#e0e0e0" fill="none" stroke-width="1.5" stroke-linejoin="round"></path>
-                                        </svg>
-                                    </button>
-                                    <span class="counter-holder">{{.Dislikes}}</span> 
-                                </div>
-                        </div>
-                        {{end}}
+                        <button name="dislike-btn" value="DISLIKE" class="reactions dislike-btn" data-post-id="{{.ID}}">
+                            <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="m12 20 9-11h-6V4H9v5H3z" class="icon_svg-stroke icon_svg-fill" stroke="#e0e0e0"
+                                    fill="none" stroke-width="1.5" stroke-linejoin="round"></path>
+                            </svg>
+                        </button>
+                        <span class="counter-holder dislike-count">{{.Dislikes}}</span>
                     </div>
-                </div>   
+
+                    <btn id="comment-btn" class="reactions"><svg width="22" height="22" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M12.071 18.86c4.103 0 7.429-3.102 7.429-6.93C19.5 8.103 16.174 5 12.071 5s-7.429 3.103-7.429 6.93c0 1.291.379 2.5 1.037 3.534.32.501-1.551 3.058-1.112 3.467.46.429 3.236-1.295 3.803-.99 1.09.585 2.354.92 3.701.92Z"
+                                class="icon_svg-stroke icon_svg-fill" stroke="#e0e0e0" stroke-width="1.5" fill="none">
+                            </path>
+                        </svg></btn>
+                    <span class="counter-holder comments_counter">{{.Comments_counter}}</span>
+                </div>
+
+
+            </div>
+            <div id="comment-form">
+                <form action="/" method="post">
+                    <div class="comment-container">
+                        <input type="text" name="comment-content" post-id="{{.ID}}" placeholder="comment"
+                            class="comment-input">
+                        <button type="submit" class="comment-btn">Comment</button>
+                    </div>
+                </form>
+                <div class="comments-container">
+                    {{range .Comments}}
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <div class="flex">
+                                <i class="fa-solid fa-user"></i>
+                                <strong style="font-size: 14px;">{{ .Author}}</strong>
+                            </div>
+                            <p style="font-size: 12px;">{{.TimeAgo_com}}</p>
+                        </div>
+                        <p class="comment-text">{{.Content}}</p>
+                        <div class="like_dislike-comments">
+                            <button name="comment-like-btn" value="LIKE" class="reactions comment-like-btn"
+                                commentid="{{.ID}}">
+                                <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 4 3 15h6v5h6v-5h6z" class="icon_svg-stroke icon_svg-fill"
+                                        stroke-width="1.5" stroke="#e0e0e0" fill="none" stroke-linejoin="round"></path>
+                                </svg>
+                            </button>
+                            <span class="counter-holder">{{.Likes}}</span>
+                            <button name="comment-dislike-btn" value="DISLIKE" class="reactions comment-dislike-btn"
+                                commentid="{{.ID}}">
+                                <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="m12 20 9-11h-6V4H9v5H3z" class="icon_svg-stroke icon_svg-fill"
+                                        stroke="#e0e0e0" fill="none" stroke-width="1.5" stroke-linejoin="round"></path>
+                                </svg>
+                            </button>
+                            <span class="counter-holder">{{.Dislikes}}</span>
+                        </div>
+                    </div>
+                    {{end}}
+                </div>
             </div>
         </div>
+    </div>
+    {{end}}
+
+    <!-- pagination -->
+    <div class="pagination-controls">
+        {{if .Pagination.HasPrevious}}
+        <a href="{{.Pagination.PrevPage}}" class="pagination-link"><i class="fa-solid fa-arrow-left-long"></i> Previous</a>
         {{end}}
-        
-        <!-- <form method="get" class="pagination">
-            <a href="/?offset=&limit=">1</a>
-            <a href="/?offset=&limit=">2</a>
-            <a href="/?offset=&limit=">3</a>
-        </form> -->
 
+        <span class="pagination-current">{{.Pagination.CurrentPage}}</span>
 
-        <form method="get" class="pagination">
-            <button type="submit" name="offset" value="0">Start</button>
-        
-            <button type="submit" name="offset" value="{{ if gt .Offset 7 }}{{ sub .Offset 7 }}{{ else }}0{{ end }}"  {{ if eq .Offset 0 }} disabled {{end}}>Previous</button>
-        
-            <button type="submit" name="offset" value="{{ add .Offset 7 }}">Next</button>
-        </form>
-        
-        
-        
+        {{if .Pagination.HasNext}}
+        <a href="{{.Pagination.NextPage}}" class="pagination-link">Next <i class="fa-solid fa-arrow-right"></i></a>
+        {{end}}
+    </div>
 
-        <div class="levetate_container">
-            <a href="#top" class="levetate"><i class="fa-solid fa-jet-fighter-up"></i></a>
-        </div>
-    <script src="/static/js/forum.js"></script>
+    <div class="levetate_container">
+        <a href="#top" class="levetate"><i class="fa-solid fa-jet-fighter-up"></i></a>
+    </div>
+    <script src="static/js/forum.js"></script>
 </body>
+
 </html>

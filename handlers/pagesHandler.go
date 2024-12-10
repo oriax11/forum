@@ -8,10 +8,6 @@ import (
 )
 
 // ProfileHandler handles a request to a user's profile page
-// It retrieves the session cookie and checks if the user is logged in
-// If the user is not logged in, it redirects to the login page
-// If the user is logged in, it retrieves the user's information from the database
-// and renders the profile.html template
 func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("session_token")
 	if err != nil {
@@ -19,13 +15,13 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	email, exists := database.Sessions[cookie.Value]
+	userID, exists := database.Sessions[cookie.Value]
 	if !exists {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
 
-	user, err := database.GetUserInfo(email)
+	user, err := database.GetUserInfo(userID)
 	if err != nil {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return

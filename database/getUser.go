@@ -12,7 +12,7 @@ import (
 func GetUser(email, password string) (string, error) {
 	var hashedPassword string
 	var userId string
-	err := DB.QueryRow("SELECT user_id, password FROM Users WHERE email = ?", email).Scan(&userId,&hashedPassword)
+	err := DB.QueryRow("SELECT user_id, password FROM Users WHERE email = ?", email).Scan(&userId, &hashedPassword)
 	if err == sql.ErrNoRows {
 		return "", fmt.Errorf("no user with this email")
 	} else if err != nil {
