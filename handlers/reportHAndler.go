@@ -8,11 +8,7 @@ import (
 	"forum_full/database"
 )
 
-func ReportHandler(w http.ResponseWriter, r *http.Request) {
-	// if r.Method == http.MethodGet {
-	database.Tpl.ExecuteTemplate(w, "report.html", nil)
-	// 	return
-	// }
+func ReportHandler(w http.ResponseWriter, r *http.Request) {	
 	if r.Method == http.MethodPost {
 		// Parse the form data
 		err := r.ParseForm()
@@ -45,4 +41,5 @@ func ReportHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		defer resp.Body.Close()
 	}
+	database.Tpl.ExecuteTemplate(w, "report.html", nil)
 }

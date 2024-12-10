@@ -9,12 +9,7 @@ import (
 	"forum_full/utils"
 )
 
-// RegisterHandler handles a request to the /register endpoint. It checks if the
-// user is already logged in and redirects them to the home page if they are.
-// If the request is a GET request, it renders the register.html template. If the
-// request is a POST request, it validates the form data and adds the user to the
-// database. If the user already exists, it renders the register.html template with
-// an error message.
+
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	if cookie, err := r.Cookie("session_token"); err == nil {
 		if _, sessionExists := database.Sessions[cookie.Value]; !sessionExists {
@@ -28,19 +23,11 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		// Render the register.html template
 		if err := database.Tpl.ExecuteTemplate(w, "register.html", nil); err != nil {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
-
 	case http.MethodPost:
-		// Validate the form data
-		action := r.FormValue("query")
-		if action != "reg" {
-			http.Error(w, "Bad request\nHmmm, it looks like you are lost!!", http.StatusBadRequest)
-			return
-		}
 		var user utils.User
 		user.Username = r.FormValue("username")
 		user.Email = strings.TrimSpace(r.FormValue("email"))
@@ -63,10 +50,8 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// Redirect the user to the login page
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 	default:
-		// Method Not Allowed
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 	}
 }
@@ -90,23 +75,19 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	case http.MethodPost:
-		action := r.FormValue("query")
-		if action != "login" {
-			http.Error(w, "Bad request\nHmmm, it looks like you are lost!!", http.StatusBadRequest)
-			return
-		}
-
 		var user utils.User
 		user.Email = r.FormValue("email")
 		user.Password = r.FormValue("password")
 
-		if err := database.GetUser(user.Email, user.Password); err != nil {
+		userID, err := database.GetUser(user.Email, user.Password)
+		if err != nil {
 			database.Tpl.ExecuteTemplate(w, "login.html", utils.Errors{ErrorType: err.Error()})
 			return
 		}
 
+		//check if the user is aleardy have an oppened session
 		for key, value := range database.Sessions {
-			if value == user.Email {
+			if value == userID {
 				delete(database.Sessions, key)
 			}
 		}
@@ -118,8 +99,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		var userID string
-		database.DB.QueryRow("SELECT user_id FROM Users WHERE email = ?", user.Email).Scan(&userID)
 		database.Sessions[sessionID] = userID
 		utils.SetCookies(w, sessionID, "session_token", true)
 

@@ -19,12 +19,6 @@ func FilterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	action := r.FormValue("query")
-	if action != "cat_filter" {
-		http.Error(w, "Invalid action", http.StatusBadRequest)
-		return
-	}
-
 	category := r.FormValue("categories")
 	categoriesField := []string{"General", "Art", "News", "Technology", "Sport"}
 	isValidCategory := false
