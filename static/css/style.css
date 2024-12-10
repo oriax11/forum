@@ -151,7 +151,7 @@ body {
   transition: all 0.3s ease;
 }
 
-#btn-logout {
+#btn-dropdown {
   background-color: var(--accent-primary);
   color: var(--accent-primary);
   width: 40px;
@@ -163,7 +163,7 @@ body {
   transition: all 0.3s ease;
 }
 
-#btn-logout i {
+#btn-dropdown i {
   margin-top: 30%;
   color: var(--background-checkbox);
   font-size: 18px;
