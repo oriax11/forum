@@ -186,13 +186,13 @@
 
 
         <form method="get" class="pagination">
-            <button type="submit" name="offset" value="0"  value="7">Start</button>
+            <button type="submit" name="offset" value="0">Start</button>
         
-            <button type="submit" name="offset" value="{{ sub .Offset 7 }}">Previous</button>
+            <button type="submit" name="offset" value="{{ if gt .Offset 7 }}{{ sub .Offset 7 }}{{ else }}0{{ end }}"  {{ if eq .Offset 0 }} disabled {{end}}>Previous</button>
         
             <button type="submit" name="offset" value="{{ add .Offset 7 }}">Next</button>
-        
         </form>
+        
         
         
 

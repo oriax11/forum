@@ -306,7 +306,7 @@ body {
   font-size: 16px;
 }
 
-.post-form button {
+.post-form button, .pagination button {
   color: var(--accent-primary);
   background-color: transparent;
   padding: 6px 12px;
@@ -316,7 +316,7 @@ body {
   transition: all 0.3s ease;
 }
 
-.post-form button:hover {
+.post-form button:hover ,.pagination button:hover {
   color: var(--background-primary);
   background-color: var(--accent-primary);
   cursor: pointer;
@@ -615,29 +615,4 @@ i{
   gap: 10px;
   margin: 20px 0;
   font-family: Arial, sans-serif;
-}
-
-.pagination button,
-.pagination a {
-  text-decoration: none;
-  padding: 8px 16px;
-  border: 1px solid #ddd;
-  background-color: #f8f8f8;
-  color: #333;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border-radius: 4px;
-}
-
-.pagination button:hover,
-.pagination a:hover {
-  background-color: #e8e8e8;
-}
-
-.pagination a {
-  color: #007bff;
-}
-
-.pagination a:hover {
-  background-color: #f0f0f0;
 }

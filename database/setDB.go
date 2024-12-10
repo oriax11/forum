@@ -20,7 +20,8 @@ func init() {
 	Tpl = template.Must(template.New("").Funcs(template.FuncMap{
 		"add": func(a, b int) int { return a + b },
 		"sub": func(a, b int) int { return a - b },
-	}).ParseGlob("templates/*.html"))}
+	}).ParseGlob("templates/*.html"))
+}
 
 func InitDB() error {
 	var err error
