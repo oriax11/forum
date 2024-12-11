@@ -17,9 +17,28 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 
 	title := r.FormValue("title")
 	content := r.FormValue("content")
-	category_type := r.Form["type"]
+	categoryType := r.Form["type"]
 
-	Allcategories := strings.Join(category_type, " ")
+
+	// categories validation if not in allowed categories
+	allowedCategories := []string{"General", "Art", "News", "Technology", "Sport"}
+	categorySet := make(map[string]bool)
+	for _, category := range categoryType {
+		for _, allowed := range allowedCategories {
+			if category == allowed {
+				categorySet[category] = true
+				break
+			}
+		}
+	}
+
+	// fill the unique categories back to the slice
+	filteredCategories := []string{}
+	for category := range categorySet {
+		filteredCategories = append(filteredCategories, category)
+	}
+
+	allCategories := strings.Join(filteredCategories, " ")
 
 	if len(title) > 150 {
 		http.Error(w, "Post title cannot exceed 150 characters.", http.StatusBadRequest)
@@ -38,12 +57,12 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 
 	userID := Sessions[cookie.Value]
 	if userID == "" {
-		http.Error(w, "Faild to load Post", http.StatusInternalServerError)
+		http.Error(w, "Failed to load Post", http.StatusInternalServerError)
 		return
 	}
 
-	if len(category_type) == 0 {
-		http.Error(w, "category cannot be emty", http.StatusBadRequest)
+	if len(filteredCategories) == 0 {
+		http.Error(w, "Category cannot be empty", http.StatusBadRequest)
 		return
 	}
 	if title == "" || content == "" {
@@ -53,7 +72,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 
 	_, err = DB.Exec(
 		"INSERT INTO Posts (user_id, title, content, categories) VALUES (?, ?, ?, ?)",
-		userID, title, content, Allcategories,
+		userID, title, content, allCategories,
 	)
 	if err != nil {
 		http.Error(w, "Post creation failed", http.StatusInternalServerError)

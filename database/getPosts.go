@@ -119,7 +119,7 @@ func Getcontent(rows *sql.Rows) ([]utils.Post, error) {
 // GetPagination extracts pagination parameters
 func GetPagination(r *http.Request, totalPosts int, url string) (*Pagination) {
 	currentPage := 1
-	pageSize := 2
+	pageSize := 10
 	totalPages := (totalPosts + pageSize - 1) / pageSize
 
 	if page, err := strconv.Atoi(r.URL.Query().Get("page")); err == nil && page > 0 && page <= totalPages {
