@@ -6,6 +6,7 @@ import (
 
 	"forum_full/database"
 	"forum_full/handlers"
+	"forum_full/utils"
 )
 
 
@@ -31,8 +32,9 @@ func main() {
 	http.HandleFunc("/api/postreact", database.Postreact)
 	http.HandleFunc("/api/postComment", database.PostComment)
 	http.HandleFunc("/api/postCommentReact", database.CommentReact)
+	http.HandleFunc("/noscript-check", utils.NoScriptCheckHandler) 
 
 	// Start the server
 	log.Println("Server is running on port http://localhost:9080/")
-	log.Fatal(http.ListenAndServe(":9080", nil))
+	log.Fatal(http.ListenAndServe("0.0.0.0:9080", nil))
 }

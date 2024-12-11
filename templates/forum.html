@@ -10,6 +10,9 @@
 </head>
 
 <body>
+
+    
+
     <nav class="navbar">
         <a href="/"><img class="logo" src="static/img/logo.svg" alt="logo"></a>
         <div class="nav-buttons">
@@ -81,8 +84,8 @@
 
     <div class="post-form_container">
         <form class="post-form" action="/" method="post">
-            <textarea required class="input-title" name="title" placeholder="title"></textarea>
-            <textarea required class="input-content" name="content" placeholder="What is your question?"></textarea>
+            <textarea id="title" class="input-title" name="title" placeholder="title"></textarea>
+            <textarea  id="content" class="input-content" name="content" placeholder="What is your question?"></textarea>
             <div class="params-container">
                 <div class="checks-container">
                     <input name="type" type="checkbox" id="General" value="General" class="checkbox-text">
@@ -210,6 +213,7 @@
     <div class="levetate_container">
         <a href="#top" class="levetate"><i class="fa-solid fa-jet-fighter-up"></i></a>
     </div>
+
     <script src="static/js/forum.js"></script>
 </body>
 

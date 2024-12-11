@@ -2,15 +2,19 @@ package utils
 
 import "net/http"
 
-func jsCheckHandler(w http.ResponseWriter, r *http.Request) {
-	// Check for the presence of a query parameter or cookie
-	jsEnabled := r.URL.Query().Get("js")
-	if jsEnabled != "true" {
-		// Redirect to the root if JavaScript is not detected
-		http.Redirect(w, r, "/", http.StatusFound)
-		return
-	}
+// NoScriptCheckHandler verifies access when JavaScript is disabled.
+func NoScriptCheckHandler(w http.ResponseWriter, r *http.Request) {
+    if r.Method != http.MethodPost {
+        http.NotFound(w, r)
+        return
+    }
 
-	// JavaScript is enabled, proceed normally
-	w.Write([]byte("JavaScript is enabled!"))
+    verification := r.FormValue("noscript_verification")
+    if verification != "true" {
+        http.Error(w, "Unauthorized access", http.StatusForbidden)
+        return
+    }
+
+    http.Redirect(w, r, "/", http.StatusSeeOther)
 }
+

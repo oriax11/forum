@@ -13,7 +13,6 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-
 	// Handle post creation
 	if r.Method == http.MethodPost {
 		database.CreatePost(w, r)

@@ -72,7 +72,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 
 	_, err = DB.Exec(
 		"INSERT INTO Posts (user_id, title, content, categories) VALUES (?, ?, ?, ?)",
-		userID, title, content, allCategories,
+		userID, strings.TrimSpace(title), strings.TrimSpace(content), allCategories,
 	)
 	if err != nil {
 		http.Error(w, "Post creation failed", http.StatusInternalServerError)

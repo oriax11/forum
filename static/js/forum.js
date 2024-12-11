@@ -4,6 +4,21 @@ for (let i = 0; i < x.length; i++) {
         this.closest(".container").remove();
     })
 }
+
+
+document.getElementsByClassName("publish_btn")[0].addEventListener("click", function (event) {
+    const input_title = document.getElementById("title");
+    const input_content = document.getElementById("content");   
+
+    if (input_title.value.trim() === "" || input_content.value.trim() === "") {
+        event.preventDefault(); 
+        input_title.style.border = input_title.value.trim() === "" ? "1px solid red" : "";
+        input_content.style.border = input_content.value.trim() === "" ? "1px solid red" : "";
+    }
+});
+
+
+
 const usernameElement = document.getElementById("Username");
 const pf_btn = document.getElementById("pf_btn");
 usernameElement.style.cursor = "pointer";
@@ -196,6 +211,10 @@ document.querySelectorAll(".comment-btn").forEach(button => {
         const commentInput = button.previousElementSibling;
         const postId = commentInput.getAttribute("post-id");
         const commentContent = commentInput.value;
+        if (commentContent.length <= 0) {
+            commentInput.style.border = "1px solid red";
+            console.log("kjsdf")
+        } 
         sendComment(postId, commentContent, function (data) {
             if (data.success) {
                 const post = button.closest(".post");
