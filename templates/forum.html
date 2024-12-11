@@ -10,16 +10,12 @@
 </head>
 
 <body>
-
-    
-
     <nav class="navbar">
         <a href="/"><img class="logo" src="static/img/logo.svg" alt="logo"></a>
         <div class="nav-buttons">
             <div class="user-info-container">
                 <span id="Username">{{.Username}}</span>
                 <form action="/profile" method="get">
-                    <input type="hidden" name="query" value="profile">
                     <div class="user-info-container">
                         <button type="submit" id="pf_btn">
                             <!-- <i id="user_icon" class="fa-solid fa-user"></i> -->
@@ -27,7 +23,6 @@
                         </button>
                     </div>
                 </form>
-
             </div>
             <div class="dropdown">
                 <a id="btn-dropdown">
@@ -170,7 +165,7 @@
                             </div>
                             <p style="font-size: 12px;">{{.TimeAgo_com}}</p>
                         </div>
-                        <p class="comment-text">{{.Content}}</p>
+                        <p class="comment-text" style="word-wrap: break-word;">{{.Content}}</p>
                         <div class="like_dislike-comments">
                             <button name="comment-like-btn" value="LIKE" class="reactions comment-like-btn"
                                 commentid="{{.ID}}">
