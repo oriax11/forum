@@ -5,17 +5,29 @@ for (let i = 0; i < x.length; i++) {
     })
 }
 
+document.getElementById("publish_btn").addEventListener("click", function (event) {
+    const inputTitle = document.getElementById("title");
+    const inputContent = document.getElementById("content");   
 
-document.getElementsByClassName("publish_btn")[0].addEventListener("click", function (event) {
-    const input_title = document.getElementById("title");
-    const input_content = document.getElementById("content");   
-
-    if (input_title.value.trim() === "" || input_content.value.trim() === "") {
-        event.preventDefault(); 
-        input_title.style.border = input_title.value.trim() === "" ? "1px solid red" : "";
-        input_content.style.border = input_content.value.trim() === "" ? "1px solid red" : "";
+    let isValid = true;
+    if (inputTitle.value.trim() === "") {
+        isValid = false;
+        inputTitle.style.border = "1px solid red";
+        inputTitle.placeholder = "Please provide a title";
+    } else {
+        inputTitle.style.border = "";
     }
-});
+    if (inputContent.value.trim() === "") {
+        isValid = false;
+        inputContent.style.border = "1px solid red";
+        inputContent.placeholder = "Content cannot be empty";
+    } else {
+        inputContent.style.border = "";
+    }
+    if (!isValid) {
+        event.preventDefault();
+    }
+})
 
 
 
