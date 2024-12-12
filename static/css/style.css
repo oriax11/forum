@@ -38,17 +38,30 @@
 }
 
 .pagination-link {
+  background-color: transparent;
   color: var(--accent-primary);
   padding: 8px 16px;
   border: 1px solid var(--accent-primary);
   text-decoration: none;
   transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pagination-link i {
+  transition: color 0.3s ease;
 }
 
 .pagination-link:hover {
   background-color: var(--accent-primary);
   color: var(--background-primary);
 }
+
+.pagination-link:hover i {
+  color: var(--background-primary);
+}
+
 
 .pagination-current {
   color: var(--accent-primary);
@@ -213,9 +226,7 @@ body {
   background-color: var(--border-color);
 }
 
-/* .dropdown:hover .dropdown-content {
-  display: block;
-} */
+
 
 /* Responsive styles */
 @media (max-width: 768px) {

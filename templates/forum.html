@@ -194,14 +194,14 @@
 
     <form method="get" class="pagination-controls">
         {{if .Pagination.HasPrevious}}
-        <button type="submit" name="page" class="pagination-link" value="{{.Pagination.Previous}}">Previous</button>
+        <button type="submit" name="page" class="pagination-link" value="{{.Pagination.Previous}}"><i class="fa-solid fa-arrow-left"></i>  Previous</button>
         {{end}}
 
 
         <span class="pagination-current">{{.Pagination.CurrentPage}}</span>
 
         {{if .Pagination.HasNext}}
-        <button type="submit" class="pagination-link" name="page" value="{{.Pagination.Next}}">Next</button>
+        <button type="submit" class="pagination-link" name="page" value="{{.Pagination.Next}}">Next  <i class="fa-solid fa-arrow-right"></i></button>
         {{end}}
     </form>
 
