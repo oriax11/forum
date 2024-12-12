@@ -46,20 +46,17 @@
         <ul>
             <!-- <li><a href="/">Home</a></li> -->
             <li>
-                <form class="categories_selection" method="get" action="/filter">
-                    <input type="hidden" name="query" value="cat_filter">
-                    &nbsp;&nbsp;<i class="fa-solid fa-list"></i>
-                    <select class="category-select" name="categories" onchange="this.form.submit()">
-                        <option value="" disabled selected>Select Category</option>
-                        <option value="General">General</option>
-                        <option value="News">News</option>
-                        <option value="Technology">Tech</option>
-                        <option value="Art">Art</option>
-                        <option value="Sport">Sport</option>
-                    </select>
-                </form>
-
+                &nbsp;&nbsp;<i class="fa-solid fa-list"></i>
+                <select class="category-select" name="categories" onchange="if(this.value) window.location.href=this.value;">
+                    <option value="" disabled selected>Select Category</option>
+                    <option value="/filter/General">General</option>
+                    <option value="/filter/News">News</option>
+                    <option value="/filter/Technology">Technology</option>
+                    <option value="/filter/Art">Art</option>
+                    <option value="/filter/Sport">Sport</option>
+                </select>
             </li>
+            
             <li class="created_liked">
                 <form class="forms" action="/created" method="get">
                     <input type="hidden" name="query" value="created">

@@ -19,6 +19,8 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	
+
 	// Fetch posts using offset and limit
 	posts, pagination, err := database.GetPosts(r)
 	if err != nil {
