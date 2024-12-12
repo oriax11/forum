@@ -19,6 +19,10 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 		database.CreatePost(w, r)
 		return
 	}
+	if r.Method != http.MethodGet {
+		http.Error(w, "Bad mathod", http.StatusMethodNotAllowed)
+		return
+	}
 
 	
 
