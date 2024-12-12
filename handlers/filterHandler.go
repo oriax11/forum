@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"forum_full/database"
 	"forum_full/utils"
@@ -18,8 +19,7 @@ func FilterHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
 	}
-
-	category := r.FormValue("categories")
+	category := strings.TrimPrefix(r.URL.Path, "/filter/")
 	categoriesField := []string{"General", "Art", "News", "Technology", "Sport"}
 	isValidCategory := false
 	for _, value := range categoriesField {
@@ -42,7 +42,7 @@ func FilterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get pagination parameters
-	pagination := database.GetPagination(r, totalPosts, fmt.Sprintf("filter?query=cat_filter&categories=%s&", category))
+	pagination := database.GetPagination(r, totalPosts)
 
 	rows, err := database.DB.Query(`
         SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
@@ -50,7 +50,7 @@ func FilterHandler(w http.ResponseWriter, r *http.Request) {
         JOIN Users u ON p.user_id = u.user_id
         WHERE p.categories LIKE ?
         ORDER BY p.created_at DESC
-        LIMIT ? OFFSET ?`, "%"+category+"%", pagination.PageSize, pagination.OffSet)
+        LIMIT ? OFFSET ?`, "%"+category+"%", pagination.PageSize, pagination.Offset)
 	if err != nil {
 		http.Error(w, "Failed to load Posts", http.StatusInternalServerError)
 		return
@@ -118,11 +118,7 @@ func LikedHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	action := r.URL.Query().Get("query")
-	if action != "liked" {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
-		return
-	}
+
 
 	// Get total count for pagination
 	var totalPosts int
@@ -135,7 +131,7 @@ func LikedHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get pagination parameters
-	pagination := database.GetPagination(r, totalPosts, "liked?query=liked&")
+	pagination := database.GetPagination(r, totalPosts)
 
 	rows, err := database.DB.Query(`
         SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
@@ -144,7 +140,7 @@ func LikedHandler(w http.ResponseWriter, r *http.Request) {
         JOIN Reactions r ON p.post_id = r.post_id
         WHERE r.reaction_type = 'LIKE' AND r.user_id = ?
         ORDER BY p.created_at DESC
-        LIMIT ? OFFSET ?`, userID, pagination.PageSize, pagination.OffSet)
+        LIMIT ? OFFSET ?`, userID, pagination.PageSize, pagination.Offset)
 	if err != nil {
 		http.Error(w, "Failed to load Posts", http.StatusInternalServerError)
 		return
@@ -174,6 +170,7 @@ func LikedHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := database.Tpl.ExecuteTemplate(w, "forum.html", data); err != nil {
+		fmt.Println(err)
 		http.Error(w, "Error rendering the forum page", http.StatusInternalServerError)
 	}
 }
@@ -196,22 +193,17 @@ func CreatedHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	action := r.URL.Query().Get("query")
-	if action != "created" {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
-		return
-	}
 
 	// Get total count for pagination
 	var totalPosts int
-	
-	if err = database.DB.QueryRow("SELECT COUNT(*) FROM Posts WHERE user_id = ?",userID).Scan(&totalPosts);err != nil {
+
+	if err = database.DB.QueryRow("SELECT COUNT(*) FROM Posts WHERE user_id = ?", userID).Scan(&totalPosts); err != nil {
 		http.Error(w, "Failed to count posts", http.StatusInternalServerError)
 		return
 	}
 
 	// Get pagination parameters
-	pagination := database.GetPagination(r, totalPosts, "created?query=created&")
+	pagination := database.GetPagination(r, totalPosts)
 
 	rows, err := database.DB.Query(`
         SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
@@ -219,7 +211,7 @@ func CreatedHandler(w http.ResponseWriter, r *http.Request) {
         JOIN Users u ON p.user_id = u.user_id
         WHERE u.user_id = ?
         ORDER BY p.created_at DESC
-        LIMIT ? OFFSET ?`,userID,pagination.PageSize,pagination.OffSet)
+        LIMIT ? OFFSET ?`, userID, pagination.PageSize, pagination.Offset)
 	if err != nil {
 		http.Error(w, "Failed to load Posts", http.StatusInternalServerError)
 		return

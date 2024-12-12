@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"forum_full/database"
@@ -61,6 +62,7 @@ func ForumHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := database.Tpl.ExecuteTemplate(w, "forum.html", data); err != nil {
+		fmt.Println(err)
 		http.Error(w, "Error rendering the forum page", http.StatusInternalServerError)
 		return
 	}

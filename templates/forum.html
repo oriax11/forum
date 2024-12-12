@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="static/css/style.css" />
+    <link rel="stylesheet" href="/static/css/style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <title>intouch</title>
 </head>
 
 <body>
     <nav class="navbar">
-        <a href="/"><img class="logo" src="static/img/logo.svg" alt="logo"></a>
+        <a href="/"><img class="logo" src="/static/img/logo.svg" alt="logo"></a>
         <div class="nav-buttons">
             <div class="user-info-container">
                 <span id="Username">{{.Username}}</span>
@@ -59,7 +59,6 @@
             
             <li class="created_liked">
                 <form class="forms" action="/created" method="get">
-                    <input type="hidden" name="query" value="created">
                     <button class="liked_post" type="submit"><i class="fa-solid fa-signs-post"></i> Created
                         Posts</button>
                 </form>
@@ -67,7 +66,6 @@
 
             <li class="created_liked">
                 <form class="forms" action="/liked" method="get">
-                    <input type="hidden" name="query" value="liked">
                     <button class="liked_post" type="submit"><i class="fa-regular fa-heart"></i> liked posts</button>
                 </form>
             </li>
@@ -189,24 +187,25 @@
     </div>
     {{end}}
 
-    <!-- pagination -->
-    <div class="pagination-controls">
+    <form method="get" class="pagination-controls">
         {{if .Pagination.HasPrevious}}
-        <a href="{{.Pagination.PrevPage}}" class="pagination-link"><i class="fa-solid fa-arrow-left-long"></i> Previous</a>
+        <button type="submit" name="page" class="pagination-link" value="{{.Pagination.Previous}}">Previous</button>
         {{end}}
+
 
         <span class="pagination-current">{{.Pagination.CurrentPage}}</span>
 
         {{if .Pagination.HasNext}}
-        <a href="{{.Pagination.NextPage}}" class="pagination-link">Next <i class="fa-solid fa-arrow-right"></i></a>
+        <button type="submit" class="pagination-link" name="page" value="{{.Pagination.Next}}">Next</button>
         {{end}}
-    </div>
+    </form>
+
 
     <div class="levetate_container">
         <a href="#top" class="levetate"><i class="fa-solid fa-jet-fighter-up"></i></a>
     </div>
 
-    <script src="static/js/forum.js"></script>
+    <script src="/static/js/forum.js"></script>
 </body>
 
 </html>
