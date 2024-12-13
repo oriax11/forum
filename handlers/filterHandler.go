@@ -10,7 +10,19 @@ import (
 )
 
 // FilterHandler handles a GET request to filter posts by category.
-// handlers/filterHandler.go
+//
+// It first checks if the request method is GET and that the category name is
+// valid. Then it retrieves the total count of posts for the given category and
+// uses it to get the pagination parameters.
+//
+// It then queries the database to retrieve the posts for the given category and
+// page. It uses the Getcontent function to retrieve the posts content from the
+// database rows.
+//
+// It then handles the user session by retrieving the user ID from the session
+// cookie and getting the user information from the database.
+//
+// Finally, it renders the forum.html template with the retrieved data.
 func FilterHandler(w http.ResponseWriter, r *http.Request) {
 	guestCookie, _ := r.Cookie("Guest_token")
 	sessionCookie, _ := r.Cookie("session_token")
@@ -99,28 +111,30 @@ func FilterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// handlers/filterHandler.go
+// LikedHandler handles requests to display posts liked by the logged-in user.
+// It requires a valid session token and supports pagination of the liked posts.
 func LikedHandler(w http.ResponseWriter, r *http.Request) {
+	// Retrieve session token from cookies
 	cookie, err := r.Cookie("session_token")
 	if err != nil {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
 
+	// Get user ID from session
 	userID := database.Sessions[cookie.Value]
 	if userID == "" {
 		http.Error(w, "Failed to Load Liked Posts", http.StatusInternalServerError)
 		return
 	}
 
+	// Ensure the request method is GET
 	if r.Method != http.MethodGet {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
 	}
 
-
-
-	// Get total count for pagination
+	// Get total count of liked posts for pagination
 	var totalPosts int
 	err = database.DB.QueryRow(`SELECT COUNT(*) FROM Posts p
         JOIN Reactions r ON p.post_id = r.post_id
@@ -130,9 +144,10 @@ func LikedHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get pagination parameters
+	// Get pagination parameters based on total liked posts
 	pagination := database.GetPagination(r, totalPosts)
 
+	// Query the database for liked posts with pagination
 	rows, err := database.DB.Query(`
         SELECT p.post_id, p.title, p.content, p.categories, p.created_at, u.username
         FROM Posts p
@@ -147,18 +162,21 @@ func LikedHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 
+	// Retrieve post content from query results
 	posts, err := database.Getcontent(rows)
 	if err != nil {
 		http.Error(w, "Failed to load Posts", http.StatusInternalServerError)
 		return
 	}
 
+	// Get user information for displaying the username
 	userInfo, err := database.GetUserInfo(userID)
 	if err != nil {
 		http.Error(w, "Failed to load user info", http.StatusInternalServerError)
 		return
 	}
 
+	// Prepare data for rendering the template
 	data := struct {
 		P          []utils.Post
 		Username   string
@@ -169,6 +187,7 @@ func LikedHandler(w http.ResponseWriter, r *http.Request) {
 		Pagination: pagination,
 	}
 
+	// Render the forum page with liked posts
 	if err := database.Tpl.ExecuteTemplate(w, "forum.html", data); err != nil {
 		fmt.Println(err)
 		http.Error(w, "Error rendering the forum page", http.StatusInternalServerError)

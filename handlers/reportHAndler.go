@@ -8,11 +8,13 @@ import (
 	"forum_full/database"
 )
 
-func ReportHandler(w http.ResponseWriter, r *http.Request) {	
+// ReportHandler handles the report page, providing a form for users to send a message to the administrators.
+// The form is processed by sending a POST request to Telegram's API to send the message to a specific chat.
+func ReportHandler(w http.ResponseWriter, r *http.Request) {
+	// Handle POST requests
 	if r.Method == http.MethodPost {
 		// Parse the form data
-		err := r.ParseForm()
-		if err != nil {
+		if err := r.ParseForm(); err != nil {
 			http.Error(w, "Unable to parse form data", http.StatusBadRequest)
 			return
 		}
@@ -22,6 +24,7 @@ func ReportHandler(w http.ResponseWriter, r *http.Request) {
 		email := r.FormValue("email")
 		message := r.FormValue("message")
 
+		// Telegram bot token and chat ID
 		botToken := "7239461576:AAEPLw-vzHgPJtcN--EYMa9j5VNEe03uqxI"
 		chatID := "1518093759"
 
@@ -41,5 +44,7 @@ func ReportHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		defer resp.Body.Close()
 	}
+
+	// Render the report page
 	database.Tpl.ExecuteTemplate(w, "report.html", nil)
 }

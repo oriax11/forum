@@ -20,12 +20,16 @@ type Pagination struct {
 
 // GetPosts retrieves all posts from the database.
 // It returns a slice of Post objects containing all the posts from the database.
+// The function takes a http.Request object as an argument and uses it to
+// determine the pagination parameters such as page size and offset.
 func GetPosts(r *http.Request) ([]utils.Post, *Pagination, error) {
+	// Get the total number of posts in the database
 	var totalPosts int
 	if err := DB.QueryRow("SELECT COUNT(*) FROM Posts").Scan(&totalPosts); err != nil {
-		return nil, nil, fmt.Errorf("failed to get total posts count")
+		return nil, nil, fmt.Errorf("failed to get total posts count: %w", err)
 	}
 
+	// Get pagination parameters from the request
 	pagination := GetPagination(r, totalPosts)
 
 	// Query the database with LIMIT and OFFSET
@@ -35,18 +39,22 @@ func GetPosts(r *http.Request) ([]utils.Post, *Pagination, error) {
 						   ORDER BY p.created_at DESC
 						   LIMIT ? OFFSET ?`, pagination.PageSize, pagination.Offset)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("failed to query posts: %w", err)
 	}
 	defer rows.Close()
 
+	// Get the posts content from the rows
 	posts, err := Getcontent(rows)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("failed to get posts content: %w", err)
 	}
 
 	return posts, pagination, nil
 }
 
+// Getcontent retrieves the content of the posts from the database
+// It takes a pointer to a sql.Rows object as an argument and returns a slice of Post objects
+// The function also returns an error if any of the database operations fail
 func Getcontent(rows *sql.Rows) ([]utils.Post, error) {
 	var posts []utils.Post
 	for rows.Next() {

@@ -9,6 +9,9 @@ import (
 	"forum_full/utils"
 )
 
+// PostComment handles a POST request to add a comment to a post
+// It validates the request body and adds the comment to the database
+// It returns a JSON response with the added comment's details
 func PostComment(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
