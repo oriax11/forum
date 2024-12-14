@@ -13,8 +13,8 @@ func CheckCredentials(user User) string {
 	}
 
 	// check username
-	if !regexp.MustCompile(`^[a-zA-Z0-9_-]{3,15}$`).MatchString(user.Username) {
-		return "invalid username format"
+	if !regexp.MustCompile(`^[a-zA-Z0-9_-]{3,15}$`).MatchString(user.Username) || !regexp.MustCompile(`^[a-zA-Z0-9_-]{3,15}$`).MatchString(user.Fullname) {
+		return "invalid full name or username format"
 	}
 
 	// check Password

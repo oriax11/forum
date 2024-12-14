@@ -49,8 +49,8 @@ func PostComment(w http.ResponseWriter, r *http.Request) {
 	
 	CommentData.Content = strings.Trim(CommentData.Content, " ")
 
-	if CommentData.Content == "" {
-		http.Error(w, "Comment cannot be empty", http.StatusBadRequest)
+	if CommentData.Content == "" || len(CommentData.Content) >= 1000 {
+		http.Error(w, "Comment cannot be empty or exceed 1000 characters", http.StatusBadRequest)
 		return
 	}
 

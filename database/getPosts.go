@@ -129,7 +129,7 @@ func GetPagination(r *http.Request, totalPosts int) *Pagination {
 	// Default values
 	currentPage := 1
 	pageSize := 10
-	totalPages := (totalPosts + pageSize - 1) / pageSize
+	totalPages := (totalPosts + pageSize -1 ) / pageSize
 
 	// Parse the "page" query parameter
 	if page, err := strconv.Atoi(r.URL.Query().Get("page")); err == nil && page > 0 && page <= totalPages {

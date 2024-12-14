@@ -223,9 +223,8 @@ document.querySelectorAll(".comment-btn").forEach(button => {
         const commentInput = button.previousElementSibling;
         const postId = commentInput.getAttribute("post-id");
         const commentContent = commentInput.value;
-        if (commentContent.length <= 0) {
+        if (commentContent.length <= 0 || commentContent.length > 1000) {
             commentInput.style.border = "1px solid red";
-            console.log("kjsdf")
         } 
         sendComment(postId, commentContent, function (data) {
             if (data.success) {
