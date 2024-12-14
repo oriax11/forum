@@ -12,14 +12,16 @@ document.getElementById("publish_btn").addEventListener("click", function (event
     let isValid = true;
     if (inputTitle.value.trim() === "") {
         isValid = false;
-        inputTitle.style.border = "1px solid red";
+        inputTitle.value = "";
+        inputTitle.style.border = "1px solid #ff4b4b";
         inputTitle.placeholder = "Please provide a title";
     } else {
         inputTitle.style.border = "";
     }
     if (inputContent.value.trim() === "") {
         isValid = false;
-        inputContent.style.border = "1px solid red";
+        inputContent.value = "";
+        inputContent.style.border = "1px solid #ff4b4b";
         inputContent.placeholder = "Content cannot be empty";
     } else {
         inputContent.style.border = "";
@@ -224,7 +226,7 @@ document.querySelectorAll(".comment-btn").forEach(button => {
         const postId = commentInput.getAttribute("post-id");
         const commentContent = commentInput.value;
         if (commentContent.length <= 0 || commentContent.length > 1000) {
-            commentInput.style.border = "1px solid red";
+            commentInput.style.border = "1px solid #ff4b4b";
         } 
         sendComment(postId, commentContent, function (data) {
             if (data.success) {
