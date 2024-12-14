@@ -13,7 +13,7 @@ docker run --name forum-app-container -p 8080:8080 -d forum-app
 
 # Step 3: Prune unused Docker objects
 echo "Pruning unused Docker objects..."
-# docker system prune -f
+docker system prune -f
 
 # Output completion message
 echo "Docker container is running and unused objects have been pruned."
