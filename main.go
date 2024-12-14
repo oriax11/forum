@@ -32,6 +32,6 @@ func main() {
 	http.HandleFunc("/api/postCommentReact", database.CommentReact)
 
 	// Start the server
-	log.Println("Server is running on port http://localhost:9080/")
-	log.Fatal(http.ListenAndServe("0.0.0.0:9080", nil))
+	log.Println("Server is running on port http://localhost:8080/")
+	log.Fatal(http.ListenAndServe("0.0.0.0:8080", nil))
 }

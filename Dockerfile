@@ -4,6 +4,7 @@ FROM golang:1.22.3-alpine AS builder
 # Install build dependencies for SQLite3
 RUN apk add --no-cache \
     gcc \
+    libc-dev \
     sqlite-dev
 
 # Set the working directory
@@ -16,7 +17,7 @@ COPY go.mod go.sum ./
 COPY . .
 
 # Build the application
-RUN go build -o app .
+RUN go build -o forum .
 
 # Stage 2: Runtime
 FROM alpine:latest
@@ -29,7 +30,7 @@ RUN apk add --no-cache \
 WORKDIR /app
 
 # Copy the built binary from the builder stage
-COPY --from=builder /app/app .
+COPY --from=builder /app/forum .
 
 
 # Copy static files (templates, CSS, JS) and database
@@ -41,4 +42,4 @@ COPY forum.db .
 EXPOSE 8080
 
 # Run the application
-CMD ["./app"]
+CMD ["./forum"]
