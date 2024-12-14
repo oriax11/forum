@@ -378,8 +378,6 @@ document.querySelectorAll(".comment-like-btn").forEach(button => {
     });
 });
 
-
-
 // Add event listeners for dislike buttons
 document.querySelectorAll(".comment-dislike-btn").forEach(button => {
     button.addEventListener("click", function (event) {
@@ -398,4 +396,27 @@ document.querySelectorAll(".comment-dislike-btn").forEach(button => {
             }
         });
     });
+});
+
+// Sidebar functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const body = document.body;
+
+    // Function to toggle sidebar
+    function toggleSidebar() {
+        sidebar.classList.toggle('open');
+        sidebarOverlay.classList.toggle('show');
+        body.classList.toggle('sidebar-open');
+    }
+
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', toggleSidebar);
+    }
+    
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', toggleSidebar);
+    }
 });

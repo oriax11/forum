@@ -11,6 +11,9 @@
 
 <body>
     <nav class="navbar">
+        <button class="mobile-toggle" id="sidebarToggle">
+            <i class="fa-solid fa-bars" style="color: var(--background-primary);"></i>
+        </button>
         <a href="/"><img class="logo" src="/static/img/logo.svg" alt="logo"></a>
         <div class="nav-buttons">
             <div class="user-info-container">
@@ -40,47 +43,79 @@
             <a href="/login" id="login_btn" class="login">Login</a>
             <a href="/register" id="register_btn" class="register">Register</a>
         </div>
-    </nav>
+    </nav>    
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
+    <!-- Main Sidebar -->
+    <div class="stky-sidebar" id="sidebar">
+        <!-- Recent Posts Section -->
+        <div class="sidebar-section">
+            <div class="section-header">
+                <i class="fa-solid fa-clock"></i>
+                <span class="section-title">Latest Posts</span>
+            </div>
+            <div class="sidebar-links">
+                <a href="/" class="sidebar-link">
+                    <i class="fa-solid fa-comments"></i>
+                    <span>All Discussions</span>
+                </a>
+            </div>
+        </div>
 
+        <!-- User Content Section - Only show if logged in -->
+        {{if ne .Username ""}}
+        <div class="sidebar-section">
+            <div class="section-header">
+                <i class="fa-solid fa-user"></i>
+                <span class="section-title">Your Content</span>
+            </div>
+            <div class="sidebar-links">
+                <a href="/created" class="sidebar-link">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    <span>Created Posts</span>
+                </a>
+                <a href="/liked" class="sidebar-link">
+                    <i class="fa-solid fa-heart"></i>
+                    <span>Liked Posts</span>
+                </a>
+            </div>
+        </div>
+        {{end}}
 
-
-    <div class="stky-sidebar">
-        <ul>
-            <!-- <li><a href="/">Home</a></li> -->
-            <li>
-                &nbsp;&nbsp;<i class="fa-solid fa-list"></i>
-                <select class="category-select" name="categories" onchange="if(this.value) window.location.href=this.value;">
-                    <option value="" disabled selected>Select Category</option>
-                    <option value="/filter/General">General</option>
-                    <option value="/filter/News">News</option>
-                    <option value="/filter/Technology">Technology</option>
-                    <option value="/filter/Art">Art</option>
-                    <option value="/filter/Sport">Sport</option>
-                </select>
-            </li>
-            
-            <li class="created_liked">
-                <form class="forms" action="/created" method="get">
-                    <button class="liked_post" type="submit"><i class="fa-solid fa-signs-post"></i> Created
-                        Posts</button>
-                </form>
-            </li>
-
-            <li class="created_liked">
-                <form class="forms" action="/liked" method="get">
-                    <button class="liked_post" type="submit"><i class="fa-regular fa-heart"></i> liked posts</button>
-                </form>
-            </li>
-        </ul>
+        <!-- Categories Section -->
+        <div class="sidebar-section">
+            <div class="section-header">
+                <i class="fa-solid fa-tags"></i>
+                <span class="section-title">Categories</span>
+            </div>
+            <div class="sidebar-links">
+                <a href="/filter/General" class="sidebar-link category-link">
+                    <span>#General</span>
+                </a>
+                <a href="/filter/Technology" class="sidebar-link category-link">
+                    <span>#Technology</span>
+                </a>
+                <a href="/filter/Art" class="sidebar-link category-link">
+                    <span>#Art</span>
+                </a>
+                <a href="/filter/Sport" class="sidebar-link category-link">
+                    <span>#Sport</span>
+                </a>
+                <a href="/filter/News" class="sidebar-link category-link">
+                    <span>#News</span>
+                </a>
+            </div>
+        </div>
     </div>
 
-    <noscript> This website requires JavaScript to function correctly. Please enable JavaScript for the best experience. </noscript>
+    <noscript> This website requires JavaScript to function correctly. Please enable JavaScript for the best experience.
+    </noscript>
 
     <div class="post-form_container">
         <form class="post-form" action="/" method="post">
             <textarea id="title" class="input-title" name="title" placeholder="title"></textarea>
-            <textarea  id="content" class="input-content" name="content" placeholder="What is your question?"></textarea>
+            <textarea id="content" class="input-content" name="content" placeholder="What is your question?"></textarea>
             <div class="params-container">
                 <div class="checks-container">
                     <input name="type" type="checkbox" id="General" value="General" class="checkbox-text">
@@ -194,14 +229,16 @@
 
     <form method="get" class="pagination-controls">
         {{if .Pagination.HasPrevious}}
-        <button type="submit" name="page" class="pagination-link" value="{{.Pagination.Previous}}"><i class="fa-solid fa-arrow-left"></i>  Previous</button>
+        <button type="submit" name="page" class="pagination-link" value="{{.Pagination.Previous}}"><i
+                class="fa-solid fa-arrow-left"></i> Previous</button>
         {{end}}
 
 
         <span class="pagination-current">{{.Pagination.CurrentPage}}</span>
 
         {{if .Pagination.HasNext}}
-        <button type="submit" class="pagination-link" name="page" value="{{.Pagination.Next}}">Next  <i class="fa-solid fa-arrow-right"></i></button>
+        <button type="submit" class="pagination-link" name="page" value="{{.Pagination.Next}}">Next <i
+                class="fa-solid fa-arrow-right"></i></button>
         {{end}}
     </form>
 
